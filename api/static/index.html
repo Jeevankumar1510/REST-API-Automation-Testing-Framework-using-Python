@@ -1052,48 +1052,45 @@
         if (res.ok) {
           projectsData = await res.json();
         }
-      } catch (err) {
-        console.warn("Could not fetch projects list:", err);
-      }
 
-      // If database is fresh or empty, guarantee Project 1 is present
-      if (!projectsData || projectsData.length === 0) {
-        projectsData = [{
-          id: 1,
-          name: "User Management REST API",
-          app_type: "user_management",
-          description: "Core user microservice featuring JWT authentication, role management, and CRUD automation suite.",
-          base_url: "http://127.0.0.1:8000",
-          endpoints_count: 8,
-          test_cases_count: 46
-        }];
-      }
-
-      // Populate dropdown on execution page with bright, visible styled options
-      const select = document.getElementById('exec-project-select');
-      if (select) {
-        select.innerHTML = '';
-        projectsData.forEach(p => {
-          const opt = document.createElement('option');
-          opt.value = p.id;
-          opt.innerText = `📦 ${p.name} (${p.test_cases_count || 46} Tests)`;
-          opt.style.backgroundColor = '#0f172a';
-          opt.style.color = '#38bdf8';
-          opt.style.fontWeight = 'bold';
-          opt.style.padding = '8px 12px';
-          select.appendChild(opt);
-        });
-        if (projectsData.length > 0) {
-          select.value = projectsData[0].id;
+        // If database is fresh or empty, guarantee Project 1 is present
+        if (!projectsData || projectsData.length === 0) {
+          projectsData = [{
+            id: 1,
+            name: "User Management REST API",
+            app_type: "user_management",
+            description: "Core user microservice featuring JWT authentication, role management, and CRUD automation suite.",
+            base_url: "http://127.0.0.1:8000",
+            endpoints_count: 8,
+            test_cases_count: 46
+          }];
         }
-      }
+
+        // Populate dropdown on execution page with bright, visible styled options
+        const select = document.getElementById('exec-project-select');
+        if (select) {
+          select.innerHTML = '';
+          projectsData.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.innerText = `📦 ${p.name} (${p.test_cases_count || 46} Tests)`;
+            opt.style.backgroundColor = '#0f172a';
+            opt.style.color = '#38bdf8';
+            opt.style.fontWeight = 'bold';
+            opt.style.padding = '8px 12px';
+            select.appendChild(opt);
+          });
+          if (projectsData.length > 0) {
+            select.value = projectsData[0].id;
+          }
+        }
 
         // Render My Projects Cards
         const container = document.getElementById('my-projects-container');
-        container.innerHTML = '';
+        if (container) container.innerHTML = '';
 
         const overviewContainer = document.getElementById('overview-projects-list');
-        overviewContainer.innerHTML = '';
+        if (overviewContainer) overviewContainer.innerHTML = '';
 
         projectsData.forEach(p => {
           const passRate = p.latest_execution ? p.latest_execution.pass_rate : 100;
@@ -1134,8 +1131,8 @@
               </div>
             </div>
           `;
-          container.insertAdjacentHTML('beforeend', card);
-          overviewContainer.insertAdjacentHTML('beforeend', card);
+          if (container) container.insertAdjacentHTML('beforeend', card);
+          if (overviewContainer) overviewContainer.insertAdjacentHTML('beforeend', card);
         });
       } catch (err) {
         console.error("Projects load error:", err);
