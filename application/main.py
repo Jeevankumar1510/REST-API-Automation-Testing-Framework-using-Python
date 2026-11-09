@@ -7,9 +7,10 @@ static asset hosting, and modular routers using modern FastAPI lifespan context.
 from contextlib import asynccontextmanager
 from pathlib import Path
 import time
+from typing import Optional
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from application.routes.auth import router as auth_router
@@ -23,19 +24,41 @@ from platform_core.routes.projects_routes import router as platform_projects_rou
 from platform_core.services.project_service import ProjectService
 
 
+def get_index_html_path() -> Optional[Path]:
+    """Finds index.html across standard, relative, and serverless directory layouts."""
+    candidates = [
+        Path(__file__).resolve().parent / "static" / "index.html",
+        Path(__file__).resolve().parent.parent / "api" / "static" / "index.html",
+        Path("application/static/index.html"),
+        Path("api/static/index.html")
+    ]
+    for c in candidates:
+        if c.exists():
+            return c
+    return None
+
+
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+if not (STATIC_DIR / "index.html").exists():
+    alt = Path(__file__).resolve().parent.parent / "api" / "static"
+    if (alt / "index.html").exists():
+        STATIC_DIR = alt
+
 try:
     STATIC_DIR.mkdir(parents=True, exist_ok=True)
-except OSError:
+except Exception:
     pass
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Modern lifespan handler: initializes SQLite database and seeds default projects."""
-    Base.metadata.create_all(bind=engine)
-    with SessionLocal() as db:
-        ProjectService.seed_default_projects_if_empty(db)
+    try:
+        Base.metadata.create_all(bind=engine)
+        with SessionLocal() as db:
+            ProjectService.seed_default_projects_if_empty(db)
+    except Exception as e:
+        print(f"Startup initialization notice: {e}")
     yield
 
 
@@ -79,8 +102,8 @@ app.include_router(platform_pipeline_router)
 app.include_router(platform_github_router)
 app.include_router(platform_dashboard_router)
 
-# Mount Static Assets
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+# Mount Static Assets safely with check_dir=False
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR), check_dir=False), name="static")
 
 
 @app.get(
@@ -91,8 +114,10 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 )
 def platform_ui():
     """Serves the Intelligent API Automation & 3D CI/CD Web Platform."""
-    index_file = STATIC_DIR / "index.html"
-    return FileResponse(str(index_file))
+    index_file = get_index_html_path()
+    if index_file and index_file.exists():
+        return FileResponse(str(index_file), media_type="text/html")
+    return HTMLResponse("<h1>Antigravity API Platform</h1><p>Platform running in serverless mode.</p>")
 
 
 @app.get(
@@ -105,9 +130,9 @@ def platform_ui():
 def root(request: Request):
     accept = request.headers.get("accept", "")
     if "text/html" in accept:
-        index_file = STATIC_DIR / "index.html"
-        if index_file.exists():
-            return FileResponse(str(index_file))
+        index_file = get_index_html_path()
+        if index_file and index_file.exists():
+            return FileResponse(str(index_file), media_type="text/html")
 
     return {
         "service": "Intelligent API Automation & CI/CD Platform",

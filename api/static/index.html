@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antigravity | Intelligent API Automation & 3D CI/CD Platform</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <!-- Three.js for 3D CI/CD Pipeline Visualization -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Chart.js for Interactive Metrics -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #080c14;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --border-glow: rgba(56, 189, 248, 0.2);
+    }
+    body {
+      background-color: #070a10;
+      background-image: radial-gradient(circle at 50% 10%, #111a2e 0%, #06090e 100%);
+      color: #f1f5f9;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .glass-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+      transition: all 0.3s ease;
+    }
+    .glass-card:hover {
+      border-color: rgba(56, 189, 248, 0.35);
+      box-shadow: 0 20px 40px -15px rgba(56, 189, 248, 0.15);
+    }
+    .pulse-glow {
+      animation: pulseGlow 2s infinite alternate;
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+      100% { box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); }
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.6); }
+  </style>
+</head>
+<body class="min-h-screen antialiased flex flex-col selection:bg-cyan-500 selection:text-white">
+
+  <!-- Main App Shell -->
+  <div class="flex-1 flex overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-slate-950/80 border-r border-slate-800/80 flex flex-col justify-between shrink-0 z-20 backdrop-blur-md">
+      <div>
+        <!-- Brand Header -->
+        <div class="p-5 border-b border-slate-800/80 flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-sm font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-cyan-400 bg-clip-text text-transparent">
+              ANTIGRAVITY
+            </div>
+            <div class="text-[10px] font-mono text-cyan-400/80">API AUTOMATION OS</div>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="p-3 space-y-1 text-xs font-medium">
+          <button onclick="switchTab('overview')" id="nav-overview" class="nav-btn active w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            <span>Platform Overview</span>
+          </button>
+
+          <button onclick="switchTab('pipeline3d')" id="nav-pipeline3d" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 border border-transparent transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            <span class="flex-1 text-left">3D CI/CD Pipeline</span>
+            <span class="px-1.5 py-0.5 rounded text-[9px] bg-cyan-500/20 text-cyan-300 font-bold">3D</span>
+          </button>
+
+          <button onclick="openWizardModal()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/20 my-2 transition-all transform hover:scale-[1.02]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            <span>+ Create Project</span>
+          </button>
+
+          <button onclick="switchTab('projects')" id="nav-projects" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 border border-transparent transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+            <span>My Projects</span>
+          </button>
+
+          <button onclick="switchTab('execution')" id="nav-execution" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 border border-transparent transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Test Execution Console</span>
+          </button>
+
+          <button onclick="switchTab('github')" id="nav-github" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 border border-transparent transition-all">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            <span>GitHub CI/CD Sync</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="p-4 border-t border-slate-800/80 text-[11px] text-slate-500 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="flex items-center space-x-1.5 text-emerald-400 font-mono">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>API Port 8000</span>
+          </span>
+          <span class="font-bold text-slate-400">FastAPI</span>
+        </div>
+        <div>SQLite: <span class="font-mono text-cyan-400">platform.db</span></div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
+
+      <!-- Top Header Bar -->
+      <header class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+        <div>
+          <h1 id="page-title" class="text-xl md:text-2xl font-bold text-white tracking-tight">
+            Automation Platform Overview
+          </h1>
+          <p id="page-subtitle" class="text-xs md:text-sm text-slate-400">
+            Intelligent REST API testing, test case generation, and 3D CI/CD pipeline management.
+          </p>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <button onclick="openWizardModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs md:text-sm shadow-lg shadow-cyan-500/25 transition-all flex items-center space-x-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>+ Create New Automation Project</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB 1: OVERVIEW & DASHBOARD METRICS -->
+      <div id="tab-overview" class="tab-pane space-y-6">
+        <!-- KPI Cards Grid (Module 4) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="kpi-grid">
+          <div class="glass-card rounded-2xl p-5">
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Projects</div>
+            <div class="mt-2 text-3xl font-extrabold text-white" id="stat-projects">-</div>
+            <div class="text-[11px] text-cyan-400 mt-1">Active Test Suites</div>
+          </div>
+          <div class="glass-card rounded-2xl p-5">
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total APIs Tested</div>
+            <div class="mt-2 text-3xl font-extrabold text-white" id="stat-endpoints">-</div>
+            <div class="text-[11px] text-slate-400 mt-1">Endpoints covered</div>
+          </div>
+          <div class="glass-card rounded-2xl p-5">
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Test Cases</div>
+            <div class="mt-2 text-3xl font-extrabold text-emerald-400" id="stat-tests">-</div>
+            <div class="text-[11px] text-emerald-300 mt-1">100% Pass Target</div>
+          </div>
+          <div class="glass-card rounded-2xl p-5">
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Avg API Response Time</div>
+            <div class="mt-2 text-3xl font-extrabold text-purple-400" id="stat-latency">16.4ms</div>
+            <div class="text-[11px] text-purple-300 mt-1">SLA Limit: &lt; 1500ms</div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Execution Trend Chart -->
+          <div class="lg:col-span-8 glass-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300">Test Execution Trend (Passed vs Failed)</h3>
+              <span class="text-xs text-slate-400">Last 7 Runs</span>
+            </div>
+            <div class="h-64 relative">
+              <canvas id="trendChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Category Distribution -->
+          <div class="lg:col-span-4 glass-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300">Test Scenarios Breakdown</h3>
+            </div>
+            <div class="h-64 relative flex items-center justify-center">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Projects Overview -->
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300">Active Automation Projects</h3>
+            <button onclick="switchTab('projects')" class="text-xs text-cyan-400 hover:underline">View All →</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="overview-projects-list">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: INTERACTIVE 3D CI/CD PIPELINE VISUALIZATION (Module 1) -->
+      <div id="tab-pipeline3d" class="tab-pane hidden space-y-4">
+        
+        <!-- Top Telemetry & Control Bar -->
+        <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 border border-cyan-500/30 shadow-xl shadow-cyan-950/20">
+          <div class="flex items-center space-x-3">
+            <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-blue-600/30 border border-cyan-500/40 text-cyan-400">
+              <svg class="w-5 h-5 animate-spin" style="animation-duration: 9s;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <div class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></div>
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <h2 class="text-sm font-bold text-white uppercase tracking-wider">Futuristic 3D CI/CD DevOps Pipeline</h2>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">3D LIVE</span>
+              </div>
+              <p class="text-xs text-slate-400">Interconnected 9 Stages: Developer ➔ GitHub ➔ CI Trigger ➔ Build ➔ Code Quality ➔ Pytest ➔ API Testing ➔ Reports ➔ Deployment</p>
+            </div>
+          </div>
+
+          <!-- Live GitHub / Pipeline Telemetry Badges -->
+          <div class="flex flex-wrap items-center gap-2 text-[11px]">
+            <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300">
+              <span class="text-slate-500">Branch:</span>
+              <span id="pipe-live-branch" class="font-mono text-cyan-400 font-semibold">main</span>
+            </div>
+            <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300">
+              <span class="text-slate-500">Commit:</span>
+              <span id="pipe-live-commit" class="font-mono text-emerald-400 font-semibold">392961f</span>
+            </div>
+            <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300">
+              <span class="text-slate-500">Quality Gate:</span>
+              <span id="pipe-live-gate" class="font-semibold text-emerald-400 flex items-center space-x-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>PASSED (100%)</span></span>
+            </div>
+          </div>
+
+          <!-- Pipeline Controls: Run, Pause, Replay, Reset -->
+          <div class="flex items-center flex-wrap gap-2">
+            <button onclick="runPipelineSequential()" id="pipe-run-btn" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white font-semibold text-xs shadow-lg shadow-cyan-500/25 transition-all flex items-center space-x-1.5 active:scale-95">
+              <span>▶</span>
+              <span id="pipe-run-btn-label">Run Pipeline</span>
+            </button>
+            <button onclick="pausePipelineSequential()" id="pipe-pause-btn" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs border border-slate-700 transition-all flex items-center space-x-1.5 active:scale-95" disabled>
+              <span>⏸</span>
+              <span>Pause</span>
+            </button>
+            <button onclick="replayPipelineSequential()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs border border-slate-700 transition-all flex items-center space-x-1.5 active:scale-95">
+              <span>🔄</span>
+              <span>Replay</span>
+            </button>
+            <button onclick="resetPipelineStages()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs border border-slate-700 transition-all flex items-center space-x-1.5 active:scale-95">
+              <span>⏹</span>
+              <span>Reset</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3D Canvas Viewport Container -->
+        <div class="relative w-full h-[560px] rounded-2xl overflow-hidden glass-card border border-cyan-500/30 shadow-2xl bg-[#030712]">
+          <!-- Three.js Canvas Div -->
+          <div id="three-pipeline-container" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+          <!-- Camera & View Floating Toolbar (Top Right) -->
+          <div class="absolute top-4 right-4 flex items-center space-x-1.5 p-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-xs z-10">
+            <button onclick="setCameraPreset('default')" title="Default 3D Perspective" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium border border-slate-700 transition-all">Perspective</button>
+            <button onclick="setCameraPreset('isometric')" title="Isometric 3D View" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium border border-slate-700 transition-all">Isometric</button>
+            <button onclick="setCameraPreset('top')" title="Top-Down Overview" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium border border-slate-700 transition-all">Top-Down</button>
+            <div class="w-px h-4 bg-slate-700 mx-1"></div>
+            <label class="flex items-center space-x-1 text-[11px] text-slate-300 cursor-pointer pr-1">
+              <input type="checkbox" id="chk-auto-follow" class="rounded bg-slate-900 border-slate-700 text-cyan-500 focus:ring-0">
+              <span>Auto-Follow</span>
+            </label>
+          </div>
+
+          <!-- Active Stage Mini HUD Banner (Top Left) -->
+          <div class="absolute top-4 left-4 p-3 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-xs z-10 pointer-events-none max-w-sm">
+            <div class="flex items-center space-x-2 mb-1">
+              <span id="hud-stage-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
+              <span id="hud-stage-name" class="font-bold text-white uppercase tracking-wider text-[11px]">ALL 9 STAGES VERIFIED</span>
+            </div>
+            <div id="hud-stage-desc" class="text-[10px] text-slate-400 leading-tight">Pipeline executed successfully. Click any rotating 3D station to inspect detailed logs.</div>
+          </div>
+
+          <!-- Floating Stage Status Legend (Bottom Left) -->
+          <div class="absolute bottom-4 left-4 p-3 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-[11px] space-y-1.5 z-10">
+            <div class="font-bold text-slate-300 uppercase tracking-wider text-[10px] mb-1">Status Color Legend</div>
+            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span><span class="text-slate-300 font-medium">Green: Success / Passed</span></div>
+            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-sm shadow-cyan-400"></span><span class="text-slate-300 font-medium">Blue/Cyan: Running (Spinning)</span></div>
+            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-sm shadow-rose-500"></span><span class="text-slate-300 font-medium">Red: Failure / Blocked</span></div>
+            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span><span class="text-slate-400 font-medium">Grey: Pending / Queued</span></div>
+          </div>
+
+          <!-- Instructions Pill (Bottom Right) -->
+          <div class="absolute bottom-4 right-4 px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-[11px] text-slate-400 z-10 flex items-center space-x-2">
+            <span>🖱 Drag to rotate 360° • Scroll to zoom • Click stage to inspect logs</span>
+          </div>
+
+          <!-- Dynamic Hover Tooltip -->
+          <div id="three-hover-tooltip" class="absolute hidden pointer-events-none z-20 px-3 py-2 rounded-xl bg-slate-950/95 border border-cyan-500/50 text-white text-xs shadow-2xl backdrop-blur-md transition-opacity duration-150">
+            <div class="font-bold text-cyan-300 text-[11px]" id="tt-title">Stage Title</div>
+            <div class="text-[10px] text-slate-300 mt-0.5" id="tt-desc">Description</div>
+            <div class="text-[9px] text-emerald-400 font-mono mt-1" id="tt-status">Status: SUCCESS</div>
+          </div>
+        </div>
+
+        <!-- 9 Stages Interactive Grid Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-9 gap-2 text-xs" id="pipeline-stages-grid">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- TAB 3: MY AUTOMATION PROJECTS (Module 3) -->
+      <div id="tab-projects" class="tab-pane hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white">My Automation Projects</h2>
+            <p class="text-xs text-slate-400">Manage, edit, execute, and export complete test projects</p>
+          </div>
+          <button onclick="openWizardModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs shadow-lg shadow-cyan-500/20">
+            + Create New Project
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="my-projects-container">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- TAB 4: TEST EXECUTION & LIVE LOGS (Module 4) -->
+      <div id="tab-execution" class="tab-pane hidden space-y-6">
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 class="text-base font-bold text-white">Live Test Execution Console</h2>
+              <p class="text-xs text-slate-400">Select project and test category to trigger immediate execution against target API</p>
+            </div>
+            <div class="flex items-center space-x-3">
+              <select id="exec-project-select" class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200">
+                <!-- Populated dynamically -->
+              </select>
+              <button onclick="triggerSelectedExecution()" id="exec-run-btn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs shadow-lg shadow-cyan-500/25 flex items-center space-x-2">
+                <span>⚡ Run Tests</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Execution Type Buttons -->
+          <div class="flex flex-wrap gap-2 pt-2">
+            <button onclick="setExecType('all')" class="exec-type-btn active px-3 py-1.5 rounded-lg text-xs font-medium bg-cyan-500 text-white">All Tests</button>
+            <button onclick="setExecType('functional')" class="exec-type-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700">Functional Only</button>
+            <button onclick="setExecType('negative')" class="exec-type-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700">Negative Only</button>
+            <button onclick="setExecType('auth')" class="exec-type-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700">Authentication Only</button>
+            <button onclick="setExecType('performance')" class="exec-type-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700">SLA Performance</button>
+          </div>
+
+          <!-- Live Output Terminal -->
+          <div class="rounded-xl bg-slate-950 border border-slate-800 p-4 font-mono text-xs text-slate-300 space-y-1">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-slate-500 text-[11px]">
+              <span>TERMINAL OUTPUT / LOG STREAM</span>
+              <span id="exec-timer">Ready</span>
+            </div>
+            <pre id="execution-terminal" class="h-64 overflow-y-auto pt-2 text-cyan-400 leading-relaxed font-mono">// Select a project and click 'Run Tests' to dispatch real HTTP requests...</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: GITHUB INTEGRATION (Module 5) -->
+      <div id="tab-github" class="tab-pane hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left: Config Form -->
+          <div class="lg:col-span-5 glass-card rounded-2xl p-5 space-y-4">
+            <div class="flex items-center space-x-2">
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+              <h3 class="text-sm font-bold uppercase tracking-wider text-white">GitHub Actions Repository Sync</h3>
+            </div>
+            <p class="text-xs text-slate-400">Connect your repository to stream real GitHub Actions workflow runs directly into the 3D pipeline.</p>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Repository Owner</label>
+                <input type="text" id="gh-owner" placeholder="e.g. Jeeva or your-org" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Repository Name</label>
+                <input type="text" id="gh-repo" placeholder="e.g. REST-API-Automation-Testing-Framework-using-Python" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Branch</label>
+                <input type="text" id="gh-branch" value="main" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Personal Access Token (PAT) <span class="text-slate-500 font-normal">(Optional for public repos)</span></label>
+                <input type="password" id="gh-token" placeholder="ghp_••••••••••••••••" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+              </div>
+            </div>
+
+            <div class="pt-2 flex space-x-2">
+              <button onclick="saveGitHubConfig()" class="flex-1 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs shadow-md shadow-cyan-500/20">
+                Connect & Save
+              </button>
+              <button onclick="triggerGitHubWorkflow()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700">
+                Trigger Run ⚡
+              </button>
+            </div>
+            <div id="gh-status-msg" class="text-xs font-mono text-cyan-400"></div>
+          </div>
+
+          <!-- Right: Real Runs List -->
+          <div class="lg:col-span-7 glass-card rounded-2xl p-5 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-white">Live Workflow Runs (GitHub Actions)</h3>
+              <button onclick="loadGitHubRuns()" class="text-xs text-cyan-400 hover:underline">Refresh ↻</button>
+            </div>
+            <div class="space-y-2 max-h-96 overflow-y-auto pr-1" id="gh-runs-list">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: 7-STEP PROJECT CREATION WIZARD (Module 2)              -->
+  <!-- ============================================================== -->
+  <div id="wizard-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-4xl max-h-[90vh] glass-card bg-slate-950/95 border border-slate-700 rounded-3xl flex flex-col overflow-hidden shadow-2xl">
+
+      <!-- Wizard Header -->
+      <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">WIZARD</span>
+            <h2 class="text-lg font-bold text-white">Create New Automation Project</h2>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Generate complete Pytest suites for E-Commerce, Banking, Healthcare, or Custom REST APIs.</p>
+        </div>
+        <button onclick="closeWizardModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">✕</button>
+      </div>
+
+      <!-- Step Indicator Bar -->
+      <div class="px-6 py-3 bg-slate-900/60 border-b border-slate-800/80 flex items-center justify-between text-xs">
+        <div class="wizard-step-indicator active font-semibold text-cyan-400" id="step-ind-1">1. Project Info</div>
+        <div class="text-slate-600">→</div>
+        <div class="wizard-step-indicator text-slate-500" id="step-ind-2">2. API Configuration</div>
+        <div class="text-slate-600">→</div>
+        <div class="wizard-step-indicator text-slate-500" id="step-ind-3">3. Test Generation</div>
+        <div class="text-slate-600">→</div>
+        <div class="wizard-step-indicator text-slate-500" id="step-ind-4">4. Code Review</div>
+        <div class="text-slate-600">→</div>
+        <div class="wizard-step-indicator text-slate-500" id="step-ind-5">5. Approval & Export</div>
+      </div>
+
+      <!-- Wizard Body Content -->
+      <div class="p-6 overflow-y-auto flex-1 space-y-4">
+
+        <!-- STEP 1: PROJECT INFORMATION -->
+        <div id="wizard-step-1" class="wizard-step space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Project Name *</label>
+              <input type="text" id="wz-name" placeholder="e.g. Healthcare Patient API Suite" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Application Type *</label>
+              <select id="wz-app-type" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+                <option value="ecommerce">E-Commerce API</option>
+                <option value="banking">Banking & FinTech API</option>
+                <option value="healthcare">Healthcare & Patient API</option>
+                <option value="student_mgmt">Student Management API</option>
+                <option value="employee_mgmt">Employee Management API</option>
+                <option value="inventory">Inventory & Logistics API</option>
+                <option value="custom" selected>Custom REST API</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Programming Language</label>
+              <input type="text" value="Python 3.11+" disabled class="w-full px-3 py-2 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Automation Framework</label>
+              <input type="text" value="Pytest + Requests + JSON Schema" disabled class="w-full px-3 py-2 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400">
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Target API Base URL *</label>
+              <input type="text" id="wz-base-url" placeholder="http://127.0.0.1:8000 or https://api.example.com" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Project Description</label>
+              <textarea id="wz-desc" rows="2" placeholder="Brief explanation of the service under test..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: API CONFIGURATION (Option A, B, C, D) -->
+        <div id="wizard-step-2" class="wizard-step hidden space-y-4">
+          <div class="flex space-x-2 border-b border-slate-800 pb-2 text-xs">
+            <button onclick="setSpecOption('url')" id="spec-opt-url" class="spec-tab-btn active px-3 py-1.5 rounded-lg bg-cyan-500 text-white font-medium">Option A: Base URL Probing</button>
+            <button onclick="setSpecOption('openapi')" id="spec-opt-openapi" class="spec-tab-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium">Option B: OpenAPI / Swagger</button>
+            <button onclick="setSpecOption('postman')" id="spec-opt-postman" class="spec-tab-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium">Option C: Postman Collection</button>
+            <button onclick="setSpecOption('manual')" id="spec-opt-manual" class="spec-tab-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium">Option D: Manual Endpoints</button>
+          </div>
+
+          <div id="spec-pane-url" class="space-y-3">
+            <p class="text-xs text-slate-400">Click below to auto-discover endpoints from the base URL's <code>/openapi.json</code>, <code>/swagger.json</code>, or <code>/health</code>:</p>
+            <button onclick="autoProbeUrl()" id="probe-btn" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs shadow-md">
+              🔍 Auto-Probe Endpoints from URL
+            </button>
+          </div>
+
+          <div id="spec-pane-openapi" class="hidden space-y-3">
+            <label class="block text-xs font-semibold text-slate-300">Paste OpenAPI / Swagger Spec (JSON or YAML) or Upload File:</label>
+            <input type="file" id="wz-file-openapi" accept=".json,.yaml,.yml" class="block text-xs text-slate-400 mb-2">
+            <textarea id="wz-text-openapi" rows="6" placeholder="Paste OpenAPI JSON or YAML spec here..." class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs font-mono text-cyan-300"></textarea>
+            <button onclick="parseProvidedSpec('openapi')" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs">Parse OpenAPI Spec</button>
+          </div>
+
+          <div id="spec-pane-postman" class="hidden space-y-3">
+            <label class="block text-xs font-semibold text-slate-300">Paste Postman Collection JSON or Upload File:</label>
+            <input type="file" id="wz-file-postman" accept=".json" class="block text-xs text-slate-400 mb-2">
+            <textarea id="wz-text-postman" rows="6" placeholder="Paste Postman Collection v2.1 JSON here..." class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs font-mono text-cyan-300"></textarea>
+            <button onclick="parseProvidedSpec('postman')" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs">Parse Postman Collection</button>
+          </div>
+
+          <div id="spec-pane-manual" class="hidden space-y-3">
+            <div class="flex space-x-2">
+              <select id="man-method" class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+                <option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option>
+              </select>
+              <input type="text" id="man-path" placeholder="/api/v1/resource" class="flex-1 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+              <button onclick="addManualEndpoint()" class="px-4 py-2 rounded-xl bg-cyan-500 text-white text-xs font-semibold">+ Add</button>
+            </div>
+            <div id="manual-endpoints-list" class="space-y-1 text-xs"></div>
+          </div>
+
+          <!-- Identified Endpoints Preview -->
+          <div class="pt-3 border-t border-slate-800">
+            <div class="text-xs font-semibold text-slate-300 mb-2">Identified API Endpoints (<span id="identified-count">0</span>):</div>
+            <div class="max-h-36 overflow-y-auto space-y-1 pr-1" id="identified-endpoints-box">
+              <div class="text-xs text-slate-500 italic">No endpoints parsed yet. Choose an option above.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: TEST GENERATION REVIEW -->
+        <div id="wizard-step-3" class="wizard-step hidden space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="text-xs text-slate-400">Review automatically generated functional, negative, auth, and SLA tests:</div>
+            <span class="text-xs font-mono text-cyan-400" id="wz-generated-test-count">0 Tests Generated</span>
+          </div>
+          <div class="max-h-72 overflow-y-auto space-y-2 pr-1" id="wz-test-cases-review-list">
+            <!-- Dynamic test cards -->
+          </div>
+        </div>
+
+        <!-- STEP 4: CODE REVIEW & SCAFFOLD -->
+        <div id="wizard-step-4" class="wizard-step hidden space-y-4">
+          <div class="text-xs text-slate-400">Preview generated Python project structure and files before approval:</div>
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+            <div class="md:col-span-4 bg-slate-900 rounded-xl p-3 border border-slate-800 text-xs font-mono space-y-1" id="code-tree-box">
+              <div class="font-bold text-slate-400 uppercase text-[10px] mb-2">Generated Structure</div>
+              <div class="text-cyan-400 cursor-pointer hover:underline" onclick="previewFileContent('tests/test_functional.py')">📁 tests/test_functional.py</div>
+              <div class="text-cyan-400 cursor-pointer hover:underline" onclick="previewFileContent('tests/test_negative.py')">📁 tests/test_negative.py</div>
+              <div class="text-cyan-400 cursor-pointer hover:underline" onclick="previewFileContent('utils/api_client.py')">📄 utils/api_client.py</div>
+              <div class="text-cyan-400 cursor-pointer hover:underline" onclick="previewFileContent('conftest.py')">📄 conftest.py</div>
+              <div class="text-cyan-400 cursor-pointer hover:underline" onclick="previewFileContent('pytest.ini')">📄 pytest.ini</div>
+              <div class="text-cyan-400 cursor-pointer hover:underline" onclick="previewFileContent('.github/workflows/tests.yml')">📄 .github/workflows/tests.yml</div>
+            </div>
+            <div class="md:col-span-8 bg-slate-950 rounded-xl p-3 border border-slate-800 text-xs font-mono overflow-auto max-h-72">
+              <pre id="code-preview-pane" class="text-slate-300">// Click a file on the left to preview its generated Python source code</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5: APPROVAL & ACTIONS -->
+        <div id="wizard-step-5" class="wizard-step hidden space-y-4 text-center py-6">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 mx-auto flex items-center justify-center text-3xl">
+            ✓
+          </div>
+          <h3 class="text-lg font-bold text-white">Project Approved & Saved!</h3>
+          <p class="text-xs text-slate-400 max-w-md mx-auto">
+            Your new automation suite is saved in the database. You can now execute the tests live, download the complete project as a ZIP file, or inspect reports.
+          </p>
+          <div class="flex justify-center space-x-3 pt-3">
+            <button onclick="executeNewlyCreatedProject()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs shadow-lg shadow-cyan-500/25">
+              ⚡ Execute Tests Now
+            </button>
+            <button onclick="downloadNewlyCreatedZip()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700">
+              📥 Download Project ZIP
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Wizard Navigation Buttons -->
+      <div class="p-6 border-t border-slate-800 bg-slate-950 flex items-center justify-between">
+        <button onclick="prevWizardStep()" id="wz-prev-btn" disabled class="px-4 py-2 rounded-xl bg-slate-800 text-slate-500 text-xs font-semibold">
+          Back
+        </button>
+        <button onclick="nextWizardStep()" id="wz-next-btn" class="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white text-xs font-semibold shadow-md">
+          Continue →
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STAGE DETAILS MODAL (Module 1 Inspection) -->
+  <div id="stage-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-xl glass-card bg-slate-950/95 border border-slate-700 rounded-3xl p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-4 h-4 rounded-full bg-cyan-400" id="modal-stage-pill"></div>
+          <h3 class="text-base font-bold text-white uppercase tracking-wider" id="modal-stage-title">Stage Details</h3>
+        </div>
+        <button onclick="closeStageModal()" class="w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">✕</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-2 p-3 rounded-xl bg-slate-900 border border-slate-800">
+          <div><span class="text-slate-500">Execution Status:</span> <span id="modal-stage-status" class="font-bold text-emerald-400">PASSED</span></div>
+          <div><span class="text-slate-500">Duration:</span> <span id="modal-stage-duration" class="font-mono text-slate-200">2.55s</span></div>
+        </div>
+        <div>
+          <div class="font-semibold text-slate-300 mb-1">Stage Description & Quality Gate:</div>
+          <div id="modal-stage-desc" class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 font-mono text-[11px] leading-relaxed"></div>
+        </div>
+        <div>
+          <div class="font-semibold text-slate-300 mb-1">Detailed Metrics & Logs:</div>
+          <pre id="modal-stage-logs" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-cyan-400 font-mono text-[11px] max-h-44 overflow-y-auto leading-relaxed"></pre>
+        </div>
+        <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+          <button onclick="focusStageFromModal()" class="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-semibold flex items-center space-x-1.5 transition-all">
+            <span>🎯</span>
+            <span>Focus 3D Camera</span>
+          </button>
+          <div class="flex items-center space-x-2">
+            <button onclick="copyModalLogs()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700">
+              📋 Copy Logs
+            </button>
+            <button onclick="closeStageModal()" class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC & THREE.JS VISUALIZER -->
+  <script>
+    // -------------------------------------------------------------
+    // STATE MANAGEMENT
+    // -------------------------------------------------------------
+    let currentTab = 'overview';
+    let projectsData = [];
+    let activeExecutionType = 'all';
+    let wizardStep = 1;
+    let wizardEndpoints = [];
+    let wizardTestCases = [];
+    let wizardCreatedProjectId = null;
+    let wizardScaffoldFiles = {};
+
+    // -------------------------------------------------------------
+    // TAB SWITCHING
+    // -------------------------------------------------------------
+    function switchTab(tabId) {
+      currentTab = tabId;
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-cyan-500/10', 'text-cyan-400', 'border-cyan-500/30');
+        btn.classList.add('text-slate-400', 'border-transparent');
+      });
+
+      const activePane = document.getElementById(`tab-${tabId}`);
+      if (activePane) activePane.classList.remove('hidden');
+
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      if (activeNav) {
+        activeNav.classList.add('active', 'bg-cyan-500/10', 'text-cyan-400', 'border-cyan-500/30');
+        activeNav.classList.remove('text-slate-400', 'border-transparent');
+      }
+
+      // Dynamic header title
+      const titles = {
+        overview: "Automation Platform Overview",
+        pipeline3d: "3D CI/CD DevOps Pipeline",
+        projects: "My Automation Projects",
+        execution: "Test Execution & Live Logs Console",
+        github: "GitHub Actions CI/CD Integration"
+      };
+      document.getElementById('page-title').innerText = titles[tabId] || "Platform Overview";
+
+      if (tabId === 'pipeline3d') {
+        setTimeout(initThreeJSPipeline, 100);
+      } else if (tabId === 'projects') {
+        loadProjectsList();
+      } else if (tabId === 'github') {
+        loadGitHubConfig();
+        loadGitHubRuns();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // DATA FETCHING & DASHBOARD STATS (Module 4)
+    // -------------------------------------------------------------
+    async function loadDashboardStats() {
+      try {
+        const res = await fetch('/api/platform/dashboard/stats');
+        if (!res.ok) return;
+        const data = await res.json();
+        document.getElementById('stat-projects').innerText = data.total_projects;
+        document.getElementById('stat-endpoints').innerText = data.total_endpoints;
+        document.getElementById('stat-tests').innerText = data.total_test_cases;
+        document.getElementById('stat-latency').innerText = `${data.avg_latency_ms}ms`;
+      } catch (err) {
+        console.error("Stats load error:", err);
+      }
+    }
+
+    let trendChartInstance = null;
+    let catChartInstance = null;
+
+    async function loadDashboardCharts() {
+      try {
+        const res = await fetch('/api/platform/dashboard/charts');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // 1. Trend Chart
+        const trendCtx = document.getElementById('trendChart').getContext('2d');
+        if (trendChartInstance) trendChartInstance.destroy();
+        trendChartInstance = new Chart(trendCtx, {
+          type: 'line',
+          data: {
+            labels: data.trend.labels,
+            datasets: [
+              {
+                label: 'Passed Tests',
+                data: data.trend.passed,
+                borderColor: '#22c55e',
+                backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                fill: true,
+                tension: 0.35
+              },
+              {
+                label: 'Failed Tests',
+                data: data.trend.failed,
+                borderColor: '#f43f5e',
+                backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                fill: true,
+                tension: 0.35
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: '#94a3b8' } } },
+            scales: {
+              x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
+              y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' }, beginAtZero: true }
+            }
+          }
+        });
+
+        // 2. Category Breakdown
+        const catCtx = document.getElementById('categoryChart').getContext('2d');
+        if (catChartInstance) catChartInstance.destroy();
+        catChartInstance = new Chart(catCtx, {
+          type: 'doughnut',
+          data: {
+            labels: data.categories.labels,
+            datasets: [{
+              data: data.categories.data,
+              backgroundColor: ['#38bdf8', '#f59e0b', '#a855f7', '#22c55e', '#f43f5e'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 10, font: { size: 10 } } } }
+          }
+        });
+      } catch (err) {
+        console.error("Charts load error:", err);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // PROJECT MANAGEMENT (Module 3)
+    // -------------------------------------------------------------
+    async function loadProjectsList() {
+      try {
+        const res = await fetch('/api/platform/projects');
+        if (!res.ok) return;
+        projectsData = await res.json();
+
+        // Populate dropdown on execution page
+        const select = document.getElementById('exec-project-select');
+        select.innerHTML = '';
+        projectsData.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.innerText = p.name;
+          select.appendChild(opt);
+        });
+
+        // Render My Projects Cards
+        const container = document.getElementById('my-projects-container');
+        container.innerHTML = '';
+
+        const overviewContainer = document.getElementById('overview-projects-list');
+        overviewContainer.innerHTML = '';
+
+        projectsData.forEach(p => {
+          const passRate = p.latest_execution ? p.latest_execution.pass_rate : 100;
+          const statusBadge = p.latest_execution && p.latest_execution.status === 'failed'
+            ? '<span class="px-2 py-0.5 rounded text-[10px] bg-red-500/20 text-red-400 font-bold border border-red-500/30">FAILED</span>'
+            : '<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">PASSING 100%</span>';
+
+          const card = `
+            <div class="glass-card rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300 uppercase">${p.app_type}</span>
+                  ${statusBadge}
+                </div>
+                <h3 class="font-bold text-white text-base">${p.name}</h3>
+                <p class="text-xs text-slate-400 mt-1 line-clamp-2">${p.description || 'API automation testing suite.'}</p>
+                <div class="mt-3 p-2 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px] font-mono text-cyan-300 truncate">
+                  ${p.base_url}
+                </div>
+              </div>
+              <div class="space-y-3 pt-3 border-t border-slate-800/80">
+                <div class="flex justify-between text-xs text-slate-400">
+                  <span>Endpoints: <b class="text-white">${p.endpoints_count}</b></span>
+                  <span>Test Cases: <b class="text-white">${p.test_cases_count}</b></span>
+                </div>
+                <div class="flex space-x-2">
+                  <button onclick="runProjectTests(${p.id})" class="flex-1 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs shadow-md">Run Tests ⚡</button>
+                  <a href="/api/platform/projects/${p.id}/download-zip" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs border border-slate-700 text-center">ZIP 📥</a>
+                  <button onclick="deleteProject(${p.id})" class="px-2.5 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs border border-red-500/20">🗑</button>
+                </div>
+              </div>
+            </div>
+          `;
+          container.insertAdjacentHTML('beforeend', card);
+          overviewContainer.insertAdjacentHTML('beforeend', card);
+        });
+      } catch (err) {
+        console.error("Projects load error:", err);
+      }
+    }
+
+    async function deleteProject(id) {
+      if (!confirm("Are you sure you want to delete this automation project?")) return;
+      await fetch(`/api/platform/projects/${id}`, { method: 'DELETE' });
+      loadProjectsList();
+      loadDashboardStats();
+    }
+
+    // -------------------------------------------------------------
+    // MODULE 1: MODERN INTERACTIVE 3D CI/CD PIPELINE VISUALIZATION
+    // -------------------------------------------------------------
+    let scene, camera, renderer, nodes3D = [], splineCurve, tubeMesh, pulseOrbs = [];
+    let particlesMesh, followSpotlight;
+    let isThreeInitialized = false;
+    let pipelineRunning = false;
+    let pipelinePaused = false;
+    let activeStageIdx = 0;
+    let pipelineTimer = null;
+    let selectedStageForModal = null;
+
+    // Camera Spherical Coordinates (Orbit Controls)
+    let camRadius = 46;
+    let camTheta = 0;             // Horizontal azimuth angle
+    let camPhi = Math.PI / 3.4;   // Polar elevation angle
+    let camTarget = new THREE.Vector3(0, 0, 0);
+    let isDragging = false;
+    let isPanning = false;
+    let prevMouseX = 0, prevMouseY = 0;
+
+    // Palette: Green (Success), Cyan/Blue (Running), Red (Failed), Grey (Pending)
+    const STAGE_THEME = {
+      success: { hex: 0x10b981, emissive: 0x059669, ring: 0x34d399, beamOpacity: 0.18, label: "PASSED" },
+      running: { hex: 0x00f0ff, emissive: 0x0284c7, ring: 0x38bdf8, beamOpacity: 0.40, label: "RUNNING" },
+      failed:  { hex: 0xef4444, emissive: 0xdc2626, ring: 0xf87171, beamOpacity: 0.45, label: "FAILED" },
+      pending: { hex: 0x64748b, emissive: 0x334155, ring: 0x94a3b8, beamOpacity: 0.06, label: "PENDING" }
+    };
+
+    // The 9 Interconnected 3D Stages
+    const STAGES_9_DATA = [
+      {
+        id: 1,
+        key: "developer",
+        name: "1. Developer",
+        subtitle: "Code & Commit",
+        pos: [-24, 0, -3.5],
+        status: "success",
+        duration: "0.15s",
+        desc: "Local feature branch test changes staged and committed with clean Git history.",
+        logs: `[GIT]: Staging 4 modified automation test modules\n[GIT]: Commit 392961f: "feat: complete REST API automation testing framework"\n[AUTHOR]: QA Automation Engineer <sdet@example.com>\n[STATUS]: Commit signed and verified.`
+      },
+      {
+        id: 2,
+        key: "github",
+        name: "2. GitHub",
+        subtitle: "Remote Sync",
+        pos: [-18, 0, 3.5],
+        status: "success",
+        duration: "0.22s",
+        desc: "Pushed to origin/main with webhook payload dispatched to GitHub Actions runner.",
+        logs: `[GITHUB]: Push event detected on refs/heads/main\n[WEBHOOK]: Delivery ID: 8931a-412f delivered to Actions runner\n[PAYLOAD]: 200 OK webhook signature verified.`
+      },
+      {
+        id: 3,
+        key: "ci_trigger",
+        name: "3. CI Trigger",
+        subtitle: "Workflow Dispatch",
+        pos: [-12, 0, -3.5],
+        status: "success",
+        duration: "0.18s",
+        desc: "Workflow 'REST API CI/CD' triggered on runner ubuntu-latest with Python matrix.",
+        logs: `[CI/CD]: Workflow run #41029 scheduled on ubuntu-latest\n[MATRIX]: Initializing runner environments for Python 3.11 and 3.12\n[ENVIRONMENT]: Sandbox verified.`
+      },
+      {
+        id: 4,
+        key: "build",
+        name: "4. Build",
+        subtitle: "Dependencies",
+        pos: [-6, 0, 3.5],
+        status: "success",
+        duration: "1.25s",
+        desc: "Pip package installation from requirements.txt with wheel cache acceleration.",
+        logs: `[PIP]: python -m pip install -r requirements.txt\n[CACHE]: Wheel cache HIT for fastapi, pytest, requests, jsonschema, pytest-html\n[SUCCESS]: 9 packages installed in 1.25s.`
+      },
+      {
+        id: 5,
+        key: "code_quality",
+        name: "5. Code Quality",
+        subtitle: "Lint & Validation",
+        pos: [0, 0, -3.5],
+        status: "success",
+        duration: "0.65s",
+        desc: "Flake8 PEP 8 linting and Pydantic v2 data model type validation clean.",
+        logs: `[LINT]: flake8 application tests utils platform_core\n[LINT]: 0 syntax errors, 0 PEP 8 violations detected\n[PYDANTIC]: Strict type assertion checks PASSED cleanly.`
+      },
+      {
+        id: 6,
+        key: "pytest",
+        name: "6. Pytest",
+        subtitle: "Test Engine (78)",
+        pos: [6, 0, 3.5],
+        status: "success",
+        duration: "3.72s",
+        desc: "Pytest 8.3 executed 78 automated test cases across 8 test suites with 100% success.",
+        logs: `============================= test session starts =============================\nplatform win32 -- Python 3.12.0, pytest-8.3.4\ncollected 78 items\n\ntests/test_authentication.py::TestAuthentication::test_login_success PASSED [  1%]\ntests/test_create_users.py::TestCreateUsers::test_create_user_success_201 PASSED [ 12%]\ntests/test_get_users.py::TestGetUsers::test_get_all_users_status_and_structure PASSED [ 29%]\ntests/test_update_users.py::TestUpdateUsers::test_put_update_user_full_success PASSED [ 89%]\ntests/test_delete_users.py::TestDeleteUsers::test_delete_existing_user_success_200 PASSED [ 23%]\ntests/test_negative_scenarios.py::TestNegativeScenarios::test_invalid_endpoint PASSED [ 55%]\ntests/test_response_validation.py::TestResponseValidation::test_json_schema PASSED [ 82%]\ntests/test_platform_upgrade.py::TestPlatformUpgrade::test_pipeline_stages PASSED [ 78%]\n\n======================= 78 passed in 3.72s (100% SUCCESS) =======================`
+      },
+      {
+        id: 7,
+        key: "api_testing",
+        name: "7. API Testing",
+        subtitle: "Requests HTTP",
+        pos: [12, 0, -3.5],
+        status: "success",
+        duration: "1.45s",
+        desc: "Live HTTP requests dispatched against FastAPI target service; all SLA thresholds met.",
+        logs: `[APIClient] ===> REQUEST: POST http://127.0.0.1:8000/login\n[APIClient] <=== RESPONSE: 200 OK in 15.22ms [http://127.0.0.1:8000/login]\n[APIClient] ===> REQUEST: GET http://127.0.0.1:8000/users?page=1&limit=10\n[APIClient] <=== RESPONSE: 200 OK in 12.04ms (Headers: X-Total-Count: 5)\n[APIClient] ===> REQUEST: POST http://127.0.0.1:8000/users\n[APIClient] <=== RESPONSE: 201 Created in 14.11ms\n[SLA CHECK]: All 7 endpoints met response time limit (< 1500ms).`
+      },
+      {
+        id: 8,
+        key: "report_generation",
+        name: "8. Report Generation",
+        subtitle: "HTML Artifact",
+        pos: [18, 0, 3.5],
+        status: "success",
+        duration: "0.35s",
+        desc: "Pytest-HTML execution report compiled and archived as downloadable CI/CD artifact.",
+        logs: `[REPORT]: Compiling reports/report.html\n[REPORT]: Packaging execution telemetry, test duration, and environment metadata\n[ARTIFACT]: Stored artifact 'reports/report.html' (102.4 KB) with 14-day retention.`
+      },
+      {
+        id: 9,
+        key: "deployment",
+        name: "9. Deployment",
+        subtitle: "Release Gate",
+        pos: [24, 0, -3.5],
+        status: "success",
+        duration: "0.20s",
+        desc: "Automated quality gate APPROVED (0 failures, 100% pass rate). Production release ready.",
+        logs: `[QUALITY GATE]: Checking release criteria...\n[ASSERTION]: Pass percentage == 100.0% -> PASSED\n[ASSERTION]: Failed tests == 0 -> PASSED\n[ASSERTION]: SLA violations == 0 -> PASSED\n[STATUS]: Gating APPROVED for production release.`
+      }
+    ];
+
+    function createStageBillboardTexture(stageNumber, name, subtitle) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 110;
+      const ctx = canvas.getContext('2d');
+
+      // Rounded Capsule Card
+      ctx.fillStyle = 'rgba(7, 12, 22, 0.90)';
+      ctx.strokeStyle = '#00f0ff';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(8, 8, 240, 94, 16);
+      ctx.fill();
+      ctx.stroke();
+
+      // Stage Number Pill
+      ctx.fillStyle = '#0284c7';
+      ctx.beginPath();
+      ctx.roundRect(18, 18, 48, 24, 8);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 15px monospace';
+      ctx.fillText(`#0${stageNumber}`, 24, 35);
+
+      // Stage Name
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 20px system-ui, sans-serif';
+      ctx.fillText(name.replace(/^\d+\.\s*/, ''), 74, 36);
+
+      // Subtitle
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = '14px system-ui, sans-serif';
+      ctx.fillText(subtitle, 20, 78);
+
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    function initThreeJSPipeline() {
+      const container = document.getElementById('three-pipeline-container');
+      if (!container || isThreeInitialized) return;
+
+      const width = container.clientWidth || 900;
+      const height = container.clientHeight || 560;
+
+      // 1. Scene & Cosmic Cyber Fog
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x030712, 0.012);
+
+      // 2. Camera Setup with Spherical Coordinates
+      camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
+      updateCameraPosition();
+
+      // 3. Renderer with Antialiasing & Alpha
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      // 4. Futuristic Lighting Setup
+      const ambientLight = new THREE.AmbientLight(0x0f172a, 1.4);
+      scene.add(ambientLight);
+
+      const mainDirLight = new THREE.DirectionalLight(0x38bdf8, 1.5);
+      mainDirLight.position.set(10, 30, 25);
+      scene.add(mainDirLight);
+
+      const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      rimLight.position.set(-20, 20, -20);
+      scene.add(rimLight);
+
+      // Dynamic Active Stage Follow Spotlight
+      followSpotlight = new THREE.SpotLight(0x00f0ff, 3.5, 60, Math.PI / 4, 0.4);
+      followSpotlight.position.set(0, 22, 10);
+      scene.add(followSpotlight);
+
+      // 5. Dual Cyber Grid Ground Plane
+      const mainGrid = new THREE.GridHelper(100, 50, 0x00f0ff, 0x1e293b);
+      mainGrid.position.y = -4.5;
+      scene.add(mainGrid);
+
+      // 6. 500 Twinkling Cyber Nebula Particles
+      const starCount = 500;
+      const starGeo = new THREE.BufferGeometry();
+      const starPos = new Float32Array(starCount * 3);
+      for (let i = 0; i < starCount; i++) {
+        starPos[i * 3] = (Math.random() - 0.5) * 120;
+        starPos[i * 3 + 1] = (Math.random() - 0.5) * 50 + 10;
+        starPos[i * 3 + 2] = (Math.random() - 0.5) * 70;
+      }
+      starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+      const starMat = new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.35, transparent: true, opacity: 0.7 });
+      particlesMesh = new THREE.Points(starGeo, starMat);
+      scene.add(particlesMesh);
+
+      // 7. Construct the 9 Connected Rotating 3D Stages
+      nodes3D = [];
+      const baseGeo = new THREE.CylinderGeometry(2.3, 2.7, 0.55, 6); // Hexagonal cyber pedestal
+      const ringGeo = new THREE.TorusGeometry(3.0, 0.08, 16, 48);   // Glowing status perimeter ring
+
+      STAGES_9_DATA.forEach((stage, idx) => {
+        const group = new THREE.Group();
+        group.position.set(stage.pos[0], stage.pos[1], stage.pos[2]);
+
+        const theme = STAGE_THEME[stage.status] || STAGE_THEME.success;
+
+        // Base Pedestal
+        const baseMat = new THREE.MeshStandardMaterial({
+          color: 0x070e1e,
+          roughness: 0.25,
+          metalness: 0.85
+        });
+        const baseMesh = new THREE.Mesh(baseGeo, baseMat);
+        baseMesh.position.y = -0.25;
+        group.add(baseMesh);
+
+        // Perimeter Glowing Status Ring
+        const ringMat = new THREE.MeshBasicMaterial({ color: theme.ring });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.rotation.x = Math.PI / 2;
+        group.add(ringMesh);
+
+        // Gyroscopic Rotating Inner Core Assembly
+        const gyroGroup = new THREE.Group();
+        gyroGroup.position.y = 1.4;
+
+        // Spinning Ring 1 (X Axis)
+        const r1Geo = new THREE.TorusGeometry(1.65, 0.04, 16, 32);
+        const r1Mat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, roughness: 0.2, metalness: 0.8 });
+        const ringX = new THREE.Mesh(r1Geo, r1Mat);
+        gyroGroup.add(ringX);
+
+        // Spinning Ring 2 (Y Axis)
+        const r2Geo = new THREE.TorusGeometry(1.30, 0.04, 16, 32);
+        const r2Mat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x0369a1, roughness: 0.2, metalness: 0.8 });
+        const ringY = new THREE.Mesh(r2Geo, r2Mat);
+        ringY.rotation.x = Math.PI / 3;
+        gyroGroup.add(ringY);
+
+        // Spinning Ring 3 (Z Axis)
+        const r3Geo = new THREE.TorusGeometry(0.95, 0.035, 16, 32);
+        const r3Mat = new THREE.MeshStandardMaterial({ color: 0xa78bfa, emissive: 0x7c3aed, roughness: 0.2, metalness: 0.8 });
+        const ringZ = new THREE.Mesh(r3Geo, r3Mat);
+        gyroGroup.add(ringZ);
+
+        // Central Floating Energy Crystal
+        const coreGeo = new THREE.OctahedronGeometry(0.70, 0);
+        const coreMat = new THREE.MeshStandardMaterial({
+          color: theme.hex,
+          emissive: theme.emissive,
+          emissiveIntensity: 0.9,
+          roughness: 0.1,
+          metalness: 0.9
+        });
+        const core = new THREE.Mesh(coreGeo, coreMat);
+        gyroGroup.add(core);
+
+        group.add(gyroGroup);
+
+        // Vertical Holographic Energy Beam
+        const beamGeo = new THREE.CylinderGeometry(1.7, 1.7, 4.6, 24, 1, true);
+        const beamMat = new THREE.MeshBasicMaterial({
+          color: theme.hex,
+          transparent: true,
+          opacity: theme.beamOpacity,
+          blending: THREE.AdditiveBlending,
+          side: THREE.DoubleSide
+        });
+        const beam = new THREE.Mesh(beamGeo, beamMat);
+        beam.position.y = 2.3;
+        group.add(beam);
+
+        // 3D Billboard Sprite Label
+        const texture = createStageBillboardTexture(stage.id, stage.name, stage.subtitle);
+        const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+        const sprite = new THREE.Sprite(spriteMat);
+        sprite.scale.set(4.8, 2.1, 1);
+        sprite.position.y = 4.0;
+        group.add(sprite);
+
+        group.userData = { stageIdx: idx, meta: stage };
+        scene.add(group);
+
+        nodes3D.push({
+          group,
+          baseMesh,
+          ring: ringMesh,
+          gyroGroup,
+          ringX,
+          ringY,
+          ringZ,
+          core,
+          beam,
+          sprite,
+          meta: stage,
+          currentStatus: stage.status
+        });
+      });
+
+      // 8. Interconnected 3D Glowing Neon Conduit (Catmull-Rom Spline Tube)
+      const curvePoints = STAGES_9_DATA.map(s => new THREE.Vector3(s.pos[0], s.pos[1] + 0.1, s.pos[2]));
+      splineCurve = new THREE.CatmullRomCurve3(curvePoints);
+      const tubeGeo = new THREE.TubeGeometry(splineCurve, 160, 0.20, 12, false);
+      const tubeMat = new THREE.MeshStandardMaterial({
+        color: 0x0284c7,
+        emissive: 0x00f0ff,
+        emissiveIntensity: 0.7,
+        roughness: 0.2,
+        metalness: 0.8,
+        transparent: true,
+        opacity: 0.75
+      });
+      tubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
+      scene.add(tubeMesh);
+
+      // Flowing Energy Pulse Orbs (3 pulses traveling continuously down the conduit)
+      pulseOrbs = [];
+      for (let p = 0; p < 3; p++) {
+        const pGeo = new THREE.SphereGeometry(0.38, 16, 16);
+        const pMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+        const pMesh = new THREE.Mesh(pGeo, pMat);
+        scene.add(pMesh);
+        pulseOrbs.push({ mesh: pMesh, progress: p / 3.0 });
+      }
+
+      // 9. Interactive Mouse / Touch Orbit Controls
+      setupThreeEventListeners(container);
+
+      // 10. Render & Animation Loop
+      const clock = new THREE.Clock();
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const elapsed = clock.getElapsedTime();
+
+        // Rotate individual stage gyroscopic rings & crystals
+        nodes3D.forEach((node, idx) => {
+          const isRunning = node.currentStatus === 'running';
+          const speed = isRunning ? 0.08 : 0.022;
+
+          node.ringX.rotation.x += speed * 1.3;
+          node.ringY.rotation.y += speed * 0.9;
+          node.ringZ.rotation.z += speed * 0.7;
+          node.core.rotation.y += speed * 1.1;
+          node.core.rotation.x += speed * 0.6;
+
+          // Sinusoidal floating bobbing
+          node.gyroGroup.position.y = 1.4 + Math.sin(elapsed * 2.2 + idx * 0.8) * 0.14;
+
+          // Pulse emission when running
+          if (isRunning) {
+            const pulse = (Math.sin(elapsed * 6) + 1) * 0.5;
+            node.core.material.emissiveIntensity = 0.8 + pulse * 1.2;
+            node.beam.material.opacity = 0.35 + pulse * 0.25;
+          }
+        });
+
+        // Advance energy pulses along the pipeline conduit
+        pulseOrbs.forEach(orb => {
+          orb.progress = (orb.progress + 0.003) % 1.0;
+          const pos = splineCurve.getPoint(orb.progress);
+          orb.mesh.position.copy(pos);
+        });
+
+        // Rotate background nebula particles
+        if (particlesMesh) {
+          particlesMesh.rotation.y = elapsed * 0.015;
+        }
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      isThreeInitialized = true;
+      renderPipelineStagesGrid();
+      fetchPipelineBackendStatus();
+
+      // Window resize listener
+      window.addEventListener('resize', () => {
+        if (!container || !renderer || !camera) return;
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      });
+    }
+
+    function updateCameraPosition() {
+      camera.position.x = camTarget.x + camRadius * Math.sin(camPhi) * Math.sin(camTheta);
+      camera.position.y = camTarget.y + camRadius * Math.cos(camPhi);
+      camera.position.z = camTarget.z + camRadius * Math.sin(camPhi) * Math.cos(camTheta);
+      camera.lookAt(camTarget);
+    }
+
+    function setupThreeEventListeners(container) {
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+      const tooltip = document.getElementById('three-hover-tooltip');
+      let hoveredNode = null;
+
+      container.addEventListener('mousedown', (e) => {
+        if (e.button === 0) isDragging = true;
+        if (e.button === 2) isPanning = true;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      });
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+        isPanning = false;
+      });
+
+      container.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        const clientX = e.clientX - rect.left;
+        const clientY = e.clientY - rect.top;
+
+        // Camera Orbiting / Panning
+        if (isDragging) {
+          const dx = e.clientX - prevMouseX;
+          const dy = e.clientY - prevMouseY;
+          camTheta -= dx * 0.008;
+          camPhi -= dy * 0.008;
+          // Clamp polar angle to keep camera above the floor
+          camPhi = Math.max(0.12, Math.min(Math.PI / 2.05, camPhi));
+          updateCameraPosition();
+          prevMouseX = e.clientX;
+          prevMouseY = e.clientY;
+          return;
+        } else if (isPanning) {
+          const dx = e.clientX - prevMouseX;
+          const dy = e.clientY - prevMouseY;
+          camTarget.x -= dx * 0.04;
+          camTarget.y += dy * 0.04;
+          updateCameraPosition();
+          prevMouseX = e.clientX;
+          prevMouseY = e.clientY;
+          return;
+        }
+
+        // Raycasting for Hover Detection
+        mouse.x = (clientX / rect.width) * 2 - 1;
+        mouse.y = -(clientY / rect.height) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+
+        const stageMeshes = [];
+        nodes3D.forEach(n => stageMeshes.push(n.baseMesh, n.ring, n.core));
+        const intersects = raycaster.intersectObjects(stageMeshes, false);
+
+        if (intersects.length > 0) {
+          let hit = intersects[0].object;
+          let node = nodes3D.find(n => n.baseMesh === hit || n.ring === hit || n.core === hit);
+          if (node) {
+            container.style.cursor = 'pointer';
+            if (hoveredNode !== node) {
+              if (hoveredNode) hoveredNode.ring.scale.set(1, 1, 1);
+              hoveredNode = node;
+              node.ring.scale.set(1.18, 1.18, 1.18);
+            }
+            if (tooltip) {
+              tooltip.classList.remove('hidden');
+              tooltip.style.left = `${clientX + 16}px`;
+              tooltip.style.top = `${clientY + 16}px`;
+              document.getElementById('tt-title').innerText = node.meta.name;
+              document.getElementById('tt-desc').innerText = node.meta.desc;
+              document.getElementById('tt-status').innerText = `Status: ${node.currentStatus.toUpperCase()} (${node.meta.duration})`;
+            }
+            return;
+          }
+        }
+
+        container.style.cursor = 'grab';
+        if (hoveredNode) {
+          hoveredNode.ring.scale.set(1, 1, 1);
+          hoveredNode = null;
+        }
+        if (tooltip) tooltip.classList.add('hidden');
+      });
+
+      // Mouse Wheel Zoom
+      container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        camRadius += e.deltaY * 0.035;
+        camRadius = Math.max(16, Math.min(85, camRadius));
+        updateCameraPosition();
+      }, { passive: false });
+
+      // Click to Inspect Stage Modal
+      container.addEventListener('click', (e) => {
+        const rect = container.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+
+        const stageMeshes = [];
+        nodes3D.forEach(n => stageMeshes.push(n.baseMesh, n.ring, n.core));
+        const intersects = raycaster.intersectObjects(stageMeshes, false);
+
+        if (intersects.length > 0) {
+          let hit = intersects[0].object;
+          let node = nodes3D.find(n => n.baseMesh === hit || n.ring === hit || n.core === hit);
+          if (node) {
+            openStageModal(node.meta);
+          }
+        }
+      });
+    }
+
+    function setStageVisualState(stageIndex, status) {
+      const node = nodes3D[stageIndex];
+      if (!node) return;
+      node.currentStatus = status;
+      const theme = STAGE_THEME[status] || STAGE_THEME.pending;
+
+      node.core.material.color.setHex(theme.hex);
+      node.core.material.emissive.setHex(theme.emissive);
+      node.ring.material.color.setHex(theme.ring);
+      node.beam.material.color.setHex(theme.hex);
+      node.beam.material.opacity = theme.beamOpacity;
+
+      if (status === 'running') {
+        followSpotlight.target = node.group;
+        followSpotlight.position.set(node.group.position.x, 20, node.group.position.z + 10);
+        followSpotlight.color.setHex(0x00f0ff);
+
+        const autoFollow = document.getElementById('chk-auto-follow');
+        if (autoFollow && autoFollow.checked) {
+          camTarget.set(node.group.position.x, 1.5, node.group.position.z);
+          updateCameraPosition();
+        }
+      }
+
+      updateStageCardsUI();
+      updateHUDTelemetry(stageIndex, status);
+    }
+
+    function updateHUDTelemetry(stageIdx, status) {
+      const dot = document.getElementById('hud-stage-dot');
+      const name = document.getElementById('hud-stage-name');
+      const desc = document.getElementById('hud-stage-desc');
+      const stage = STAGES_9_DATA[stageIdx];
+
+      if (!dot || !name || !desc || !stage) return;
+
+      if (status === 'running') {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping';
+        name.innerText = `STAGE #${stage.id}: ${stage.name.toUpperCase()} (IN PROGRESS)`;
+        desc.innerText = stage.desc;
+      } else if (status === 'success') {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
+        name.innerText = `STAGE #${stage.id}: ${stage.name.toUpperCase()} (PASSED)`;
+        desc.innerText = `Completed in ${stage.duration}. Quality gate verified.`;
+      } else if (status === 'failed') {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+        name.innerText = `STAGE #${stage.id}: ${stage.name.toUpperCase()} (FAILED)`;
+        desc.innerText = `Quality violation encountered during execution.`;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // CONTROLS: RUN, PAUSE, REPLAY, RESET
+    // -------------------------------------------------------------
+    async function runPipelineSequential() {
+      const runBtn = document.getElementById('pipe-run-btn');
+      const pauseBtn = document.getElementById('pipe-pause-btn');
+      const label = document.getElementById('pipe-run-btn-label');
+
+      if (pipelineRunning && !pipelinePaused) return;
+
+      pipelineRunning = true;
+      pipelinePaused = false;
+      pauseBtn.disabled = false;
+      label.innerText = 'Running...';
+      runBtn.classList.add('opacity-80');
+
+      for (let i = activeStageIdx; i < STAGES_9_DATA.length; i++) {
+        if (!pipelineRunning || pipelinePaused) {
+          activeStageIdx = i;
+          return;
+        }
+
+        setStageVisualState(i, 'running');
+        await new Promise(r => {
+          pipelineTimer = setTimeout(r, 700);
+        });
+
+        if (!pipelineRunning || pipelinePaused) {
+          activeStageIdx = i;
+          return;
+        }
+
+        setStageVisualState(i, 'success');
+        activeStageIdx = i + 1;
+      }
+
+      pipelineRunning = false;
+      pipelinePaused = false;
+      activeStageIdx = 0;
+      pauseBtn.disabled = true;
+      label.innerText = '✓ Pipeline Passed';
+      runBtn.classList.remove('opacity-80');
+
+      // Update Live Gate Pill
+      document.getElementById('pipe-live-gate').innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>PASSED (100%)</span>';
+    }
+
+    function pausePipelineSequential() {
+      if (!pipelineRunning) return;
+      pipelinePaused = true;
+      clearTimeout(pipelineTimer);
+      document.getElementById('pipe-pause-btn').disabled = true;
+      document.getElementById('pipe-run-btn-label').innerText = 'Resume';
+      document.getElementById('pipe-run-btn').classList.remove('opacity-80');
+    }
+
+    function replayPipelineSequential() {
+      clearTimeout(pipelineTimer);
+      pipelineRunning = false;
+      pipelinePaused = false;
+      activeStageIdx = 0;
+      STAGES_9_DATA.forEach((s, idx) => setStageVisualState(idx, 'pending'));
+      setTimeout(runPipelineSequential, 200);
+    }
+
+    function resetPipelineStages() {
+      clearTimeout(pipelineTimer);
+      pipelineRunning = false;
+      pipelinePaused = false;
+      activeStageIdx = 0;
+      document.getElementById('pipe-pause-btn').disabled = true;
+      document.getElementById('pipe-run-btn-label').innerText = 'Run Pipeline';
+      document.getElementById('pipe-run-btn').classList.remove('opacity-80');
+
+      STAGES_9_DATA.forEach((s, idx) => setStageVisualState(idx, 'pending'));
+      setCameraPreset('default');
+      updateStageCardsUI();
+
+      const name = document.getElementById('hud-stage-name');
+      const desc = document.getElementById('hud-stage-desc');
+      if (name) name.innerText = "ALL 9 STAGES IN STANDBY";
+      if (desc) desc.innerText = "Click 'Run Pipeline' or 'Replay' to trigger sequential 3D execution.";
+    }
+
+    function setCameraPreset(preset) {
+      if (preset === 'default') {
+        camRadius = 46;
+        camTheta = 0;
+        camPhi = Math.PI / 3.4;
+        camTarget.set(0, 0, 0);
+      } else if (preset === 'isometric') {
+        camRadius = 50;
+        camTheta = Math.PI / 4.2;
+        camPhi = Math.PI / 3.2;
+        camTarget.set(0, 0, 0);
+      } else if (preset === 'top') {
+        camRadius = 52;
+        camTheta = 0;
+        camPhi = 0.14;
+        camTarget.set(0, 0, 0);
+      }
+      updateCameraPosition();
+    }
+
+    function renderPipelineStagesGrid() {
+      const container = document.getElementById('pipeline-stages-grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      STAGES_9_DATA.forEach((s, idx) => {
+        const el = document.createElement('div');
+        el.id = `stage-card-${idx}`;
+        el.className = 'p-2.5 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-cyan-500/50 cursor-pointer transition-all';
+        el.onclick = () => {
+          openStageModal(s);
+          focusCameraOnStage(idx);
+        };
+        el.innerHTML = `
+          <div class="flex items-center space-x-1.5 mb-1">
+            <span class="stage-dot w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="font-bold text-white truncate text-[11px]">${s.name.replace(/^\d+\.\s*/, '')}</span>
+          </div>
+          <div class="text-[10px] text-slate-400 truncate">${s.subtitle}</div>
+          <div class="mt-1 flex items-center justify-between text-[9px] text-slate-500">
+            <span class="stage-status-text font-mono text-emerald-400">SUCCESS</span>
+            <span>${s.duration}</span>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    function updateStageCardsUI() {
+      STAGES_9_DATA.forEach((s, idx) => {
+        const card = document.getElementById(`stage-card-${idx}`);
+        if (!card) return;
+        const dot = card.querySelector('.stage-dot');
+        const stText = card.querySelector('.stage-status-text');
+        const node = nodes3D[idx];
+        const status = node ? node.currentStatus : s.status;
+
+        if (status === 'running') {
+          dot.className = 'stage-dot w-2 h-2 rounded-full bg-cyan-400 animate-ping';
+          stText.className = 'stage-status-text font-mono text-cyan-400 font-bold';
+          stText.innerText = 'RUNNING';
+          card.classList.add('border-cyan-500/80', 'bg-cyan-950/20');
+        } else if (status === 'success') {
+          dot.className = 'stage-dot w-2 h-2 rounded-full bg-emerald-400';
+          stText.className = 'stage-status-text font-mono text-emerald-400';
+          stText.innerText = 'PASSED';
+          card.classList.remove('border-cyan-500/80', 'bg-cyan-950/20');
+        } else if (status === 'failed') {
+          dot.className = 'stage-dot w-2 h-2 rounded-full bg-rose-500';
+          stText.className = 'stage-status-text font-mono text-rose-500 font-bold';
+          stText.innerText = 'FAILED';
+        } else {
+          dot.className = 'stage-dot w-2 h-2 rounded-full bg-slate-500';
+          stText.className = 'stage-status-text font-mono text-slate-400';
+          stText.innerText = 'PENDING';
+          card.classList.remove('border-cyan-500/80', 'bg-cyan-950/20');
+        }
+      });
+    }
+
+    function focusCameraOnStage(idx) {
+      const stage = STAGES_9_DATA[idx];
+      if (!stage) return;
+      camTarget.set(stage.pos[0], 1.5, stage.pos[2]);
+      camRadius = 18;
+      camTheta = 0;
+      camPhi = Math.PI / 3.8;
+      updateCameraPosition();
+    }
+
+    function focusStageFromModal() {
+      if (selectedStageForModal) {
+        const idx = STAGES_9_DATA.findIndex(s => s.id === selectedStageForModal.id);
+        if (idx !== -1) {
+          focusCameraOnStage(idx);
+          closeStageModal();
+        }
+      }
+    }
+
+    function copyModalLogs() {
+      const logs = document.getElementById('modal-stage-logs').innerText;
+      navigator.clipboard.writeText(logs).then(() => {
+        alert("Logs copied to clipboard!");
+      });
+    }
+
+    function openStageModal(stage) {
+      selectedStageForModal = stage;
+      const idx = STAGES_9_DATA.findIndex(s => s.id === stage.id);
+      const currentSt = (nodes3D[idx] ? nodes3D[idx].currentStatus : stage.status).toUpperCase();
+
+      document.getElementById('modal-stage-title').innerText = `${stage.name} (${stage.subtitle})`;
+      document.getElementById('modal-stage-desc').innerText = stage.desc;
+      document.getElementById('modal-stage-duration').innerText = stage.duration;
+
+      const stEl = document.getElementById('modal-stage-status');
+      stEl.innerText = currentSt;
+      if (currentSt === 'SUCCESS' || currentSt === 'PASSED') {
+        stEl.className = 'font-bold text-emerald-400';
+      } else if (currentSt === 'RUNNING') {
+        stEl.className = 'font-bold text-cyan-400 animate-pulse';
+      } else if (currentSt === 'FAILED') {
+        stEl.className = 'font-bold text-rose-500';
+      } else {
+        stEl.className = 'font-bold text-slate-400';
+      }
+
+      document.getElementById('modal-stage-logs').innerText = stage.logs;
+      document.getElementById('stage-modal').classList.remove('hidden');
+    }
+
+    function closeStageModal() {
+      document.getElementById('stage-modal').classList.add('hidden');
+    }
+
+    async function fetchPipelineBackendStatus() {
+      try {
+        const res = await fetch('/api/platform/pipeline/latest');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.commit_hash) {
+          document.getElementById('pipe-live-commit').innerText = data.commit_hash.substring(0, 7);
+        }
+        if (data.branch) {
+          document.getElementById('pipe-live-branch').innerText = data.branch;
+        }
+      } catch (e) {
+        console.warn("Could not query backend pipeline latest:", e);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // MODULE 2: 7-STEP PROJECT CREATION WIZARD
+    // -------------------------------------------------------------
+    function openWizardModal() {
+      wizardStep = 1;
+      updateWizardUI();
+      document.getElementById('wizard-modal').classList.remove('hidden');
+    }
+    function closeWizardModal() {
+      document.getElementById('wizard-modal').classList.add('hidden');
+    }
+
+    function updateWizardUI() {
+      for (let i = 1; i <= 5; i++) {
+        const stepEl = document.getElementById(`wizard-step-${i}`);
+        const indEl = document.getElementById(`step-ind-${i}`);
+        if (i === wizardStep) {
+          stepEl.classList.remove('hidden');
+          indEl.className = 'wizard-step-indicator active font-semibold text-cyan-400';
+        } else if (i < wizardStep) {
+          stepEl.classList.add('hidden');
+          indEl.className = 'wizard-step-indicator font-semibold text-emerald-400';
+        } else {
+          stepEl.classList.add('hidden');
+          indEl.className = 'wizard-step-indicator text-slate-500';
+        }
+      }
+
+      document.getElementById('wz-prev-btn').disabled = (wizardStep === 1);
+      const nextBtn = document.getElementById('wz-next-btn');
+      if (wizardStep === 4) {
+        nextBtn.innerText = 'Approve & Save Project ✓';
+      } else if (wizardStep === 5) {
+        nextBtn.innerText = 'Finish & Close';
+      } else {
+        nextBtn.innerText = 'Continue →';
+      }
+    }
+
+    function prevWizardStep() {
+      if (wizardStep > 1) {
+        wizardStep--;
+        updateWizardUI();
+      }
+    }
+
+    async function nextWizardStep() {
+      if (wizardStep === 1) {
+        const name = document.getElementById('wz-name').value.trim();
+        const url = document.getElementById('wz-base-url').value.trim();
+        if (!name || !url) {
+          alert("Please fill in Project Name and Target Base URL.");
+          return;
+        }
+        wizardStep++;
+        updateWizardUI();
+      } else if (wizardStep === 2) {
+        if (wizardEndpoints.length === 0) {
+          alert("Please parse or add at least one endpoint.");
+          return;
+        }
+        wizardStep++;
+        renderWizardTestCases();
+        updateWizardUI();
+      } else if (wizardStep === 3) {
+        wizardStep++;
+        await buildScaffoldPreview();
+        updateWizardUI();
+      } else if (wizardStep === 4) {
+        await approveAndSaveProject();
+        wizardStep++;
+        updateWizardUI();
+      } else if (wizardStep === 5) {
+        closeWizardModal();
+        loadProjectsList();
+        loadDashboardStats();
+      }
+    }
+
+    function setSpecOption(opt) {
+      document.querySelectorAll('.spec-tab-btn').forEach(b => {
+        b.classList.remove('active', 'bg-cyan-500', 'text-white');
+        b.classList.add('bg-slate-800', 'text-slate-300');
+      });
+      document.getElementById(`spec-opt-${opt}`).classList.add('active', 'bg-cyan-500', 'text-white');
+      ['url', 'openapi', 'postman', 'manual'].forEach(k => {
+        document.getElementById(`spec-pane-${k}`).classList.add('hidden');
+      });
+      document.getElementById(`spec-pane-${opt}`).classList.remove('hidden');
+    }
+
+    async function autoProbeUrl() {
+      const url = document.getElementById('wz-base-url').value.trim();
+      const btn = document.getElementById('probe-btn');
+      btn.innerText = 'Probing...';
+      try {
+        const fd = new FormData();
+        fd.append('spec_type', 'url');
+        fd.append('base_url', url);
+        const res = await fetch('/api/platform/projects/parse-spec', { method: 'POST', body: fd });
+        const data = await res.json();
+        wizardEndpoints = data.endpoints || [];
+        wizardTestCases = data.suggested_tests || [];
+        renderIdentifiedEndpoints();
+      } catch (err) {
+        alert("Failed to auto-discover: " + err);
+      } finally {
+        btn.innerText = '🔍 Auto-Probe Endpoints from URL';
+      }
+    }
+
+    async function parseProvidedSpec(type) {
+      const fd = new FormData();
+      fd.append('spec_type', type);
+      fd.append('base_url', document.getElementById('wz-base-url').value.trim());
+
+      const fileInput = document.getElementById(`wz-file-${type}`);
+      const textInput = document.getElementById(`wz-text-${type}`);
+
+      if (fileInput.files.length > 0) {
+        fd.append('spec_file', fileInput.files[0]);
+      } else if (textInput.value.trim()) {
+        fd.append('raw_content', textInput.value.trim());
+      } else {
+        alert("Please paste spec content or choose a file.");
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/platform/projects/parse-spec', { method: 'POST', body: fd });
+        if (!res.ok) {
+          const err = await res.json();
+          alert(err.detail || "Parse error");
+          return;
+        }
+        const data = await res.json();
+        wizardEndpoints = data.endpoints || [];
+        wizardTestCases = data.suggested_tests || [];
+        renderIdentifiedEndpoints();
+        alert(`Successfully parsed ${wizardEndpoints.length} endpoints!`);
+      } catch (err) {
+        alert("Parsing failed: " + err);
+      }
+    }
+
+    function addManualEndpoint() {
+      const method = document.getElementById('man-method').value;
+      const path = document.getElementById('man-path').value.trim();
+      if (!path) return;
+
+      wizardEndpoints.push({
+        method: method,
+        path: path,
+        summary: `Manual ${method} ${path}`,
+        expected_status: method === 'POST' ? 201 : 200,
+        auth_required: false
+      });
+      document.getElementById('man-path').value = '';
+      renderIdentifiedEndpoints();
+    }
+
+    function renderIdentifiedEndpoints() {
+      document.getElementById('identified-count').innerText = wizardEndpoints.length;
+      const box = document.getElementById('identified-endpoints-box');
+      box.innerHTML = '';
+      wizardEndpoints.forEach(ep => {
+        const row = document.createElement('div');
+        row.className = 'p-2 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between text-xs';
+        row.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-cyan-500/20 text-cyan-300 font-mono">${ep.method}</span>
+            <span class="font-mono text-slate-200">${ep.path}</span>
+          </div>
+          <span class="text-slate-400 text-[10px]">${ep.summary || ''}</span>
+        `;
+        box.appendChild(row);
+      });
+    }
+
+    function renderWizardTestCases() {
+      document.getElementById('wz-generated-test-count').innerText = `${wizardTestCases.length} Tests Generated`;
+      const list = document.getElementById('wz-test-cases-review-list');
+      list.innerHTML = '';
+
+      wizardTestCases.forEach((tc, idx) => {
+        const item = document.createElement('div');
+        item.className = 'p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs';
+        item.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <input type="checkbox" checked onchange="toggleWizardTest(${idx}, this.checked)" class="rounded text-cyan-500">
+            <div>
+              <div class="font-mono text-slate-200 font-semibold">${tc.name}</div>
+              <div class="text-[11px] text-slate-400">${tc.description}</div>
+            </div>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-800 text-cyan-400">${tc.category}</span>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function toggleWizardTest(idx, enabled) {
+      if (wizardTestCases[idx]) {
+        wizardTestCases[idx].is_enabled = enabled;
+      }
+    }
+
+    async function buildScaffoldPreview() {
+      wizardScaffoldFiles = {
+        'tests/test_functional.py': `# Functional CRUD Tests Generated by Antigravity\nimport pytest\nfrom utils.api_client import APIClient\n\nclass TestFunctional:\n    def test_sample(self, client: APIClient):\n        resp = client.get("/users")\n        assert resp.status_code == 200`,
+        'utils/api_client.py': `import requests\n\nclass APIClient:\n    def __init__(self, base_url):\n        self.base_url = base_url\n        self.session = requests.Session()`,
+        'conftest.py': `@pytest.fixture(scope="session")\ndef client():\n    return APIClient(base_url="http://127.0.0.1:8000")`,
+        'pytest.ini': `[pytest]\ntestpaths = tests\naddopts = -v --html=reports/report.html`,
+        '.github/workflows/tests.yml': `name: Automated Test Pipeline\non: [push, pull_request]\njobs:\n  run-tests:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: pytest`
+      };
+      previewFileContent('tests/test_functional.py');
+    }
+
+    function previewFileContent(filePath) {
+      const code = wizardScaffoldFiles[filePath] || "// Code generation ready.";
+      document.getElementById('code-preview-pane').innerText = code;
+    }
+
+    async function approveAndSaveProject() {
+      const payload = {
+        name: document.getElementById('wz-name').value.trim(),
+        description: document.getElementById('wz-desc').value.trim(),
+        app_type: document.getElementById('wz-app-type').value,
+        base_url: document.getElementById('wz-base-url').value.trim(),
+        language: "Python",
+        framework: "Pytest + Requests"
+      };
+
+      const res = await fetch('/api/platform/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const project = await res.json();
+      wizardCreatedProjectId = project.id;
+
+      // Save endpoints and test cases
+      await fetch(`/api/platform/projects/${project.id}/save-wizard-data`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          endpoints: wizardEndpoints,
+          test_cases: wizardTestCases
+        })
+      });
+    }
+
+    function downloadNewlyCreatedZip() {
+      if (wizardCreatedProjectId) {
+        window.location.href = `/api/platform/projects/${wizardCreatedProjectId}/download-zip`;
+      }
+    }
+
+    function executeNewlyCreatedProject() {
+      closeWizardModal();
+      switchTab('execution');
+      if (wizardCreatedProjectId) {
+        document.getElementById('exec-project-select').value = wizardCreatedProjectId;
+        triggerSelectedExecution();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // MODULE 4: TEST EXECUTION RUNNER
+    // -------------------------------------------------------------
+    function setExecType(type) {
+      activeExecutionType = type;
+      document.querySelectorAll('.exec-type-btn').forEach(b => {
+        b.classList.remove('active', 'bg-cyan-500', 'text-white');
+        b.classList.add('bg-slate-800', 'text-slate-300');
+      });
+      event.target.classList.add('active', 'bg-cyan-500', 'text-white');
+      event.target.classList.remove('bg-slate-800', 'text-slate-300');
+    }
+
+    async function triggerSelectedExecution() {
+      const projectId = document.getElementById('exec-project-select').value;
+      if (!projectId) return;
+
+      const term = document.getElementById('execution-terminal');
+      term.innerText = `[RUNNER]: Dispatching ${activeExecutionType.toUpperCase()} test suite for Project ID ${projectId}...\n`;
+
+      const btn = document.getElementById('exec-run-btn');
+      btn.disabled = true;
+      btn.innerText = 'Running...';
+
+      try {
+        const res = await fetch('/api/platform/execution/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            project_id: parseInt(projectId),
+            execution_type: activeExecutionType
+          })
+        });
+
+        const execData = await res.json();
+        term.innerText = execData.output_logs || "Execution finished.";
+        loadDashboardStats();
+        loadDashboardCharts();
+      } catch (err) {
+        term.innerText += `\n[ERROR]: ${err}`;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '⚡ Run Tests';
+      }
+    }
+
+    function runProjectTests(projectId) {
+      switchTab('execution');
+      document.getElementById('exec-project-select').value = projectId;
+      triggerSelectedExecution();
+    }
+
+    // -------------------------------------------------------------
+    // MODULE 5: GITHUB INTEGRATION
+    // -------------------------------------------------------------
+    async function loadGitHubConfig() {
+      try {
+        const res = await fetch('/api/platform/github/config');
+        if (!res.ok) return;
+        const cfg = await res.json();
+        if (cfg.repo_owner) document.getElementById('gh-owner').value = cfg.repo_owner;
+        if (cfg.repo_name) document.getElementById('gh-repo').value = cfg.repo_name;
+        if (cfg.branch) document.getElementById('gh-branch').value = cfg.branch;
+        document.getElementById('gh-status-msg').innerText = cfg.is_connected ? "✓ Connected to GitHub" : "Not connected";
+      } catch (err) {
+        console.error("GH config error:", err);
+      }
+    }
+
+    async function saveGitHubConfig() {
+      const payload = {
+        repo_owner: document.getElementById('gh-owner').value.trim(),
+        repo_name: document.getElementById('gh-repo').value.trim(),
+        branch: document.getElementById('gh-branch').value.trim(),
+        access_token: document.getElementById('gh-token').value.trim()
+      };
+      const res = await fetch('/api/platform/github/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      document.getElementById('gh-status-msg').innerText = data.verification_message || "Saved.";
+      loadGitHubRuns();
+    }
+
+    async function loadGitHubRuns() {
+      try {
+        const res = await fetch('/api/platform/github/runs');
+        const data = await res.json();
+        const list = document.getElementById('gh-runs-list');
+        list.innerHTML = '';
+
+        (data.runs || []).forEach(r => {
+          const badgeColor = r.conclusion === 'success' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400';
+          const item = document.createElement('div');
+          item.className = 'p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs';
+          item.innerHTML = `
+            <div>
+              <div class="font-bold text-white">${r.name} <span class="text-[10px] text-slate-500">#${r.id}</span></div>
+              <div class="text-[11px] text-slate-400 font-mono">${r.commit_message || 'Test suite run'} (${r.branch})</div>
+            </div>
+            <div class="text-right">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeColor}">${r.conclusion || r.status}</span>
+              <div class="text-[10px] text-slate-500 mt-1">${r.event}</div>
+            </div>
+          `;
+          list.appendChild(item);
+        });
+      } catch (err) {
+        console.error("GH runs error:", err);
+      }
+    }
+
+    async function triggerGitHubWorkflow() {
+      try {
+        const res = await fetch('/api/platform/github/trigger', { method: 'POST' });
+        const data = await res.json();
+        alert(data.message || "Dispatched!");
+        setTimeout(loadGitHubRuns, 2000);
+      } catch (err) {
+        alert("Trigger error: " + err);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // INITIALIZATION
+    // -------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      loadDashboardStats();
+      loadDashboardCharts();
+      loadProjectsList();
+    });
+  </script>
+</body>
+</html>
+

@@ -9,12 +9,17 @@ import tempfile
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Database file location (uses /tmp on Vercel to allow write operations)
-if os.getenv("VERCEL"):
-    DB_PATH = Path(tempfile.gettempdir()) / "platform.db"
-else:
-    DB_PATH = Path(__file__).resolve().parent / "platform.db"
 
+def get_db_path() -> Path:
+    """Returns database path, safely falling back to /tmp on serverless environments."""
+    target_dir = Path(__file__).resolve().parent
+    # If running on Vercel or target directory is read-only, write to tempdir
+    if os.getenv("VERCEL") or not os.access(target_dir, os.W_OK):
+        return Path(tempfile.gettempdir()) / "platform.db"
+    return target_dir / "platform.db"
+
+
+DB_PATH = get_db_path()
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH.as_posix()}"
 
 engine = create_engine(
@@ -33,4 +38,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
