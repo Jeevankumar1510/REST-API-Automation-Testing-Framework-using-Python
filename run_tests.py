@@ -51,6 +51,12 @@ def start_server():
     subprocess.run(cmd, cwd=PROJECT_ROOT)
 
 
+def run_benchmark():
+    """Execute load and concurrency benchmark."""
+    cmd = [sys.executable, "load_test.py", "--concurrency", "10", "--requests", "100"]
+    subprocess.run(cmd, cwd=PROJECT_ROOT)
+
+
 def interactive_menu():
     """Display interactive CLI menu for test selection."""
     while True:
@@ -63,11 +69,13 @@ def interactive_menu():
         print("  [4] Run Negative Scenarios (400, 401, 404, 405, 409, 422)")
         print("  [5] Run JSON Schema & Performance SLA Tests")
         print("  [6] Open Latest HTML Test Report in Browser")
-        print("  [7] Start FastAPI Target Application Server")
+        print("  [7] Open Interactive 3D Architecture Dashboard")
+        print("  [8] Run Concurrency & Load Benchmark (100 reqs / 10 workers)")
+        print("  [9] Start FastAPI Target Application Server")
         print("  [0] Exit")
         print("=" * 65)
 
-        choice = input("Enter your choice [0-7]: ").strip()
+        choice = input("Enter your choice [0-9]: ").strip()
 
         if choice == "1":
             code = run_pytest()
@@ -86,12 +94,18 @@ def interactive_menu():
         elif choice == "6":
             open_report()
         elif choice == "7":
+            dash_path = PROJECT_ROOT / "dashboard.html"
+            print(f"\n📊 Opening 3D Dashboard: {dash_path.resolve()}\n")
+            webbrowser.open(dash_path.as_uri())
+        elif choice == "8":
+            run_benchmark()
+        elif choice == "9":
             start_server()
         elif choice == "0":
             print("\nExiting. Happy Testing! 🎉\n")
             break
         else:
-            print("\n❌ Invalid selection. Please choose an option from 0 to 7.")
+            print("\n❌ Invalid selection. Please choose an option from 0 to 9.")
 
 
 def main():
