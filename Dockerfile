@@ -24,3 +24,4 @@ EXPOSE 8000
 
 # Default command runs the test suite
 CMD ["python", "-m", "pytest"]
+

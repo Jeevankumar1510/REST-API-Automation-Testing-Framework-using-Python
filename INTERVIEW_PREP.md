@@ -182,3 +182,4 @@ This guide contains **25+ commonly asked technical interview questions, conceptu
 > 3. Identify if the issue is a bug in the code, a contract change, or a flaky test environment (e.g., timeout).
 > 4. Reproduce the failure locally by running the specific test: `pytest tests/test_create_users.py -k test_name -s`.
 > 5. Log a detailed defect report with Steps to Reproduce, Expected Result, Actual Result, Request Payload, and Server Response."*
+
