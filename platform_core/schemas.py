@@ -75,7 +75,10 @@ class TestCaseUpdate(BaseModel):
 class ExecutionRequest(BaseModel):
     project_id: int
     execution_type: str = "all"  # all, functional, negative, auth, selected
+    test_file: Optional[str] = "all"  # Specific test file to run (e.g. tests/test_authentication.py)
     test_case_ids: Optional[List[int]] = None
+    custom_file_name: Optional[str] = None
+    custom_file_content: Optional[str] = None
 
 
 # Spec Import Schemas

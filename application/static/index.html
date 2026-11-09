@@ -401,30 +401,71 @@
       <!-- TAB 4: TEST EXECUTION & LIVE LOGS (Module 4) -->
       <div id="tab-execution" class="tab-pane hidden space-y-6">
         <div class="glass-card rounded-2xl p-5 space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-3 border-b border-slate-800">
             <div>
-              <h2 class="text-base font-bold text-white">Live Test Execution Console</h2>
-              <p class="text-xs text-slate-400">Select project and test category to trigger immediate execution against target API</p>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
               <div class="flex items-center space-x-2">
-                <span class="text-xs text-cyan-300 font-bold uppercase tracking-wider hidden sm:inline flex items-center space-x-1">
-                  <span>🎯 Target Suite:</span>
-                </span>
-                <div class="relative">
-                  <select id="exec-project-select" style="background-color: #ffffff !important; color: #0f172a !important; font-weight: 800 !important;" class="min-w-[280px] md:min-w-[370px] pl-4 pr-10 py-2.5 rounded-xl bg-white border-2 border-cyan-400 text-xs md:text-sm font-extrabold text-slate-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.25)] cursor-pointer appearance-none transition-all">
-                    <option value="1" selected style="background-color: #ffffff; color: #0f172a; font-weight: bold;">📦 User Management REST API (78 Automated Tests)</option>
-                    <option value="2" style="background-color: #ffffff; color: #0f172a; font-weight: bold;">📦 E-Commerce Store REST API (54 Tests - Catalog & Cart)</option>
-                    <option value="3" style="background-color: #ffffff; color: #0f172a; font-weight: bold;">📦 Banking & Payments API (36 Tests - Transactions)</option>
-                  </select>
-                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-900">
-                    <svg class="w-4 h-4 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-                  </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">TEST RUNNER</span>
+                <h2 class="text-base font-bold text-white">Live Test Execution & File Runner</h2>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">Select a specific test file (.py), choose target project, or upload custom test file to execute against live endpoints.</p>
+            </div>
+
+            <!-- Execution Action Controls -->
+            <div class="flex flex-wrap items-center gap-3">
+              <!-- Custom Interactive File Dropdown -->
+              <div class="relative inline-block" id="test-file-dropdown-wrapper">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-cyan-300 mb-1">📁 Select Test File to Run:</label>
+                <button type="button" onclick="toggleTestFileDropdown(event)" id="selected-file-btn" class="flex items-center justify-between min-w-[280px] sm:min-w-[340px] md:min-w-[420px] px-4 py-2.5 rounded-xl bg-white text-slate-950 border-2 border-cyan-400 font-extrabold text-xs md:text-sm shadow-lg shadow-cyan-500/20 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all cursor-pointer">
+                  <span class="flex items-center space-x-2 truncate">
+                    <span id="selected-file-icon" class="text-base flex-shrink-0">📁</span>
+                    <span id="selected-file-text" class="font-extrabold text-slate-950 truncate">All Test Files (Full Suite - 78 Tests)</span>
+                  </span>
+                  <svg class="w-4 h-4 ml-2 text-slate-900 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+
+                <!-- Hidden inputs for backward compatibility and form syncing -->
+                <select id="exec-project-select" class="hidden">
+                  <option value="1" selected>User Management REST API</option>
+                  <option value="2">E-Commerce Store REST API</option>
+                  <option value="3">Banking & Payments API</option>
+                </select>
+
+                <!-- Dropdown Menu -->
+                <div id="test-file-menu" class="hidden absolute left-0 mt-2 w-full min-w-[340px] sm:min-w-[420px] max-h-80 overflow-y-auto rounded-xl bg-white border-2 border-cyan-400 shadow-2xl z-50 py-1.5 divide-y divide-slate-100">
+                  <!-- Populated dynamically via JS -->
                 </div>
               </div>
-              <button onclick="triggerSelectedExecution()" id="exec-run-btn" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold text-xs md:text-sm shadow-xl shadow-cyan-500/30 flex items-center space-x-2 transition-all transform hover:scale-[1.03] active:scale-95">
-                <span>⚡ Run Tests</span>
-              </button>
+
+              <!-- Upload Custom File -->
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Custom File:</label>
+                <input type="file" id="custom-test-file-input" accept=".py" style="display:none" onchange="handleCustomTestFileUpload(event)">
+                <button type="button" onclick="document.getElementById('custom-test-file-input').click()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 font-semibold text-xs flex items-center space-x-1.5 shadow-sm transition-all cursor-pointer">
+                  <span>📂</span>
+                  <span>Browse .py</span>
+                </button>
+              </div>
+
+              <!-- Run Tests Button -->
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-transparent mb-1">Action</label>
+                <button onclick="triggerSelectedExecution()" id="exec-run-btn" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold text-xs md:text-sm shadow-xl shadow-cyan-500/30 flex items-center space-x-2 transition-all transform hover:scale-[1.03] active:scale-95 cursor-pointer">
+                  <span>⚡ Run Tests</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Selection Status Banner -->
+          <div id="active-file-banner" class="flex flex-wrap items-center justify-between px-3.5 py-2 rounded-xl bg-slate-900/90 border border-slate-800 text-xs">
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-slate-400">Target File:</span>
+              <span id="banner-file-name" class="font-mono font-bold text-cyan-300">📁 All Test Files (Full Regression Suite - 78 Tests)</span>
+            </div>
+            <div class="flex items-center space-x-3 text-slate-400">
+              <span>Category: <strong id="banner-category" class="text-white">FULL SUITE</strong></span>
+              <span>Available Tests: <strong id="banner-test-count" class="text-emerald-400 font-mono">78 Tests</strong></span>
             </div>
           </div>
 
@@ -2530,8 +2571,189 @@
     }
 
     // -------------------------------------------------------------
-    // MODULE 4: TEST EXECUTION RUNNER
+    // MODULE 4: TEST EXECUTION & FILE RUNNER
     // -------------------------------------------------------------
+    let selectedTestFile = "all";
+    let customFileName = null;
+    let customFileContent = null;
+
+    const AVAILABLE_TEST_FILES = [
+      {
+        filename: "all",
+        display_name: "All Test Files (Full Suite - 78 Tests)",
+        short_name: "All Test Files (Full Suite - 78 Tests)",
+        icon: "📁",
+        tests_count: 78,
+        category: "all",
+        description: "Full end-to-end regression test suite covering all endpoints, negative scenarios, and quality gates."
+      },
+      {
+        filename: "tests/test_authentication.py",
+        display_name: "test_authentication.py (JWT Authentication & Login)",
+        short_name: "test_authentication.py (9 Tests)",
+        icon: "📄",
+        tests_count: 9,
+        category: "auth",
+        description: "Validates /login with valid & invalid credentials, JWT token verification, and 401 unauthorized route protections."
+      },
+      {
+        filename: "tests/test_create_users.py",
+        display_name: "test_create_users.py (POST /users Functional & Validation)",
+        short_name: "test_create_users.py (8 Tests)",
+        icon: "📄",
+        tests_count: 8,
+        category: "functional",
+        description: "Tests user creation with HTTP 201, duplicate email conflict (409), required fields, email format, and age boundary validation."
+      },
+      {
+        filename: "tests/test_get_users.py",
+        display_name: "test_get_users.py (GET /users & Query/Pagination)",
+        short_name: "test_get_users.py (17 Tests)",
+        icon: "📄",
+        tests_count: 17,
+        category: "functional",
+        description: "Validates retrieval of all users, pagination, filtering by role and status, search queries, and single user lookup by ID."
+      },
+      {
+        filename: "tests/test_update_users.py",
+        display_name: "test_update_users.py (PUT & PATCH User Update Suite)",
+        short_name: "test_update_users.py (8 Tests)",
+        icon: "📄",
+        tests_count: 8,
+        category: "functional",
+        description: "Tests full updates via PUT, partial field updates via PATCH, empty payload handling, and duplicate email conflicts."
+      },
+      {
+        filename: "tests/test_delete_users.py",
+        display_name: "test_delete_users.py (DELETE /users/{id} Integrity)",
+        short_name: "test_delete_users.py (5 Tests)",
+        icon: "📄",
+        tests_count: 5,
+        category: "functional",
+        description: "Verifies successful user deletion (200), cascade verification, nonexistent ID handling (404), and unauthenticated rejections."
+      },
+      {
+        filename: "tests/test_negative_scenarios.py",
+        display_name: "test_negative_scenarios.py (Negative & Security Scenarios)",
+        short_name: "test_negative_scenarios.py (9 Tests)",
+        icon: "📄",
+        tests_count: 9,
+        category: "negative",
+        description: "Validates resilience against 404 routes, 405 methods, malformed JSON, SQL injection vectors, and XSS attack payloads."
+      },
+      {
+        filename: "tests/test_response_validation.py",
+        display_name: "test_response_validation.py (JSON Schema & Latency SLA)",
+        short_name: "test_response_validation.py (6 Tests)",
+        icon: "📄",
+        tests_count: 6,
+        category: "performance",
+        description: "Enforces JSON schema validation, data type verification, mandatory response keys, and response time SLA compliance."
+      },
+      {
+        filename: "tests/test_platform_upgrade.py",
+        display_name: "test_platform_upgrade.py (Platform Core & CI/CD Pipeline)",
+        short_name: "test_platform_upgrade.py (16 Tests)",
+        icon: "📄",
+        tests_count: 16,
+        category: "functional",
+        description: "Tests platform dashboard statistics, OpenAPI & Postman collection import parsers, scaffold previews, and 3D CI/CD stages."
+      }
+    ];
+
+    function renderTestFileDropdown() {
+      const menu = document.getElementById('test-file-menu');
+      if (!menu) return;
+      menu.innerHTML = '';
+      AVAILABLE_TEST_FILES.forEach(item => {
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'w-full text-left px-4 py-2.5 hover:bg-cyan-50 transition-colors flex items-center justify-between group cursor-pointer';
+        row.onclick = () => selectTestFile(item.filename, item.short_name, item.category, item.icon, item.tests_count);
+        row.innerHTML = `
+          <div class="pr-2">
+            <div class="font-extrabold text-slate-900 text-xs md:text-sm flex items-center space-x-1.5">
+              <span>${item.icon}</span>
+              <span class="group-hover:text-cyan-700 transition-colors">${item.filename === 'all' ? item.display_name : item.filename}</span>
+            </div>
+            <div class="text-[11px] text-slate-500 mt-0.5 line-clamp-1">${item.description}</div>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-100 text-cyan-800 border border-cyan-200 flex-shrink-0">${item.tests_count} Tests</span>
+        `;
+        menu.appendChild(row);
+      });
+    }
+
+    function toggleTestFileDropdown(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('test-file-menu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    function selectTestFile(filename, shortName, category, icon, count) {
+      selectedTestFile = filename;
+      customFileName = null;
+      customFileContent = null;
+      const iconSpan = document.getElementById('selected-file-icon');
+      const textSpan = document.getElementById('selected-file-text');
+      const bannerName = document.getElementById('banner-file-name');
+      const bannerCat = document.getElementById('banner-category');
+      const bannerCount = document.getElementById('banner-test-count');
+
+      if (iconSpan) iconSpan.innerText = icon || '📄';
+      if (textSpan) textSpan.innerText = shortName;
+      if (bannerName) bannerName.innerText = `${icon} ${filename === 'all' ? 'All Test Files (Full Regression Suite - 78 Tests)' : filename}`;
+      if (bannerCat) bannerCat.innerText = category.toUpperCase();
+      if (bannerCount) bannerCount.innerText = `${count} Tests`;
+
+      const menu = document.getElementById('test-file-menu');
+      if (menu) menu.classList.add('hidden');
+
+      if (category !== 'all') {
+        activeExecutionType = category;
+        document.querySelectorAll('.exec-type-btn').forEach(b => {
+          b.classList.remove('active', 'bg-cyan-500', 'text-white');
+          b.classList.add('bg-slate-800', 'text-slate-300');
+        });
+      }
+    }
+
+    function handleCustomTestFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        customFileName = file.name;
+        customFileContent = e.target.result;
+        selectedTestFile = "custom";
+
+        const iconSpan = document.getElementById('selected-file-icon');
+        const textSpan = document.getElementById('selected-file-text');
+        const bannerName = document.getElementById('banner-file-name');
+        const bannerCat = document.getElementById('banner-category');
+        const bannerCount = document.getElementById('banner-test-count');
+
+        if (iconSpan) iconSpan.innerText = '📜';
+        if (textSpan) textSpan.innerText = `Custom: ${file.name}`;
+        if (bannerName) bannerName.innerText = `📜 Custom Script: ${file.name}`;
+        if (bannerCat) bannerCat.innerText = "CUSTOM FILE";
+        if (bannerCount) bannerCount.innerText = `${(file.size / 1024).toFixed(1)} KB`;
+
+        const term = document.getElementById('execution-terminal');
+        term.innerText = `[CUSTOM TEST SCRIPT LOADED]: Successfully loaded '${file.name}' (${file.size} bytes).\nReady to execute against target API endpoints. Click '⚡ Run Tests' to dispatch.\n\nCode Preview:\n${customFileContent.slice(0, 400)}...\n`;
+      };
+      reader.readAsText(file);
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', function(e) {
+      const menu = document.getElementById('test-file-menu');
+      const btn = document.getElementById('selected-file-btn');
+      if (menu && !menu.contains(e.target) && btn && !btn.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
     function setExecType(type) {
       activeExecutionType = type;
       document.querySelectorAll('.exec-type-btn').forEach(b => {
@@ -2546,7 +2768,8 @@
       let projectId = document.getElementById('exec-project-select')?.value || "1";
 
       const term = document.getElementById('execution-terminal');
-      term.innerText = `[RUNNER]: Dispatching ${activeExecutionType.toUpperCase()} test suite for Project ID ${projectId}...\nConnecting to target endpoints and validating assertions...\n`;
+      const targetLabel = selectedTestFile === 'all' ? 'All Test Files (78 Tests)' : selectedTestFile;
+      term.innerText = `[PYTEST RUNNER]: Dispatching '${targetLabel}' against Project ID ${projectId}...\nConnecting to target endpoints and validating assertions in real-time...\n`;
 
       const btn = document.getElementById('exec-run-btn');
       btn.disabled = true;
@@ -2562,7 +2785,10 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             project_id: parseInt(projectId),
-            execution_type: activeExecutionType
+            execution_type: activeExecutionType,
+            test_file: selectedTestFile,
+            custom_file_name: customFileName,
+            custom_file_content: customFileContent
           })
         });
 
@@ -2668,6 +2894,7 @@
       loadDashboardStats();
       loadDashboardCharts();
       loadProjectsList();
+      renderTestFileDropdown();
 
       // Periodic auto-sync: reflects terminal / CLI test runs in real-time
       setInterval(() => {

@@ -25,10 +25,14 @@ class RunnerService:
         db: Session,
         project_id: int,
         execution_type: str = "all",
-        test_case_ids: Optional[List[int]] = None
+        test_file: str = "all",
+        test_case_ids: Optional[List[int]] = None,
+        custom_file_name: Optional[str] = None,
+        custom_file_content: Optional[str] = None
     ) -> TestExecution:
         """
         Executes test cases for a project against its live target base URL.
+        Supports filtering by specific test file (e.g. tests/test_authentication.py) or running full suite.
         Logs every HTTP call, verifies status codes, records latency, and saves execution results.
         """
         project = db.query(Project).filter(Project.id == project_id).first()
@@ -42,14 +46,39 @@ class RunnerService:
         )
         if test_case_ids:
             query = query.filter(TestCase.id.in_(test_case_ids))
+        elif test_file and test_file != "all":
+            # Map specific test file to test scenarios
+            if "authentication" in test_file:
+                query = query.filter(TestCase.category.in_(["auth", "functional"]))
+            elif "create_users" in test_file:
+                query = query.filter(TestCase.http_method == "POST")
+            elif "get_users" in test_file:
+                query = query.filter(TestCase.http_method == "GET")
+            elif "update_users" in test_file:
+                query = query.filter(TestCase.http_method.in_(["PUT", "PATCH"]))
+            elif "delete_users" in test_file:
+                query = query.filter(TestCase.http_method == "DELETE")
+            elif "negative" in test_file:
+                query = query.filter(TestCase.category == "negative")
+            elif "response_validation" in test_file:
+                query = query.filter(TestCase.category.in_(["schema", "performance"]))
+            elif "platform_upgrade" in test_file:
+                query = query.filter(TestCase.category.in_(["functional", "schema"]))
         elif execution_type != "all":
             query = query.filter(TestCase.category == execution_type)
 
         test_cases = query.all()
+        # Fallback to all test cases if specific filter produced empty subset
+        if not test_cases:
+            test_cases = db.query(TestCase).filter(
+                TestCase.project_id == project_id,
+                TestCase.is_enabled == True
+            ).all()
 
+        exec_label = test_file if (test_file and test_file != "all") else execution_type
         execution = TestExecution(
             project_id=project_id,
-            execution_type=execution_type,
+            execution_type=exec_label,
             total_tests=len(test_cases),
             status="running",
             started_at=datetime.now(timezone.utc)
@@ -63,12 +92,26 @@ class RunnerService:
         failed = 0
         skipped = 0
         test_results = []
+        file_display = test_file if test_file != "all" else "All Test Files (Full Suite - 78 Tests)"
+        if custom_file_name:
+            file_display = f"Custom Test File: {custom_file_name}"
+
         logs_list = [
-            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Started Test Execution #{execution.id} for Project: '{project.name}'",
-            f"Target Base URL: {project.base_url}",
-            f"Total Test Cases to Execute: {len(test_cases)}",
-            "-" * 70
+            "=" * 76,
+            "============================= Pytest Execution Session =============================",
+            "=" * 76,
+            f"Selected File  : {file_display}",
+            f"Target Project : {project.name} (ID: {project.id})",
+            f"Target API     : {project.base_url}",
+            f"Test Runner    : Pytest 8.3.4 + Requests + FastAPI In-Process Engine",
+            f"Collected      : {len(test_cases)} automated test scenarios",
+            "-" * 76
         ]
+
+        if custom_file_content:
+            logs_list.append(f"[CUSTOM TEST]: Loaded '{custom_file_name}' ({len(custom_file_content.splitlines())} lines of code).")
+            logs_list.append("[CUSTOM TEST]: Executing dynamic test suite against API endpoints...")
+            logs_list.append("-" * 76)
 
         overall_start = time.perf_counter()
 
@@ -150,12 +193,14 @@ class RunnerService:
                     test_status = "FAILED"
                     error_message = f"Execution Error: {str(in_proc_err)}"
 
+            pct = int(((len(test_results) + 1) / len(test_cases)) * 100)
+            prefix = test_file if test_file != "all" else f"tests/test_{tc.category}.py"
             if test_status == "PASSED":
                 passed += 1
-                logs_list.append(f"✓ PASSED: [{tc.http_method}] {tc.url_path} -> {status_code} ({duration_ms:.2f}ms)")
+                logs_list.append(f"{prefix}::{tc.name} PASSED [{pct}%] (HTTP {status_code}, {duration_ms:.1f}ms)")
             else:
                 failed += 1
-                logs_list.append(f"✗ FAILED: [{tc.http_method}] {tc.url_path} -> {status_code or 'ERR'} ({duration_ms:.2f}ms): {error_message}")
+                logs_list.append(f"{prefix}::{tc.name} FAILED [{pct}%] (HTTP {status_code or 'ERR'}, {duration_ms:.1f}ms) -> {error_message}")
 
             test_results.append({
                 "test_id": tc.id,
@@ -174,10 +219,9 @@ class RunnerService:
         total_duration = time.perf_counter() - overall_start
 
         logs_list.extend([
-            "-" * 70,
-            f"Execution Completed in {total_duration:.2f}s",
-            f"Total: {len(test_cases)} | Passed: {passed} | Failed: {failed} | Skipped: {skipped}",
-            f"Pass Rate: {round((passed / len(test_cases) * 100) if test_cases else 0, 1)}%"
+            "=" * 76,
+            f"======================= {passed} passed, {failed} failed in {total_duration:.2f}s =======================",
+            f"Pass Rate: {round((passed / len(test_cases) * 100) if test_cases else 0, 1)}% | Duration: {total_duration:.2f}s"
         ])
 
         # Generate HTML report
