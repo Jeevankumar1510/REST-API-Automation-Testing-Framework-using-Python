@@ -100,6 +100,17 @@ python -m pytest
 ```
 *Note: Pytest automatically boots the target server in the background via the session fixture in `conftest.py` if not already running!*
 
+### Option D: Deploy to Vercel Serverless (Production Cloud)
+The platform is fully pre-configured for zero-friction Vercel deployment via `vercel.json` and `api/index.py`:
+1. Push your repository to GitHub.
+2. Import the repository in [Vercel](https://vercel.com/new).
+3. Leave **Root Directory** as `./` and framework as **FastAPI** or **Other**.
+4. Click **Deploy**.
+5. Once live, access:
+   - **3D CI/CD Platform**: `https://<your-project>.vercel.app/platform`
+   - **Interactive Swagger Docs**: `https://<your-project>.vercel.app/docs`
+   - **Health Endpoint**: `https://<your-project>.vercel.app/health`
+
 ---
 
 ## 🏗 Enterprise System Architecture
