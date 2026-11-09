@@ -46,22 +46,27 @@
     ::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.6); }
 
-    /* Ensure select dropdown options are ALWAYS 100% visible on all operating systems and browsers */
+    /* Ensure project select dropdown button and options appear pure white with high-contrast bold text */
     select#exec-project-select {
-      color: #ffffff !important;
-      background-color: #0f172a !important;
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      font-weight: 800 !important;
+      font-size: 13px !important;
+      border: 2px solid #06b6d4 !important;
+      box-shadow: 0 4px 14px 0 rgba(6, 182, 212, 0.25) !important;
     }
     select#exec-project-select option {
-      background-color: #0f172a !important;
-      color: #38bdf8 !important;
+      background-color: #ffffff !important;
+      color: #0f172a !important;
       font-size: 13px !important;
-      font-weight: 600 !important;
+      font-weight: 700 !important;
       padding: 10px 14px !important;
     }
     select#exec-project-select option:hover,
     select#exec-project-select option:checked {
-      background-color: #1e293b !important;
-      color: #ffffff !important;
+      background-color: #e0f2fe !important;
+      color: #0369a1 !important;
+      font-weight: 800 !important;
     }
   </style>
 </head>
@@ -407,13 +412,13 @@
                   <span>🎯 Target Suite:</span>
                 </span>
                 <div class="relative">
-                  <select id="exec-project-select" class="min-w-[280px] md:min-w-[360px] pl-4 pr-10 py-2.5 rounded-xl bg-slate-900 border-2 border-cyan-400 text-xs md:text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)] cursor-pointer appearance-none transition-all hover:bg-slate-800">
-                    <option value="1" selected>📦 User Management REST API (78 Automated Tests)</option>
-                    <option value="2">📦 E-Commerce Store REST API (54 Tests - Catalog & Cart)</option>
-                    <option value="3">📦 Banking & Payments API (36 Tests - Transactions)</option>
+                  <select id="exec-project-select" style="background-color: #ffffff !important; color: #0f172a !important; font-weight: 800 !important;" class="min-w-[280px] md:min-w-[370px] pl-4 pr-10 py-2.5 rounded-xl bg-white border-2 border-cyan-400 text-xs md:text-sm font-extrabold text-slate-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.25)] cursor-pointer appearance-none transition-all">
+                    <option value="1" selected style="background-color: #ffffff; color: #0f172a; font-weight: bold;">📦 User Management REST API (78 Automated Tests)</option>
+                    <option value="2" style="background-color: #ffffff; color: #0f172a; font-weight: bold;">📦 E-Commerce Store REST API (54 Tests - Catalog & Cart)</option>
+                    <option value="3" style="background-color: #ffffff; color: #0f172a; font-weight: bold;">📦 Banking & Payments API (36 Tests - Transactions)</option>
                   </select>
-                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-cyan-400">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-900">
+                    <svg class="w-4 h-4 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                   </div>
                 </div>
               </div>
@@ -1053,36 +1058,62 @@
           projectsData = await res.json();
         }
 
-        // If database is fresh or empty, guarantee Project 1 is present
+        // If database is fresh or empty, guarantee default projects are present
         if (!projectsData || projectsData.length === 0) {
-          projectsData = [{
-            id: 1,
-            name: "User Management REST API",
-            app_type: "user_management",
-            description: "Core user microservice featuring JWT authentication, role management, and CRUD automation suite.",
-            base_url: "http://127.0.0.1:8000",
-            endpoints_count: 8,
-            test_cases_count: 46
-          }];
+          projectsData = [
+            {
+              id: 1,
+              name: "User Management REST API",
+              app_type: "user_management",
+              description: "Core user microservice featuring JWT authentication, role management, and CRUD automation suite.",
+              base_url: "http://127.0.0.1:8000",
+              endpoints_count: 8,
+              test_cases_count: 78
+            },
+            {
+              id: 2,
+              name: "E-Commerce Store REST API",
+              app_type: "ecommerce",
+              description: "Product catalog, shopping cart, and order checkout flows with dynamic inventory assertions.",
+              base_url: "https://fakestoreapi.com",
+              endpoints_count: 12,
+              test_cases_count: 54
+            },
+            {
+              id: 3,
+              name: "Banking & Payments API",
+              app_type: "banking",
+              description: "High-security transaction processing, wallet ledger validations, and fraud SLA compliance suite.",
+              base_url: "https://api.banking-sandbox.dev",
+              endpoints_count: 9,
+              test_cases_count: 36
+            }
+          ];
         }
 
-        // Populate dropdown on execution page with bright, visible styled options
+        // Populate dropdown on execution page with bright white background and crisp dark text
         const select = document.getElementById('exec-project-select');
         if (select) {
           select.innerHTML = '';
-          projectsData.forEach(p => {
+          projectsData.forEach((p, idx) => {
             const opt = document.createElement('option');
             opt.value = p.id;
-            opt.innerText = `📦 ${p.name} (${p.test_cases_count || 46} Tests)`;
-            opt.style.backgroundColor = '#0f172a';
-            opt.style.color = '#38bdf8';
-            opt.style.fontWeight = 'bold';
+            opt.textContent = `📦 ${p.name} (${p.test_cases_count || 78} Tests)`;
+            opt.style.backgroundColor = '#ffffff';
+            opt.style.color = '#0f172a';
+            opt.style.fontWeight = '700';
             opt.style.padding = '8px 12px';
+            if (idx === 0 || p.id == 1) {
+              opt.selected = true;
+            }
             select.appendChild(opt);
           });
           if (projectsData.length > 0) {
             select.value = projectsData[0].id;
           }
+          select.style.backgroundColor = '#ffffff';
+          select.style.color = '#0f172a';
+          select.style.fontWeight = '800';
         }
 
         // Render My Projects Cards
