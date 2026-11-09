@@ -1,0 +1,189 @@
+{
+  "valid_users": [
+    {
+      "name": "Sarah Connor",
+      "email": "sarah.connor@example.com",
+      "role": "tester",
+      "status": "active",
+      "age": 30
+    },
+    {
+      "name": "John Connor",
+      "email": "john.connor@example.com",
+      "role": "developer",
+      "status": "active",
+      "age": 25
+    },
+    {
+      "name": "Kyle Reese",
+      "email": "kyle.reese@example.com",
+      "role": "admin",
+      "status": "inactive",
+      "age": 35
+    },
+    {
+      "name": "Miles Dyson",
+      "email": "miles.dyson@example.com",
+      "role": "guest",
+      "status": "active",
+      "age": 42
+    }
+  ],
+  "invalid_users_missing_fields": [
+    {
+      "description": "Missing 'name' field",
+      "payload": {
+        "email": "missing.name@example.com",
+        "role": "tester",
+        "status": "active",
+        "age": 25
+      },
+      "expected_status": 422
+    },
+    {
+      "description": "Missing 'email' field",
+      "payload": {
+        "name": "No Email User",
+        "role": "tester",
+        "status": "active",
+        "age": 25
+      },
+      "expected_status": 422
+    },
+    {
+      "description": "Missing 'role' field",
+      "payload": {
+        "name": "No Role User",
+        "email": "norole@example.com",
+        "status": "active",
+        "age": 25
+      },
+      "expected_status": 422
+    },
+    {
+      "description": "Missing 'age' field",
+      "payload": {
+        "name": "No Age User",
+        "email": "noage@example.com",
+        "role": "tester",
+        "status": "active"
+      },
+      "expected_status": 422
+    }
+  ],
+  "invalid_users_wrong_types": [
+    {
+      "description": "Age as string instead of integer",
+      "payload": {
+        "name": "String Age User",
+        "email": "str.age@example.com",
+        "role": "tester",
+        "status": "active",
+        "age": "twenty-five"
+      },
+      "expected_status": 422
+    },
+    {
+      "description": "Age as boolean",
+      "payload": {
+        "name": "Bool Age User",
+        "email": "bool.age@example.com",
+        "role": "tester",
+        "status": "active",
+        "age": true
+      },
+      "expected_status": 422
+    }
+  ],
+  "invalid_users_out_of_range": [
+    {
+      "description": "Age below 18 limit",
+      "payload": {
+        "name": "Underage User",
+        "email": "underage@example.com",
+        "role": "guest",
+        "status": "active",
+        "age": 16
+      },
+      "expected_status": 422
+    },
+    {
+      "description": "Age above 100 limit",
+      "payload": {
+        "name": "Centenarian User",
+        "email": "old@example.com",
+        "role": "guest",
+        "status": "active",
+        "age": 105
+      },
+      "expected_status": 422
+    }
+  ],
+  "invalid_users_bad_email": [
+    {
+      "description": "Missing @ and domain in email",
+      "payload": {
+        "name": "Bad Email User",
+        "email": "invalid-email-string",
+        "role": "tester",
+        "status": "active",
+        "age": 28
+      },
+      "expected_status": 422
+    },
+    {
+      "description": "Missing domain extension in email",
+      "payload": {
+        "name": "Bad Domain User",
+        "email": "user@nodomain",
+        "role": "tester",
+        "status": "active",
+        "age": 28
+      },
+      "expected_status": 422
+    }
+  ],
+  "invalid_roles": [
+    {
+      "description": "Unsupported role 'superman'",
+      "payload": {
+        "name": "Hero User",
+        "email": "superman@example.com",
+        "role": "superman",
+        "status": "active",
+        "age": 30
+      },
+      "expected_status": 422
+    }
+  ],
+  "authentication_test_cases": [
+    {
+      "description": "Valid test user credentials",
+      "username": "testuser@example.com",
+      "password": "SecretPass123!",
+      "expected_status": 200,
+      "expect_token": true
+    },
+    {
+      "description": "Valid admin credentials",
+      "username": "admin@example.com",
+      "password": "AdminPass123!",
+      "expected_status": 200,
+      "expect_token": true
+    },
+    {
+      "description": "Invalid password for existing user",
+      "username": "admin@example.com",
+      "password": "WrongPassword999!",
+      "expected_status": 401,
+      "expect_token": false
+    },
+    {
+      "description": "Non-existent user account",
+      "username": "ghost_user@example.com",
+      "password": "SomePassword123!",
+      "expected_status": 401,
+      "expect_token": false
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+name: REST API Automation Test Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  api-automation-tests:
+    name: Execute Automated API Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install Project Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Launch FastAPI Target Application
+        run: |
+          python -m uvicorn application.main:app --host 127.0.0.1 --port 8000 &
+          echo "Waiting for FastAPI server to boot up..."
+          python -c "
+          import urllib.request, time
+          for _ in range(30):
+              try:
+                  with urllib.request.urlopen('http://127.0.0.1:8000/health') as resp:
+                      if resp.status == 200:
+                          print('FastAPI server is online and healthy!')
+                          exit(0)
+              except Exception:
+                  time.sleep(0.5)
+          print('Failed to reach FastAPI server within 15s')
+          exit(1)
+          "
+
+      - name: Run Automated Test Suites with Pytest
+        run: |
+          python -m pytest --html=reports/report.html --self-contained-html
+
+      - name: Publish Test Results Summary
+        if: always()
+        run: |
+          echo "### 🚀 Automated API Test Results (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
+          echo "- **Framework:** Pytest + Requests + FastAPI" >> $GITHUB_STEP_SUMMARY
+          echo "- **Target Host:** http://127.0.0.1:8000" >> $GITHUB_STEP_SUMMARY
+          echo "- **Report:** See downloadable artifact below." >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Test Report & Execution Logs Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-report-py${{ matrix.python-version }}
+          path: |
+            reports/report.html
+            reports/execution.log
+          retention-days: 14
