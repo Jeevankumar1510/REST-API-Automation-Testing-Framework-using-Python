@@ -194,6 +194,26 @@ def health_check():
     }
 
 
+@app.get(
+    "/report",
+    tags=["Reports"],
+    summary="Latest HTML Test Report",
+    include_in_schema=False
+)
+@app.get("/api/report", include_in_schema=False)
+def get_latest_report():
+    """Serves the latest self-contained Pytest-HTML test execution report."""
+    candidates = [
+        Path("reports/report.html"),
+        Path(__file__).resolve().parent.parent / "reports" / "report.html",
+        Path("reports/executions/report_project_1.html"),
+    ]
+    for p in candidates:
+        if p.exists():
+            return FileResponse(str(p), media_type="text/html")
+    return HTMLResponse("<h2>Test report generating... Run Pytest to generate the latest report.</h2>")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("application.main:app", host="127.0.0.1", port=8000, reload=True)
