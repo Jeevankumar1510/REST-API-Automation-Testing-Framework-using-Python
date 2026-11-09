@@ -5,7 +5,11 @@ Provides live workflow monitoring, job status synchronization, and secure token 
 
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
-import httpx
+
+try:
+    import httpx
+except ImportError:
+    httpx = None
 
 
 class GitHubService:
@@ -26,6 +30,8 @@ class GitHubService:
     @classmethod
     async def verify_connection(cls, owner: str, repo: str, token: Optional[str] = None) -> Tuple[bool, str]:
         """Verify repository existence and token access."""
+        if httpx is None:
+            return False, "httpx package not installed."
         url = f"{cls.BASE_URL}/repos/{owner}/{repo}"
         async with httpx.AsyncClient(timeout=6.0) as client:
             try:
@@ -56,6 +62,9 @@ class GitHubService:
         params = {"per_page": limit}
         if branch:
             params["branch"] = branch
+
+        if httpx is None:
+            return []
 
         async with httpx.AsyncClient(timeout=8.0) as client:
             try:
@@ -96,6 +105,9 @@ class GitHubService:
         """Dispatches a manual workflow run on GitHub Actions."""
         if not token:
             return False, "GitHub Personal Access Token is required to trigger workflows."
+
+        if httpx is None:
+            return False, "httpx package not installed."
 
         url = f"{cls.BASE_URL}/repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches"
         payload = {"ref": branch}
