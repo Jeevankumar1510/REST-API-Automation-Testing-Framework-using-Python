@@ -23,7 +23,7 @@ reports/executions/
 # Generated Projects and Databases
 platform_core/*.db
 *.db
-generated_projects/*.zip
+generated_projects/*
 !generated_projects/.gitkeep
 
 # IDEs and Editors
