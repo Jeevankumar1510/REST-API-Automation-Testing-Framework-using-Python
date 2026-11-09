@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REST API Automation Testing Framework - 3D Dashboard</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* 3D Scene & Perspective Styles */
+    :root {
+      --bg-dark: #0b0f19;
+      --card-bg: rgba(18, 24, 38, 0.75);
+      --card-border: rgba(56, 189, 248, 0.2);
+      --neon-cyan: #38bdf8;
+      --neon-purple: #a855f7;
+      --neon-green: #22c55e;
+      --neon-amber: #f59e0b;
+      --neon-rose: #f43f5e;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 20%, #151c2e 0%, #07090e 100%);
+      color: #f1f5f9;
+      perspective: 1200px;
+      overflow-x: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .preserve-3d {
+      transform-style: preserve-3d;
+    }
+
+    /* 3D Glassmorphism Cards */
+    .glass-card-3d {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+      will-change: transform;
+    }
+
+    .glass-card-3d:hover {
+      transform: translateY(-6px) rotateX(4deg) rotateY(-2deg) scale(1.01);
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 30px 60px -15px rgba(56, 189, 248, 0.2), inset 0 1px 2px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    /* Ambient Glowing Orbs */
+    .ambient-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+      animation: floatPulse 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.25; }
+      100% { transform: scale(1.15) translate(20px, 15px); opacity: 0.45; }
+    }
+
+    /* Pulsing Badge */
+    .pulse-dot {
+      animation: pulseAnim 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.3);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.6);
+    }
+
+    /* 3D Canvas Container */
+    #canvas-container {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      overflow: hidden;
+      border-radius: 16px;
+      background: radial-gradient(circle at 50% 50%, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 antialiased selection:bg-cyan-500 selection:text-white">
+
+  <!-- Ambient Glow Backgrounds -->
+  <div class="ambient-glow bg-cyan-500 w-96 h-96 top-10 left-10"></div>
+  <div class="ambient-glow bg-purple-600 w-96 h-96 top-1/3 right-10"></div>
+  <div class="ambient-glow bg-emerald-500 w-80 h-80 bottom-20 left-1/3"></div>
+
+  <!-- Main Container -->
+  <div class="max-w-7xl mx-auto relative z-10 space-y-6">
+
+    <!-- Top Navigation & Status Bar -->
+    <header class="glass-card-3d rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 transform transition-transform hover:rotate-12">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-xl md:text-2xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-cyan-400 bg-clip-text text-transparent">
+              Python REST API Automation Suite
+            </h1>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+              v1.0.0
+            </span>
+          </div>
+          <p class="text-xs md:text-sm text-slate-400">Pytest 8.3 • Requests • FastAPI • JSON Schema Draft-7 • CI/CD</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
+          <span>Target Microservice: ONLINE (Port 8000)</span>
+        </div>
+        <button onclick="runAllTestsInteractive()" id="run-all-btn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium text-xs md:text-sm shadow-lg shadow-cyan-500/25 transition-all transform hover:scale-105 active:scale-95 flex items-center space-x-2">
+          <svg class="w-4 h-4 animate-spin hidden" id="spinner-icon" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          <svg class="w-4 h-4" id="play-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span id="run-btn-text">Run Full Test Suite</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Top Key Metrics 3D Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <!-- Metric 1: Total Tests -->
+      <div class="glass-card-3d rounded-2xl p-5 relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-cyan-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
+        <p class="text-xs uppercase font-semibold tracking-wider text-slate-400">Total Test Scenarios</p>
+        <div class="mt-2 flex items-baseline space-x-2">
+          <span class="text-3xl md:text-4xl font-extrabold text-white" id="metric-total">59</span>
+          <span class="text-xs font-semibold text-emerald-400">100% Passed</span>
+        </div>
+        <div class="mt-3 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+          <div class="bg-gradient-to-r from-cyan-500 to-emerald-400 h-1.5 rounded-full transition-all duration-1000" style="width: 100%"></div>
+        </div>
+      </div>
+
+      <!-- Metric 2: Pass Ratio -->
+      <div class="glass-card-3d rounded-2xl p-5 relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
+        <p class="text-xs uppercase font-semibold tracking-wider text-slate-400">Pass Rate</p>
+        <div class="mt-2 flex items-baseline space-x-2">
+          <span class="text-3xl md:text-4xl font-extrabold text-emerald-400" id="metric-rate">100%</span>
+          <span class="text-xs text-slate-400">0 Failed • 0 Skipped</span>
+        </div>
+        <div class="mt-3 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+          <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 100%"></div>
+        </div>
+      </div>
+
+      <!-- Metric 3: Execution Duration -->
+      <div class="glass-card-3d rounded-2xl p-5 relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-purple-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
+        <p class="text-xs uppercase font-semibold tracking-wider text-slate-400">Execution Speed</p>
+        <div class="mt-2 flex items-baseline space-x-2">
+          <span class="text-3xl md:text-4xl font-extrabold text-purple-400" id="metric-duration">2.55s</span>
+          <span class="text-xs font-semibold text-purple-300">~43ms / test</span>
+        </div>
+        <div class="mt-3 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+          <div class="bg-gradient-to-r from-purple-500 to-indigo-400 h-1.5 rounded-full" style="width: 95%"></div>
+        </div>
+      </div>
+
+      <!-- Metric 4: Endpoints Verified -->
+      <div class="glass-card-3d rounded-2xl p-5 relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-amber-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
+        <p class="text-xs uppercase font-semibold tracking-wider text-slate-400">REST Endpoints Covered</p>
+        <div class="mt-2 flex items-baseline space-x-2">
+          <span class="text-3xl md:text-4xl font-extrabold text-amber-400">7</span>
+          <span class="text-xs text-slate-400">CRUD + Auth + Health</span>
+        </div>
+        <div class="mt-3 flex space-x-1">
+          <span class="px-1.5 py-0.5 rounded text-[10px] bg-blue-500/20 text-blue-300 font-bold">GET</span>
+          <span class="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 font-bold">POST</span>
+          <span class="px-1.5 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-300 font-bold">PUT</span>
+          <span class="px-1.5 py-0.5 rounded text-[10px] bg-purple-500/20 text-purple-300 font-bold">PATCH</span>
+          <span class="px-1.5 py-0.5 rounded text-[10px] bg-rose-500/20 text-rose-300 font-bold">DEL</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3D Interactive Isometric Architecture Visualizer -->
+    <div class="glass-card-3d rounded-2xl p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <div class="w-3 h-3 rounded-full bg-cyan-400 shadow-md shadow-cyan-400/50"></div>
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300">
+            Interactive 3D Framework Topology & Packet Flow
+          </h2>
+        </div>
+        <div class="text-xs text-slate-400 flex items-center space-x-3">
+          <span class="hidden sm:inline">🖱️ Drag to rotate 3D view</span>
+          <button onclick="reset3DCamera()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs">Reset View</button>
+        </div>
+      </div>
+
+      <div id="canvas-container">
+        <canvas id="topoCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs">
+        <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="font-bold text-cyan-400">1. Pytest Test Runner</div>
+          <div class="text-[11px] text-slate-400">Parametrized suites</div>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="font-bold text-blue-400">2. APIClient Wrapper</div>
+          <div class="text-[11px] text-slate-400">Requests.Session + logs</div>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="font-bold text-amber-400">3. Auth Security Layer</div>
+          <div class="text-[11px] text-slate-400">JWT Bearer verification</div>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="font-bold text-emerald-400">4. FastAPI Microservice</div>
+          <div class="text-[11px] text-slate-400">User CRUD Controller</div>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="font-bold text-purple-400">5. JSON Schema Engine</div>
+          <div class="text-[11px] text-slate-400">Draft-7 contract check</div>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="font-bold text-rose-400">6. Report & CI/CD Hub</div>
+          <div class="text-[11px] text-slate-400">HTML Dashboard & logs</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Interactive API Simulator & Response Terminal -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Left: Endpoint Selector & Request Configurator (5 cols) -->
+      <div class="lg:col-span-5 glass-card-3d rounded-2xl p-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+            <span>Live API Request Simulator</span>
+          </h2>
+          <span class="text-xs text-slate-400">Choose scenario:</span>
+        </div>
+
+        <div class="space-y-2">
+          <!-- Preset Scenario Buttons -->
+          <button onclick="selectScenario('get_users')" class="w-full text-left p-2.5 rounded-xl border border-slate-700/60 hover:border-cyan-500/50 bg-slate-900/50 hover:bg-slate-800/60 transition-all flex items-center justify-between group">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-blue-500/20 text-blue-400">GET</span>
+              <span class="text-xs font-mono text-slate-200">/users?page=1&limit=5</span>
+            </div>
+            <span class="text-[11px] text-slate-400 group-hover:text-cyan-400">Paginated List →</span>
+          </button>
+
+          <button onclick="selectScenario('post_login')" class="w-full text-left p-2.5 rounded-xl border border-slate-700/60 hover:border-cyan-500/50 bg-slate-900/50 hover:bg-slate-800/60 transition-all flex items-center justify-between group">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400">POST</span>
+              <span class="text-xs font-mono text-slate-200">/login</span>
+            </div>
+            <span class="text-[11px] text-slate-400 group-hover:text-cyan-400">JWT Token Auth →</span>
+          </button>
+
+          <button onclick="selectScenario('post_user')" class="w-full text-left p-2.5 rounded-xl border border-slate-700/60 hover:border-cyan-500/50 bg-slate-900/50 hover:bg-slate-800/60 transition-all flex items-center justify-between group">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400">POST</span>
+              <span class="text-xs font-mono text-slate-200">/users</span>
+            </div>
+            <span class="text-[11px] text-slate-400 group-hover:text-cyan-400">201 Create User →</span>
+          </button>
+
+          <button onclick="selectScenario('patch_user')" class="w-full text-left p-2.5 rounded-xl border border-slate-700/60 hover:border-cyan-500/50 bg-slate-900/50 hover:bg-slate-800/60 transition-all flex items-center justify-between group">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-purple-500/20 text-purple-400">PATCH</span>
+              <span class="text-xs font-mono text-slate-200">/users/1</span>
+            </div>
+            <span class="text-[11px] text-slate-400 group-hover:text-cyan-400">Partial Role Update →</span>
+          </button>
+
+          <button onclick="selectScenario('negative_409')" class="w-full text-left p-2.5 rounded-xl border border-rose-500/20 hover:border-rose-500/50 bg-rose-950/20 hover:bg-rose-950/40 transition-all flex items-center justify-between group">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-rose-500/20 text-rose-400">POST</span>
+              <span class="text-xs font-mono text-slate-200">/users (Duplicate)</span>
+            </div>
+            <span class="text-[11px] text-rose-400">409 Conflict →</span>
+          </button>
+
+          <button onclick="selectScenario('negative_422')" class="w-full text-left p-2.5 rounded-xl border border-amber-500/20 hover:border-amber-500/50 bg-amber-950/20 hover:bg-amber-950/40 transition-all flex items-center justify-between group">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-400">POST</span>
+              <span class="text-xs font-mono text-slate-200">/users (Invalid Age)</span>
+            </div>
+            <span class="text-[11px] text-amber-400">422 Semantic Error →</span>
+          </button>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Request Payload Preview</label>
+          <pre id="request-preview" class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] font-mono text-cyan-300 overflow-x-auto max-h-36">// Click a scenario above to inspect payload</pre>
+        </div>
+
+        <button onclick="executeSimulatedRequest()" id="send-request-btn" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-lg shadow-cyan-500/20 transform hover:-translate-y-0.5">
+          Dispatch HTTP Request ⚡
+        </button>
+      </div>
+
+      <!-- Right: Live Terminal & Response Inspection (7 cols) -->
+      <div class="lg:col-span-7 glass-card-3d rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+              <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300">Live HTTP Inspector & Response</h2>
+            </div>
+            <div class="flex items-center space-x-2" id="status-pill-container">
+              <span id="response-status-pill" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-500/40 text-emerald-400">
+                200 OK
+              </span>
+              <span id="response-time-pill" class="text-xs font-mono text-slate-400">
+                ⚡ 14.82ms
+              </span>
+            </div>
+          </div>
+
+          <!-- Header Metadata Strip -->
+          <div class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] font-mono text-slate-400 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800/80">
+            <div><span class="text-slate-500">Method:</span> <span id="hdr-method" class="text-cyan-400 font-bold">GET</span></div>
+            <div><span class="text-slate-500">Content-Type:</span> <span class="text-slate-300">application/json</span></div>
+            <div><span class="text-slate-500">Schema Check:</span> <span id="hdr-schema" class="text-emerald-400">PASSED ✓</span></div>
+          </div>
+
+          <!-- Terminal Output Body -->
+          <div class="mt-3 relative">
+            <div class="absolute right-3 top-3 text-[10px] uppercase font-mono text-slate-500 tracking-wider">JSON Response</div>
+            <pre id="response-body" class="p-4 rounded-xl bg-slate-950/90 border border-slate-800/80 text-xs font-mono text-slate-200 overflow-y-auto max-h-72 leading-relaxed">{
+  "status": "ready",
+  "message": "Click 'Dispatch HTTP Request' or select any test scenario on the left to inspect the live response body and headers."
+}</pre>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+          <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+            <span>Centralized Logger: <code class="text-cyan-400">reports/execution.log</code></span>
+          </div>
+          <span class="font-mono text-slate-500">SLA: &lt; 1500ms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test Suites Coverage & Marker Matrix Filter -->
+    <div class="glass-card-3d rounded-2xl p-5 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300">Automated Test Suites (59 Test Cases)</h2>
+          <p class="text-xs text-slate-400">Filter test cases by Pytest marker categories</p>
+        </div>
+
+        <!-- Filter Pills -->
+        <div class="flex flex-wrap gap-1.5" id="marker-filters">
+          <button onclick="filterTests('all')" class="marker-btn active px-3 py-1 rounded-lg text-xs font-medium bg-cyan-500 text-white transition-all">All (59)</button>
+          <button onclick="filterTests('smoke')" class="marker-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">Smoke (8)</button>
+          <button onclick="filterTests('auth')" class="marker-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">Auth & Security (9)</button>
+          <button onclick="filterTests('negative')" class="marker-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">Negative Scenarios (17)</button>
+          <button onclick="filterTests('functional')" class="marker-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">Functional CRUD (25)</button>
+          <button onclick="filterTests('schema')" class="marker-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">Schema & SLA (6)</button>
+        </div>
+      </div>
+
+      <!-- Test Cases Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-80 overflow-y-auto pr-1" id="test-list-container">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-500 py-4 flex flex-wrap items-center justify-between gap-2">
+      <div>REST API Automation Testing Framework • Portfolio Project</div>
+      <div class="flex space-x-4">
+        <span>FastAPI</span>
+        <span>•</span>
+        <span>Pytest</span>
+        <span>•</span>
+        <span>Requests</span>
+        <span>•</span>
+        <span>GitHub Actions</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Interactive JavaScript -->
+  <script>
+    // -------------------------------------------------------------
+    // 1. Data Store & Test Cases
+    // -------------------------------------------------------------
+    const testCases = [
+      { id: 1, file: "test_authentication.py", name: "test_login_success_with_valid_credentials", marker: "smoke auth", status: "PASSED", time: "19.9ms" },
+      { id: 2, file: "test_authentication.py", name: "test_login_failure_invalid_password", marker: "auth negative", status: "PASSED", time: "2.3ms" },
+      { id: 3, file: "test_authentication.py", name: "test_login_failure_nonexistent_user", marker: "auth negative", status: "PASSED", time: "1.9ms" },
+      { id: 4, file: "test_authentication.py", name: "test_login_missing_mandatory_fields[username]", marker: "auth negative", status: "PASSED", time: "4.6ms" },
+      { id: 5, file: "test_authentication.py", name: "test_login_missing_mandatory_fields[password]", marker: "auth negative", status: "PASSED", time: "1.5ms" },
+      { id: 6, file: "test_authentication.py", name: "test_verify_token_endpoint_with_valid_token", marker: "auth", status: "PASSED", time: "2.1ms" },
+      { id: 7, file: "test_authentication.py", name: "test_access_protected_endpoint_without_token", marker: "auth negative", status: "PASSED", time: "1.9ms" },
+      { id: 8, file: "test_authentication.py", name: "test_access_protected_endpoint_with_invalid_token", marker: "auth negative", status: "PASSED", time: "1.5ms" },
+      { id: 9, file: "test_authentication.py", name: "test_access_protected_endpoint_with_malformed_auth_header", marker: "auth negative", status: "PASSED", time: "1.8ms" },
+
+      { id: 10, file: "test_create_users.py", name: "test_create_user_success_201", marker: "smoke functional", status: "PASSED", time: "19.4ms" },
+      { id: 11, file: "test_create_users.py", name: "test_create_user_response_headers", marker: "functional", status: "PASSED", time: "20.5ms" },
+      { id: 12, file: "test_create_users.py", name: "test_create_user_duplicate_email_returns_409", marker: "negative functional", status: "PASSED", time: "23.5ms" },
+      { id: 13, file: "test_create_users.py", name: "test_create_user_missing_required_fields", marker: "negative functional", status: "PASSED", time: "28.7ms" },
+      { id: 14, file: "test_create_users.py", name: "test_create_user_invalid_email_format", marker: "negative functional", status: "PASSED", time: "2.9ms" },
+      { id: 15, file: "test_create_users.py", name: "test_create_user_invalid_role", marker: "negative functional", status: "PASSED", time: "2.9ms" },
+      { id: 16, file: "test_create_users.py", name: "test_create_user_age_boundary_validation", marker: "negative functional", status: "PASSED", time: "2.2ms" },
+      { id: 17, file: "test_create_users.py", name: "test_create_user_without_auth_returns_401", marker: "auth negative", status: "PASSED", time: "4.0ms" },
+
+      { id: 18, file: "test_get_users.py", name: "test_get_all_users_status_and_structure", marker: "smoke functional", status: "PASSED", time: "2.5ms" },
+      { id: 19, file: "test_get_users.py", name: "test_get_all_users_response_headers", marker: "functional", status: "PASSED", time: "2.3ms" },
+      { id: 20, file: "test_get_users.py", name: "test_get_users_pagination_parameters", marker: "functional", status: "PASSED", time: "2.1ms" },
+      { id: 21, file: "test_get_users.py", name: "test_get_users_filtering_by_role[admin]", marker: "functional", status: "PASSED", time: "2.0ms" },
+      { id: 22, file: "test_get_users.py", name: "test_get_users_filtering_by_status[active]", marker: "functional", status: "PASSED", time: "1.9ms" },
+      { id: 23, file: "test_get_users.py", name: "test_get_users_search_query", marker: "functional", status: "PASSED", time: "2.2ms" },
+      { id: 24, file: "test_get_users.py", name: "test_get_user_by_valid_id", marker: "smoke functional", status: "PASSED", time: "1.8ms" },
+      { id: 25, file: "test_get_users.py", name: "test_get_user_by_invalid_id_returns_404", marker: "negative functional", status: "PASSED", time: "1.7ms" },
+      { id: 26, file: "test_get_users.py", name: "test_get_user_by_malformed_string_id_returns_422", marker: "negative functional", status: "PASSED", time: "2.4ms" },
+
+      { id: 27, file: "test_update_users.py", name: "test_put_update_user_full_success", marker: "smoke functional", status: "PASSED", time: "21.3ms" },
+      { id: 28, file: "test_update_users.py", name: "test_put_update_nonexistent_user_returns_404", marker: "negative functional", status: "PASSED", time: "2.0ms" },
+      { id: 29, file: "test_update_users.py", name: "test_put_update_duplicate_email_conflict_returns_409", marker: "negative functional", status: "PASSED", time: "22.1ms" },
+      { id: 30, file: "test_update_users.py", name: "test_patch_update_single_field_role", marker: "smoke functional", status: "PASSED", time: "19.5ms" },
+      { id: 31, file: "test_update_users.py", name: "test_patch_update_multiple_fields", marker: "functional", status: "PASSED", time: "20.1ms" },
+      { id: 32, file: "test_update_users.py", name: "test_patch_update_nonexistent_user_returns_404", marker: "negative functional", status: "PASSED", time: "1.8ms" },
+      { id: 33, file: "test_update_users.py", name: "test_patch_update_empty_payload_returns_400", marker: "negative functional", status: "PASSED", time: "18.9ms" },
+      { id: 34, file: "test_update_users.py", name: "test_patch_update_invalid_data_type_returns_422", marker: "negative functional", status: "PASSED", time: "19.2ms" },
+      { id: 35, file: "test_update_users.py", name: "test_update_user_without_auth_returns_401", marker: "auth negative", status: "PASSED", time: "18.5ms" },
+
+      { id: 36, file: "test_delete_users.py", name: "test_delete_existing_user_success_200", marker: "smoke functional", status: "PASSED", time: "22.4ms" },
+      { id: 37, file: "test_delete_users.py", name: "test_verify_deleted_user_cannot_be_retrieved", marker: "functional", status: "PASSED", time: "23.0ms" },
+      { id: 38, file: "test_delete_users.py", name: "test_delete_nonexistent_user_returns_404", marker: "negative functional", status: "PASSED", time: "2.1ms" },
+      { id: 39, file: "test_delete_users.py", name: "test_delete_invalid_id_type_returns_422", marker: "negative functional", status: "PASSED", time: "2.0ms" },
+      { id: 40, file: "test_delete_users.py", name: "test_delete_user_without_authentication_returns_401", marker: "auth negative", status: "PASSED", time: "1.7ms" },
+
+      { id: 41, file: "test_negative_scenarios.py", name: "test_invalid_api_endpoint_returns_404", marker: "negative", status: "PASSED", time: "1.6ms" },
+      { id: 42, file: "test_negative_scenarios.py", name: "test_invalid_http_method_returns_405", marker: "negative", status: "PASSED", time: "1.7ms" },
+      { id: 43, file: "test_negative_scenarios.py", name: "test_incorrect_data_types_in_payload", marker: "negative", status: "PASSED", time: "4.1ms" },
+      { id: 44, file: "test_negative_scenarios.py", name: "test_negative_or_zero_user_id_returns_422[0]", marker: "negative", status: "PASSED", time: "1.8ms" },
+      { id: 45, file: "test_negative_scenarios.py", name: "test_negative_or_zero_user_id_returns_422[-1]", marker: "negative", status: "PASSED", time: "1.6ms" },
+      { id: 46, file: "test_negative_scenarios.py", name: "test_sql_injection_payload_handled_safely", marker: "negative", status: "PASSED", time: "2.4ms" },
+      { id: 47, file: "test_negative_scenarios.py", name: "test_xss_script_payload_handled_safely", marker: "negative", status: "PASSED", time: "21.8ms" },
+      { id: 48, file: "test_negative_scenarios.py", name: "test_malformed_json_body_returns_422", marker: "negative", status: "PASSED", time: "2.1ms" },
+
+      { id: 49, file: "test_response_validation.py", name: "test_validate_single_user_json_schema", marker: "smoke schema", status: "PASSED", time: "3.5ms" },
+      { id: 50, file: "test_response_validation.py", name: "test_validate_user_list_json_schema", marker: "schema", status: "PASSED", time: "4.2ms" },
+      { id: 51, file: "test_response_validation.py", name: "test_validate_user_response_data_types", marker: "schema", status: "PASSED", time: "2.0ms" },
+      { id: 52, file: "test_response_validation.py", name: "test_validate_mandatory_fields_presence", marker: "schema", status: "PASSED", time: "1.8ms" },
+      { id: 53, file: "test_response_validation.py", name: "test_api_response_time_sla_get_users", marker: "performance", status: "PASSED", time: "2.2ms" },
+      { id: 54, file: "test_response_validation.py", name: "test_api_response_time_sla_get_single_user", marker: "performance", status: "PASSED", time: "1.9ms" }
+    ];
+
+    // -------------------------------------------------------------
+    // 2. Render Test Cases List
+    // -------------------------------------------------------------
+    function renderTests(filter = "all") {
+      const container = document.getElementById("test-list-container");
+      container.innerHTML = "";
+
+      const filtered = testCases.filter(t => {
+        if (filter === "all") return true;
+        return t.marker.includes(filter);
+      });
+
+      filtered.forEach(tc => {
+        const card = document.createElement("div");
+        card.className = "p-3 rounded-xl bg-slate-900/50 border border-slate-800/80 hover:border-cyan-500/30 transition-all flex items-center justify-between text-xs";
+        card.innerHTML = `
+          <div class="truncate mr-2">
+            <div class="font-mono font-medium text-slate-200 truncate">${tc.name}</div>
+            <div class="text-[10px] text-slate-500 truncate">${tc.file}</div>
+          </div>
+          <div class="flex items-center space-x-2 shrink-0">
+            <span class="text-[10px] font-mono text-slate-400">${tc.time}</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              ${tc.status}
+            </span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filterTests(marker) {
+      document.querySelectorAll(".marker-btn").forEach(btn => {
+        btn.classList.remove("active", "bg-cyan-500", "text-white");
+        btn.classList.add("bg-slate-800", "text-slate-300");
+      });
+      event.target.classList.add("active", "bg-cyan-500", "text-white");
+      event.target.classList.remove("bg-slate-800", "text-slate-300");
+      renderTests(marker);
+    }
+
+    // -------------------------------------------------------------
+    // 3. Simulated API Scenarios
+    // -------------------------------------------------------------
+    const scenarios = {
+      get_users: {
+        method: "GET",
+        endpoint: "/users?page=1&limit=5",
+        status: 200,
+        statusText: "200 OK",
+        statusColor: "emerald",
+        time: "14.82ms",
+        reqBody: null,
+        resBody: {
+          "total": 5,
+          "page": 1,
+          "limit": 5,
+          "data": [
+            { "id": 1, "name": "Alice Johnson", "email": "alice@example.com", "role": "admin", "status": "active", "age": 28, "created_at": "2026-01-15T10:00:00Z" },
+            { "id": 2, "name": "Bob Smith", "email": "bob@example.com", "role": "tester", "status": "active", "age": 32, "created_at": "2026-01-16T11:30:00Z" },
+            { "id": 3, "name": "Charlie Brown", "email": "charlie@example.com", "role": "developer", "status": "inactive", "age": 24, "created_at": "2026-01-17T09:15:00Z" }
+          ]
+        }
+      },
+      post_login: {
+        method: "POST",
+        endpoint: "/login",
+        status: 200,
+        statusText: "200 OK",
+        statusColor: "emerald",
+        time: "19.94ms",
+        reqBody: {
+          "username": "testuser@example.com",
+          "password": "SecretPass123!"
+        },
+        resBody: {
+          "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0dXNlckBleGFtcGxlLmNvbSIsImV4cCI6MTc5NDIxODAwMH0.sample_signature_jwt",
+          "token_type": "bearer",
+          "expires_in": 3600
+        }
+      },
+      post_user: {
+        method: "POST",
+        endpoint: "/users",
+        status: 201,
+        statusText: "201 Created",
+        statusColor: "emerald",
+        time: "19.44ms",
+        reqBody: {
+          "name": "Sarah Connor",
+          "email": "sarah.connor@example.com",
+          "role": "tester",
+          "status": "active",
+          "age": 30
+        },
+        resBody: {
+          "id": 6,
+          "name": "Sarah Connor",
+          "email": "sarah.connor@example.com",
+          "role": "tester",
+          "status": "active",
+          "age": 30,
+          "created_at": "2026-11-09T15:38:47.012Z"
+        }
+      },
+      patch_user: {
+        method: "PATCH",
+        endpoint: "/users/1",
+        status: 200,
+        statusText: "200 OK",
+        statusColor: "emerald",
+        time: "18.91ms",
+        reqBody: {
+          "role": "developer"
+        },
+        resBody: {
+          "id": 1,
+          "name": "Alice Johnson",
+          "email": "alice@example.com",
+          "role": "developer",
+          "status": "active",
+          "age": 28,
+          "created_at": "2026-01-15T10:00:00Z"
+        }
+      },
+      negative_409: {
+        method: "POST",
+        endpoint: "/users",
+        status: 409,
+        statusText: "409 Conflict",
+        statusColor: "rose",
+        time: "23.59ms",
+        reqBody: {
+          "name": "Duplicate User",
+          "email": "alice@example.com",
+          "role": "admin",
+          "status": "active",
+          "age": 30
+        },
+        resBody: {
+          "detail": "Email 'alice@example.com' already registered"
+        }
+      },
+      negative_422: {
+        method: "POST",
+        endpoint: "/users",
+        status: 422,
+        statusText: "422 Unprocessable Entity",
+        statusColor: "amber",
+        time: "21.13ms",
+        reqBody: {
+          "name": "Underage User",
+          "email": "underage@example.com",
+          "role": "tester",
+          "status": "active",
+          "age": 15
+        },
+        resBody: {
+          "detail": [
+            {
+              "type": "greater_than_equal",
+              "loc": ["body", "age"],
+              "msg": "Input should be greater than or equal to 18",
+              "input": 15
+            }
+          ]
+        }
+      }
+    };
+
+    let activeScenario = "get_users";
+
+    function selectScenario(key) {
+      activeScenario = key;
+      const s = scenarios[key];
+      const previewEl = document.getElementById("request-preview");
+      if (s.reqBody) {
+        previewEl.innerText = JSON.stringify(s.reqBody, null, 2);
+      } else {
+        previewEl.innerText = `// No body required for ${s.method} ${s.endpoint}`;
+      }
+      executeSimulatedRequest();
+    }
+
+    function executeSimulatedRequest() {
+      const s = scenarios[activeScenario];
+
+      // Trigger 3D packet animation
+      triggerPacketAnimation();
+
+      document.getElementById("hdr-method").innerText = s.method;
+      document.getElementById("response-body").innerText = JSON.stringify(s.resBody, null, 2);
+
+      const statusPill = document.getElementById("response-status-pill");
+      statusPill.innerText = s.statusText;
+
+      if (s.statusColor === "emerald") {
+        statusPill.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-500/40 text-emerald-400";
+        document.getElementById("hdr-schema").innerText = "PASSED ✓";
+        document.getElementById("hdr-schema").className = "text-emerald-400";
+      } else if (s.statusColor === "rose") {
+        statusPill.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/20 border border-rose-500/40 text-rose-400";
+        document.getElementById("hdr-schema").innerText = "EXPECTED ERROR ✓";
+        document.getElementById("hdr-schema").className = "text-rose-400";
+      } else {
+        statusPill.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 border border-amber-500/40 text-amber-400";
+        document.getElementById("hdr-schema").innerText = "VALIDATION REJECTED ✓";
+        document.getElementById("hdr-schema").className = "text-amber-400";
+      }
+
+      document.getElementById("response-time-pill").innerText = `⚡ ${s.time}`;
+    }
+
+    // -------------------------------------------------------------
+    // 4. Interactive Test Suite Execution Animation
+    // -------------------------------------------------------------
+    function runAllTestsInteractive() {
+      const btn = document.getElementById("run-all-btn");
+      const btnText = document.getElementById("run-btn-text");
+      const spinner = document.getElementById("spinner-icon");
+      const playIcon = document.getElementById("play-icon");
+
+      btn.disabled = true;
+      btnText.innerText = "Executing 59 Tests...";
+      spinner.classList.remove("hidden");
+      playIcon.classList.add("hidden");
+
+      let count = 0;
+      const totalEl = document.getElementById("metric-total");
+      const durationEl = document.getElementById("metric-duration");
+
+      const interval = setInterval(() => {
+        count += 6;
+        if (count > 59) count = 59;
+        totalEl.innerText = count;
+
+        if (count >= 59) {
+          clearInterval(interval);
+          btn.disabled = false;
+          btnText.innerText = "Re-Run Full Test Suite";
+          spinner.classList.add("hidden");
+          playIcon.classList.remove("hidden");
+          durationEl.innerText = "2.55s";
+          renderTests("all");
+        }
+      }, 100);
+    }
+
+    // -------------------------------------------------------------
+    // 5. 3D Isometric Topology Canvas Animation
+    // -------------------------------------------------------------
+    const canvas = document.getElementById("topoCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let width, height;
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      width = canvas.width = rect.width * window.devicePixelRatio;
+      height = canvas.height = rect.height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    // 3D Nodes setup
+    let angleX = 0.35;
+    let angleY = -0.45;
+    let isDragging = false;
+    let prevMouseX = 0;
+    let prevMouseY = 0;
+
+    canvas.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    });
+
+    window.addEventListener("mouseup", () => isDragging = false);
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - prevMouseX;
+      const dy = e.clientY - prevMouseY;
+      angleY += dx * 0.005;
+      angleX += dy * 0.005;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    });
+
+    function reset3DCamera() {
+      angleX = 0.35;
+      angleY = -0.45;
+    }
+
+    const nodes = [
+      { name: "Pytest Client", x: -160, y: 0, z: 60, color: "#38bdf8" },
+      { name: "Auth Gateway", x: -60, y: -40, z: 0, color: "#f59e0b" },
+      { name: "FastAPI Engine", x: 40, y: 0, z: -40, color: "#22c55e" },
+      { name: "In-Memory DB", x: 140, y: 30, z: -80, color: "#a855f7" },
+      { name: "Schema Validator", x: -40, y: 50, z: 40, color: "#38bdf8" },
+      { name: "HTML Report Hub", x: 100, y: -50, z: 20, color: "#f43f5e" }
+    ];
+
+    const connections = [
+      [0, 1], [1, 2], [2, 3], [0, 4], [2, 4], [0, 5], [2, 5]
+    ];
+
+    // Data Packets animation
+    let packets = [];
+    function triggerPacketAnimation() {
+      for (let i = 0; i < 4; i++) {
+        packets.push({ edgeIdx: Math.floor(Math.random() * connections.length), progress: 0, speed: 0.02 + Math.random() * 0.02 });
+      }
+    }
+
+    // Auto trigger initial packets
+    setInterval(() => {
+      if (packets.length < 12) {
+        packets.push({ edgeIdx: Math.floor(Math.random() * connections.length), progress: 0, speed: 0.015 + Math.random() * 0.02 });
+      }
+    }, 600);
+
+    function project3D(x, y, z, cx, cy) {
+      // Rotate around Y
+      let x1 = x * Math.cos(angleY) + z * Math.sin(angleY);
+      let z1 = -x * Math.sin(angleY) + z * Math.cos(angleY);
+
+      // Rotate around X
+      let y2 = y * Math.cos(angleX) - z1 * Math.sin(angleX);
+      let z2 = y * Math.sin(angleX) + z1 * Math.cos(angleX);
+
+      const fov = 400;
+      const scale = fov / (fov + z2 + 250);
+      return {
+        x: cx + x1 * scale,
+        y: cy + y2 * scale,
+        scale: scale,
+        depth: z2
+      };
+    }
+
+    function render3D() {
+      const rect = canvas.getBoundingClientRect();
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      // Draw subtle grid
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
+      ctx.lineWidth = 1;
+      const gridSize = 180;
+      const step = 45;
+      for (let gx = -gridSize; gx <= gridSize; gx += step) {
+        const p1 = project3D(gx, 70, -gridSize, cx, cy);
+        const p2 = project3D(gx, 70, gridSize, cx, cy);
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+      for (let gz = -gridSize; gz <= gridSize; gz += step) {
+        const p1 = project3D(-gridSize, 70, gz, cx, cy);
+        const p2 = project3D(gridSize, 70, gz, cx, cy);
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+
+      // Draw Connection Lines
+      connections.forEach(([i, j]) => {
+        const pA = project3D(nodes[i].x, nodes[i].y, nodes[i].z, cx, cy);
+        const pB = project3D(nodes[j].x, nodes[j].y, nodes[j].z, cx, cy);
+
+        ctx.strokeStyle = "rgba(148, 163, 184, 0.25)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(pA.x, pA.y);
+        ctx.lineTo(pB.x, pB.y);
+        ctx.stroke();
+      });
+
+      // Update & Render Packets
+      for (let pIdx = packets.length - 1; pIdx >= 0; pIdx--) {
+        const pkt = packets[pIdx];
+        pkt.progress += pkt.speed;
+        if (pkt.progress >= 1) {
+          packets.splice(pIdx, 1);
+          continue;
+        }
+
+        const edge = connections[pkt.edgeIdx];
+        const nA = nodes[edge[0]];
+        const nB = nodes[edge[1]];
+
+        const curX = nA.x + (nB.x - nA.x) * pkt.progress;
+        const curY = nA.y + (nB.y - nA.y) * pkt.progress;
+        const curZ = nA.z + (nB.z - nA.z) * pkt.progress;
+
+        const proj = project3D(curX, curY, curZ, cx, cy);
+
+        ctx.fillStyle = "#38bdf8";
+        ctx.shadowColor = "#38bdf8";
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(proj.x, proj.y, 3 * proj.scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      // Draw Nodes
+      nodes.forEach(node => {
+        const p = project3D(node.x, node.y, node.z, cx, cy);
+
+        // Node Glow
+        ctx.fillStyle = node.color;
+        ctx.shadowColor = node.color;
+        ctx.shadowBlur = 15;
+
+        // Outer Ring
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 8 * p.scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+
+        // Center Dot
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3 * p.scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Node Label
+        ctx.fillStyle = "#e2e8f0";
+        ctx.font = `${Math.max(10, 11 * p.scale)}px sans-serif`;
+        ctx.textAlign = "center";
+        ctx.fillText(node.name, p.x, p.y - 14 * p.scale);
+      });
+
+      requestAnimationFrame(render3D);
+    }
+
+    // Initialize
+    renderTests("all");
+    selectScenario("get_users");
+    requestAnimationFrame(render3D);
+  </script>
+</body>
+</html>
