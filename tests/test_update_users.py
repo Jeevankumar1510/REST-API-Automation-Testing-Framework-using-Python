@@ -189,3 +189,4 @@ class TestUpdateUsers:
 
         response_patch = api_client.patch(f"/users/{user_id}", json={"name": "No Auth"})
         assert_status_code(response_patch, 401)
+

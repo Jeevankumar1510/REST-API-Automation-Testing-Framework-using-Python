@@ -142,3 +142,4 @@ class APIClient:
     def delete(self, endpoint: str, **kwargs: Any) -> Response:
         """Send HTTP DELETE request."""
         return self.request("DELETE", endpoint, **kwargs)
+

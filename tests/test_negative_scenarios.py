@@ -101,3 +101,4 @@ class TestNegativeScenarios:
 
         response = authenticated_client.post("/users", data=malformed_body, headers=headers)
         assert_status_code(response, 422)
+

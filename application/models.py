@@ -159,3 +159,4 @@ class MessageResponse(BaseModel):
     """Generic message response."""
     message: str
     deleted_user_id: Optional[int] = None
+

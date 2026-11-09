@@ -195,3 +195,4 @@ def delete_user(
         "message": f"User {user_id} deleted successfully",
         "deleted_user_id": user_id
     }
+

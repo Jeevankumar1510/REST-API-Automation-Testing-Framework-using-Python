@@ -70,3 +70,4 @@ jobs:
             reports/report.html
             reports/execution.log
           retention-days: 14
+

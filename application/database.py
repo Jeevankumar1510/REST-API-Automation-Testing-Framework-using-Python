@@ -197,3 +197,4 @@ class Database:
 
 # Singleton instance shared across application
 db = Database()
+

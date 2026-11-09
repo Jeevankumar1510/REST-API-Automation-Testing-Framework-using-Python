@@ -100,3 +100,4 @@ class TestResponseValidation:
         response = api_client.get("/users/1")
         assert_status_code(response, 200)
         assert_response_time(response, max_ms=settings.MAX_RESPONSE_TIME_MS)
+

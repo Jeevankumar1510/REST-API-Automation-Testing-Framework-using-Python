@@ -79,3 +79,4 @@ class TestDeleteUsers:
         response = api_client.delete("/users/1")
         assert_status_code(response, 401)
         assert "Missing authentication token" in response.json()["detail"]
+

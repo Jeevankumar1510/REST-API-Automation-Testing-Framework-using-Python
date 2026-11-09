@@ -1,0 +1,25 @@
+services:
+  api:
+    build: .
+    container_name: fastapi-target-service
+    command: python -m uvicorn application.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  tests:
+    build: .
+    container_name: api-test-runner
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      - API_BASE_URL=http://api:8000
+    volumes:
+      - ./reports:/app/reports
+    command: python -m pytest

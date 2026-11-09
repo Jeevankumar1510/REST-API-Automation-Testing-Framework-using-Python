@@ -54,3 +54,4 @@ class Config:
 
 # Singleton configuration instance
 settings = Config()
+

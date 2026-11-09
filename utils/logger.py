@@ -54,3 +54,4 @@ def setup_logger(
 def get_logger(name: str = "API_Automation") -> logging.Logger:
     """Convenience getter for loggers with hierarchical names."""
     return setup_logger(name)
+

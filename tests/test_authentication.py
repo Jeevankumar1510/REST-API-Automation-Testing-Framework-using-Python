@@ -121,3 +121,4 @@ class TestAuthentication:
         response = api_client.get("/auth/verify", headers=headers)
         assert_status_code(response, 401)
         assert "Invalid authentication scheme" in response.json()["detail"]
+

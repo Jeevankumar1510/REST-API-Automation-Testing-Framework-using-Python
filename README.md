@@ -357,3 +357,4 @@ The repository includes a ready-to-use GitHub Actions workflow configured in [`.
 
 ## 📄 License
 This project is licensed under the [MIT License](LICENSE).
+

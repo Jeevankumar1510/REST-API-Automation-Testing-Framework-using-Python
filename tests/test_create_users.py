@@ -149,3 +149,4 @@ class TestCreateUsers:
         body = response.json()
         assert "detail" in body
         assert "Missing authentication token" in body["detail"]
+

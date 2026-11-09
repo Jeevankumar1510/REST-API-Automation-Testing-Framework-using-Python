@@ -134,3 +134,4 @@ class TestGetUsers:
 
         body = response.json()
         assert "detail" in body
+
