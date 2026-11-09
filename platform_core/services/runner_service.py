@@ -6,7 +6,9 @@ and updates SQLite execution history and HTML reports.
 
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
+import tempfile
 import time
 from typing import Any, Dict, List, Optional
 import requests
@@ -152,7 +154,7 @@ class RunnerService:
         ])
 
         # Generate HTML report
-        reports_dir = Path("reports") / "executions"
+        reports_dir = (Path(tempfile.gettempdir()) / "reports" / "executions") if os.getenv("VERCEL") else (Path("reports") / "executions")
         reports_dir.mkdir(parents=True, exist_ok=True)
         report_file = reports_dir / f"execution_{execution.id}.html"
 

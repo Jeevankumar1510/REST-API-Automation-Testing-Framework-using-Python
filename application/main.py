@@ -24,7 +24,10 @@ from platform_core.services.project_service import ProjectService
 
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
-STATIC_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    STATIC_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    pass
 
 
 @asynccontextmanager

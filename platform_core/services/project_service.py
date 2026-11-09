@@ -7,8 +7,10 @@ from copy import deepcopy
 from datetime import datetime, timezone
 import io
 import json
+import os
 from pathlib import Path
 import shutil
+import tempfile
 import zipfile
 from typing import Any, Dict, List, Optional
 from sqlalchemy.orm import Session
@@ -163,7 +165,8 @@ class ProjectService:
         test_cases = [tc.to_dict() for tc in project.test_cases]
         slug = GeneratorService.slugify(project.name)
 
-        target_dir = Path("generated_projects") / slug
+        base_gen_dir = Path(tempfile.gettempdir()) / "generated_projects" if os.getenv("VERCEL") else Path("generated_projects")
+        target_dir = base_gen_dir / slug
         target_dir.mkdir(parents=True, exist_ok=True)
 
         # Generate files
@@ -175,7 +178,7 @@ class ProjectService:
         )
 
         # Package into ZIP archive
-        zip_path = Path("generated_projects") / f"{slug}_automation_suite.zip"
+        zip_path = base_gen_dir / f"{slug}_automation_suite.zip"
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
             for root, _, files in target_dir.walk() if hasattr(target_dir, "walk") else shutil.os.walk(target_dir):
                 for f in files:
