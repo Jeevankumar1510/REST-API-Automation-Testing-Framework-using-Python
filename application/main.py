@@ -68,6 +68,7 @@ app = FastAPI(
     version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    redirect_slashes=False,
     lifespan=lifespan
 )
 
@@ -79,6 +80,37 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def normalize_vercel_paths(request: Request, call_next):
+    """
+    Normalizes URL paths across Vercel Serverless Function rewrites and FastAPI routes.
+    1. Reads Vercel's 'x-matched-path' header to recover the original requested path.
+    2. Rewrites /api/index.py or /api/index to root or subpath.
+    3. Handles /api and /api/ as root aliases.
+    4. Seamlessly routes /api/platform -> /platform, /api/docs -> /docs, /api/health -> /health.
+    """
+    path = request.scope.get("path", "")
+    matched = request.headers.get("x-matched-path")
+
+    # If Vercel rewrote request to api/index.py, restore original matched path
+    if matched and matched not in ("/api/index.py", "/api/index", "/api"):
+        path = matched
+        request.scope["path"] = path
+
+    # Strip /api/index.py prefix if present
+    if path.startswith("/api/index.py"):
+        sub = path[len("/api/index.py"):]
+        request.scope["path"] = sub if sub else "/"
+    elif path in ("/api", "/api/"):
+        request.scope["path"] = "/"
+    elif path.startswith("/api/") and not path.startswith("/api/platform/"):
+        # e.g. /api/platform -> /platform, /api/health -> /health, /api/users -> /users
+        request.scope["path"] = path[4:]
+
+    response = await call_next(request)
+    return response
 
 
 @app.middleware("http")
@@ -112,6 +144,7 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR), check_dir=False), na
     summary="Web UI Platform",
     include_in_schema=False
 )
+@app.get("/api/platform", include_in_schema=False)
 def platform_ui():
     """Serves the Intelligent API Automation & 3D CI/CD Web Platform."""
     index_file = get_index_html_path()
@@ -127,6 +160,8 @@ def platform_ui():
     summary="API Root",
     description="Service information, platform UI link, and API documentation."
 )
+@app.get("/api", include_in_schema=False)
+@app.get("/api/", include_in_schema=False)
 def root(request: Request):
     accept = request.headers.get("accept", "")
     if "text/html" in accept:
@@ -150,6 +185,7 @@ def root(request: Request):
     summary="Health Check",
     description="Returns the operational health status of the application."
 )
+@app.get("/api/health", include_in_schema=False)
 def health_check():
     return {
         "status": "healthy",
