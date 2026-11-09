@@ -43,12 +43,32 @@ def open_report():
         print("Run the tests first to generate the report!\n")
 
 
+def open_dashboard():
+    """Open interactive 3D Dashboard in default web browser."""
+    dash_path = PROJECT_ROOT / "dashboard.html"
+    if dash_path.exists():
+        print(f"\n✨ Opening 3D Dashboard: {dash_path.resolve()}\n")
+        webbrowser.open(dash_path.as_uri())
+    else:
+        print(f"\n⚠️  Dashboard not found at: {dash_path}\n")
+
+
 def start_server():
-    """Launch the FastAPI server using Uvicorn."""
+    """Launch the FastAPI server using Uvicorn with graceful shutdown."""
     print("\n🌐 Starting FastAPI Target Server on http://127.0.0.1:8000...")
-    print("Interactive Documentation: http://127.0.0.1:8000/docs\n")
-    cmd = [sys.executable, "-m", "uvicorn", "application.main:app", "--host", "127.0.0.1", "--port", "8000", "--reload"]
-    subprocess.run(cmd, cwd=PROJECT_ROOT)
+    print("Interactive Documentation: http://127.0.0.1:8000/docs")
+    print("Press CTRL+C anytime to stop the server cleanly.\n")
+    cmd = [
+        sys.executable, "-m", "uvicorn", "application.main:app",
+        "--host", "127.0.0.1",
+        "--port", "8000",
+        "--reload",
+        "--reload-dir", str(PROJECT_ROOT / "application")
+    ]
+    try:
+        subprocess.run(cmd, cwd=PROJECT_ROOT)
+    except KeyboardInterrupt:
+        print("\n🛑 FastAPI server stopped cleanly.\n")
 
 
 def run_benchmark():
@@ -94,9 +114,7 @@ def interactive_menu():
         elif choice == "6":
             open_report()
         elif choice == "7":
-            dash_path = PROJECT_ROOT / "dashboard.html"
-            print(f"\n📊 Opening 3D Dashboard: {dash_path.resolve()}\n")
-            webbrowser.open(dash_path.as_uri())
+            open_dashboard()
         elif choice == "8":
             run_benchmark()
         elif choice == "9":
@@ -117,6 +135,7 @@ def main():
     parser.add_argument("--schema", action="store_true", help="Run schema tests")
     parser.add_argument("--performance", action="store_true", help="Run performance tests")
     parser.add_argument("--open-report", action="store_true", help="Open HTML report")
+    parser.add_argument("--dashboard", action="store_true", help="Open interactive 3D dashboard")
     parser.add_argument("--server", action="store_true", help="Start FastAPI server")
 
     args = parser.parse_args()
@@ -135,6 +154,8 @@ def main():
         sys.exit(run_pytest(["-m", "performance"]))
     elif args.open_report:
         open_report()
+    elif args.dashboard:
+        open_dashboard()
     elif args.server:
         start_server()
     else:
