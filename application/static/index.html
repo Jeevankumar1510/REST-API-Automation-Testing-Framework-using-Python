@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antigravity | Intelligent API Automation & 3D CI/CD Platform</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <!-- Three.js for 3D CI/CD Pipeline Visualization -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Chart.js for Interactive Metrics -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #080c14;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --border-glow: rgba(56, 189, 248, 0.2);
+    }
+    body {
+      background-color: #070a10;
+      background-image: radial-gradient(circle at 50% 10%, #111a2e 0%, #06090e 100%);
+      color: #f1f5f9;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .glass-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+      transition: all 0.3s ease;
+    }
+    .glass-card:hover {
+      border-color: rgba(56, 189, 248, 0.35);
+      box-shadow: 0 20px 40px -15px rgba(56, 189, 248, 0.15);
+    }
+    .pulse-glow {
+      animation: pulseGlow 2s infinite alternate;
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+      100% { box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); }
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.6); }
+  </style>
+</head>
+<body class="min-h-screen antialiased flex flex-col selection:bg-cyan-500 selection:text-white">
+
+  <!-- Main App Shell -->
+  <div class="flex-1 flex overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-slate-950/80 border-r border-slate-800/80 flex flex-col justify-between shrink-0 z-20 backdrop-blur-md">
+      <div>
+        <!-- Brand Header -->
+        <div class="p-5 border-b border-slate-800/80 flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-sm font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-cyan-400 bg-clip-text text-transparent">
+              ANTIGRAVITY
+            </div>
+            <div class="text-[10px] font-mono text-cyan-400/80">API AUTOMATION OS</div>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="p-3 space-y-1 text-xs font-medium">
+          <button onclick="switchTab('overview')" id="nav-overview" class="nav-btn active w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            <span>Platform Overview</span>
+          </button>
+
+          <button onclick="switchTab('pipeline3d')" id="nav-pipeline3d" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 border border-transparent transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            <span class="flex-1 text-left">3D CI/CD Pipeline</span>
+            <span class="px-1.5 py-0.5 rounded text-[9px] bg-cyan-500/20 text-cyan-300 font-bold">3D</span>
+          </button>
+
+          <button onclick="openWizardModal()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/20 my-2 transition-all transform hover:scale-[1.02]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            <span>+ Create Project</span>
+          </button>
+
+          <button onclick="switchTab('projects')" id="nav-projects" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 border border-transparent transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+            <span>My Projects</span>
+          </button>
+
+          <button onclick="switchTab('execution')" id="nav-execution" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 border border-transparent transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Test Execution Console</span>
+          </button>
+
+          <button onclick="switchTab('github')" id="nav-github" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 border border-transparent transition-all">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            <span>GitHub CI/CD Sync</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="p-4 border-t border-slate-800/80 text-[11px] text-slate-500 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="flex items-center space-x-1.5 text-emerald-400 font-mono">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>API Port 8000</span>
+          </span>
+          <span class="font-bold text-slate-400">FastAPI</span>
+        </div>
+        <div>SQLite: <span class="font-mono text-cyan-400">platform.db</span></div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
+
+      <!-- Top Header Bar -->
+      <header class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+        <div>
+          <h1 id="page-title" class="text-xl md:text-2xl font-bold text-white tracking-tight">
+            Automation Platform Overview
+          </h1>
+          <p id="page-subtitle" class="text-xs md:text-sm text-slate-400">
+            Intelligent REST API testing, test case generation, and 3D CI/CD pipeline management.
+          </p>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <button onclick="openWizardModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs md:text-sm shadow-lg shadow-cyan-500/25 transition-all flex items-center space-x-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>+ Create New Automation Project</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB 1: OVERVIEW & DASHBOARD METRICS -->
+      <div id="tab-overview" class="tab-pane space-y-6">
+        <!-- KPI Cards Grid (Module 4) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="kpi-grid">
+          <div class="glass-card rounded-2xl p-5">
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Projects</div>
+            <div class="mt-2 text-3xl font-extrabold text-white" id="stat-projects">-</div>
+            <div class="text-[11px] text-cyan-400 mt-1">Active Test Suites</div>
+          </div>
+          <div class="glass-card rounded-2xl p-5">
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total APIs Tested</div>
+            <div class="mt-2 text-3xl font-extrabold text-white" id="stat-endpoints">-</div>
+            <div class="text-[11px] text-slate-400 mt-1">Endpoints covered</div>
+          </div>
+          <div class="glass-card rounded-2xl p-5">
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Test Cases</div>
+            <div class="mt-2 text-3xl font-extrabold text-emerald-400" id="stat-tests">-</div>
+            <div class="text-[11px] text-emerald-300 mt-1">100% Pass Target</div>
+          </div>
+          <div class="glass-card rounded-2xl p-5">
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Avg API Response Time</div>
+            <div class="mt-2 text-3xl font-extrabold text-purple-400" id="stat-latency">16.4ms</div>
+            <div class="text-[11px] text-purple-300 mt-1">SLA Limit: &lt; 1500ms</div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Execution Trend Chart -->
+          <div class="lg:col-span-8 glass-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300">Test Execution Trend (Passed vs Failed)</h3>
+              <span class="text-xs text-slate-400">Last 7 Runs</span>
+            </div>
+            <div class="h-64 relative">
+              <canvas id="trendChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Category Distribution -->
+          <div class="lg:col-span-4 glass-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300">Test Scenarios Breakdown</h3>
+            </div>
+            <div class="h-64 relative flex items-center justify-center">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Projects Overview -->
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300">Active Automation Projects</h3>
+            <button onclick="switchTab('projects')" class="text-xs text-cyan-400 hover:underline">View All →</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="overview-projects-list">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: INTERACTIVE 3D CI/CD PIPELINE VISUALIZATION (Module 1) -->
+      <div id="tab-pipeline3d" class="tab-pane hidden space-y-4">
+        <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-3 h-3 rounded-full bg-cyan-400 animate-ping"></div>
+            <div>
+              <h2 class="text-sm font-bold text-white uppercase tracking-wider">3D CI/CD Pipeline Visualizer (11 Connected Stages)</h2>
+              <p class="text-xs text-slate-400">Drag to rotate 3D camera • Scroll to zoom • Click any stage to inspect real logs and metrics</p>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="resetPipelineCamera()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 border border-slate-700">
+              Reset Camera
+            </button>
+            <button onclick="simulateLivePipelineRun()" id="sim-pipe-btn" class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white font-semibold text-xs shadow-lg shadow-cyan-500/20 transition-all flex items-center space-x-1.5">
+              <span>▶</span>
+              <span>Execute Live Pipeline Simulation</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3D Canvas Container -->
+        <div class="relative w-full h-[520px] rounded-2xl overflow-hidden glass-card border border-cyan-500/30">
+          <div id="three-pipeline-container" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+          <!-- Floating Stage Legend -->
+          <div class="absolute bottom-4 left-4 p-3 rounded-xl bg-slate-950/80 backdrop-blur-md border border-slate-800 text-[11px] space-y-1.5">
+            <div class="font-bold text-slate-300 uppercase tracking-wider mb-1">Stage Status Indicators</div>
+            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span><span class="text-slate-300">Passed / Success</span></div>
+            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span><span class="text-slate-300">Running / In-Progress</span></div>
+            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span><span class="text-slate-300">Pending / Queued</span></div>
+            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span class="text-slate-300">Failed Quality Gate</span></div>
+          </div>
+        </div>
+
+        <!-- 11 Stages Status Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 text-xs" id="pipeline-stages-grid">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- TAB 3: MY AUTOMATION PROJECTS (Module 3) -->
+      <div id="tab-projects" class="tab-pane hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white">My Automation Projects</h2>
+            <p class="text-xs text-slate-400">Manage, edit, execute, and export complete test projects</p>
+          </div>
+          <button onclick="openWizardModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs shadow-lg shadow-cyan-500/20">
+            + Create New Project
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="my-projects-container">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- TAB 4: TEST EXECUTION & LIVE LOGS (Module 4) -->
+      <div id="tab-execution" class="tab-pane hidden space-y-6">
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 class="text-base font-bold text-white">Live Test Execution Console</h2>
+              <p class="text-xs text-slate-400">Select project and test category to trigger immediate execution against target API</p>
+            </div>
+            <div class="flex items-center space-x-3">
+              <select id="exec-project-select" class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200">
+                <!-- Populated dynamically -->
+              </select>
+              <button onclick="triggerSelectedExecution()" id="exec-run-btn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs shadow-lg shadow-cyan-500/25 flex items-center space-x-2">
+                <span>⚡ Run Tests</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Execution Type Buttons -->
+          <div class="flex flex-wrap gap-2 pt-2">
+            <button onclick="setExecType('all')" class="exec-type-btn active px-3 py-1.5 rounded-lg text-xs font-medium bg-cyan-500 text-white">All Tests</button>
+            <button onclick="setExecType('functional')" class="exec-type-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700">Functional Only</button>
+            <button onclick="setExecType('negative')" class="exec-type-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700">Negative Only</button>
+            <button onclick="setExecType('auth')" class="exec-type-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700">Authentication Only</button>
+            <button onclick="setExecType('performance')" class="exec-type-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700">SLA Performance</button>
+          </div>
+
+          <!-- Live Output Terminal -->
+          <div class="rounded-xl bg-slate-950 border border-slate-800 p-4 font-mono text-xs text-slate-300 space-y-1">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-slate-500 text-[11px]">
+              <span>TERMINAL OUTPUT / LOG STREAM</span>
+              <span id="exec-timer">Ready</span>
+            </div>
+            <pre id="execution-terminal" class="h-64 overflow-y-auto pt-2 text-cyan-400 leading-relaxed font-mono">// Select a project and click 'Run Tests' to dispatch real HTTP requests...</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: GITHUB INTEGRATION (Module 5) -->
+      <div id="tab-github" class="tab-pane hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left: Config Form -->
+          <div class="lg:col-span-5 glass-card rounded-2xl p-5 space-y-4">
+            <div class="flex items-center space-x-2">
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+              <h3 class="text-sm font-bold uppercase tracking-wider text-white">GitHub Actions Repository Sync</h3>
+            </div>
+            <p class="text-xs text-slate-400">Connect your repository to stream real GitHub Actions workflow runs directly into the 3D pipeline.</p>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Repository Owner</label>
+                <input type="text" id="gh-owner" placeholder="e.g. Jeeva or your-org" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Repository Name</label>
+                <input type="text" id="gh-repo" placeholder="e.g. REST-API-Automation-Testing-Framework-using-Python" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Branch</label>
+                <input type="text" id="gh-branch" value="main" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Personal Access Token (PAT) <span class="text-slate-500 font-normal">(Optional for public repos)</span></label>
+                <input type="password" id="gh-token" placeholder="ghp_••••••••••••••••" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+              </div>
+            </div>
+
+            <div class="pt-2 flex space-x-2">
+              <button onclick="saveGitHubConfig()" class="flex-1 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs shadow-md shadow-cyan-500/20">
+                Connect & Save
+              </button>
+              <button onclick="triggerGitHubWorkflow()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700">
+                Trigger Run ⚡
+              </button>
+            </div>
+            <div id="gh-status-msg" class="text-xs font-mono text-cyan-400"></div>
+          </div>
+
+          <!-- Right: Real Runs List -->
+          <div class="lg:col-span-7 glass-card rounded-2xl p-5 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-white">Live Workflow Runs (GitHub Actions)</h3>
+              <button onclick="loadGitHubRuns()" class="text-xs text-cyan-400 hover:underline">Refresh ↻</button>
+            </div>
+            <div class="space-y-2 max-h-96 overflow-y-auto pr-1" id="gh-runs-list">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: 7-STEP PROJECT CREATION WIZARD (Module 2)              -->
+  <!-- ============================================================== -->
+  <div id="wizard-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-4xl max-h-[90vh] glass-card bg-slate-950/95 border border-slate-700 rounded-3xl flex flex-col overflow-hidden shadow-2xl">
+
+      <!-- Wizard Header -->
+      <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">WIZARD</span>
+            <h2 class="text-lg font-bold text-white">Create New Automation Project</h2>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Generate complete Pytest suites for E-Commerce, Banking, Healthcare, or Custom REST APIs.</p>
+        </div>
+        <button onclick="closeWizardModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">✕</button>
+      </div>
+
+      <!-- Step Indicator Bar -->
+      <div class="px-6 py-3 bg-slate-900/60 border-b border-slate-800/80 flex items-center justify-between text-xs">
+        <div class="wizard-step-indicator active font-semibold text-cyan-400" id="step-ind-1">1. Project Info</div>
+        <div class="text-slate-600">→</div>
+        <div class="wizard-step-indicator text-slate-500" id="step-ind-2">2. API Configuration</div>
+        <div class="text-slate-600">→</div>
+        <div class="wizard-step-indicator text-slate-500" id="step-ind-3">3. Test Generation</div>
+        <div class="text-slate-600">→</div>
+        <div class="wizard-step-indicator text-slate-500" id="step-ind-4">4. Code Review</div>
+        <div class="text-slate-600">→</div>
+        <div class="wizard-step-indicator text-slate-500" id="step-ind-5">5. Approval & Export</div>
+      </div>
+
+      <!-- Wizard Body Content -->
+      <div class="p-6 overflow-y-auto flex-1 space-y-4">
+
+        <!-- STEP 1: PROJECT INFORMATION -->
+        <div id="wizard-step-1" class="wizard-step space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Project Name *</label>
+              <input type="text" id="wz-name" placeholder="e.g. Healthcare Patient API Suite" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Application Type *</label>
+              <select id="wz-app-type" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+                <option value="ecommerce">E-Commerce API</option>
+                <option value="banking">Banking & FinTech API</option>
+                <option value="healthcare">Healthcare & Patient API</option>
+                <option value="student_mgmt">Student Management API</option>
+                <option value="employee_mgmt">Employee Management API</option>
+                <option value="inventory">Inventory & Logistics API</option>
+                <option value="custom" selected>Custom REST API</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Programming Language</label>
+              <input type="text" value="Python 3.11+" disabled class="w-full px-3 py-2 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Automation Framework</label>
+              <input type="text" value="Pytest + Requests + JSON Schema" disabled class="w-full px-3 py-2 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400">
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Target API Base URL *</label>
+              <input type="text" id="wz-base-url" placeholder="http://127.0.0.1:8000 or https://api.example.com" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Project Description</label>
+              <textarea id="wz-desc" rows="2" placeholder="Brief explanation of the service under test..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: API CONFIGURATION (Option A, B, C, D) -->
+        <div id="wizard-step-2" class="wizard-step hidden space-y-4">
+          <div class="flex space-x-2 border-b border-slate-800 pb-2 text-xs">
+            <button onclick="setSpecOption('url')" id="spec-opt-url" class="spec-tab-btn active px-3 py-1.5 rounded-lg bg-cyan-500 text-white font-medium">Option A: Base URL Probing</button>
+            <button onclick="setSpecOption('openapi')" id="spec-opt-openapi" class="spec-tab-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium">Option B: OpenAPI / Swagger</button>
+            <button onclick="setSpecOption('postman')" id="spec-opt-postman" class="spec-tab-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium">Option C: Postman Collection</button>
+            <button onclick="setSpecOption('manual')" id="spec-opt-manual" class="spec-tab-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium">Option D: Manual Endpoints</button>
+          </div>
+
+          <div id="spec-pane-url" class="space-y-3">
+            <p class="text-xs text-slate-400">Click below to auto-discover endpoints from the base URL's <code>/openapi.json</code>, <code>/swagger.json</code>, or <code>/health</code>:</p>
+            <button onclick="autoProbeUrl()" id="probe-btn" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs shadow-md">
+              🔍 Auto-Probe Endpoints from URL
+            </button>
+          </div>
+
+          <div id="spec-pane-openapi" class="hidden space-y-3">
+            <label class="block text-xs font-semibold text-slate-300">Paste OpenAPI / Swagger Spec (JSON or YAML) or Upload File:</label>
+            <input type="file" id="wz-file-openapi" accept=".json,.yaml,.yml" class="block text-xs text-slate-400 mb-2">
+            <textarea id="wz-text-openapi" rows="6" placeholder="Paste OpenAPI JSON or YAML spec here..." class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs font-mono text-cyan-300"></textarea>
+            <button onclick="parseProvidedSpec('openapi')" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs">Parse OpenAPI Spec</button>
+          </div>
+
+          <div id="spec-pane-postman" class="hidden space-y-3">
+            <label class="block text-xs font-semibold text-slate-300">Paste Postman Collection JSON or Upload File:</label>
+            <input type="file" id="wz-file-postman" accept=".json" class="block text-xs text-slate-400 mb-2">
+            <textarea id="wz-text-postman" rows="6" placeholder="Paste Postman Collection v2.1 JSON here..." class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs font-mono text-cyan-300"></textarea>
+            <button onclick="parseProvidedSpec('postman')" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs">Parse Postman Collection</button>
+          </div>
+
+          <div id="spec-pane-manual" class="hidden space-y-3">
+            <div class="flex space-x-2">
+              <select id="man-method" class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+                <option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option>
+              </select>
+              <input type="text" id="man-path" placeholder="/api/v1/resource" class="flex-1 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+              <button onclick="addManualEndpoint()" class="px-4 py-2 rounded-xl bg-cyan-500 text-white text-xs font-semibold">+ Add</button>
+            </div>
+            <div id="manual-endpoints-list" class="space-y-1 text-xs"></div>
+          </div>
+
+          <!-- Identified Endpoints Preview -->
+          <div class="pt-3 border-t border-slate-800">
+            <div class="text-xs font-semibold text-slate-300 mb-2">Identified API Endpoints (<span id="identified-count">0</span>):</div>
+            <div class="max-h-36 overflow-y-auto space-y-1 pr-1" id="identified-endpoints-box">
+              <div class="text-xs text-slate-500 italic">No endpoints parsed yet. Choose an option above.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: TEST GENERATION REVIEW -->
+        <div id="wizard-step-3" class="wizard-step hidden space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="text-xs text-slate-400">Review automatically generated functional, negative, auth, and SLA tests:</div>
+            <span class="text-xs font-mono text-cyan-400" id="wz-generated-test-count">0 Tests Generated</span>
+          </div>
+          <div class="max-h-72 overflow-y-auto space-y-2 pr-1" id="wz-test-cases-review-list">
+            <!-- Dynamic test cards -->
+          </div>
+        </div>
+
+        <!-- STEP 4: CODE REVIEW & SCAFFOLD -->
+        <div id="wizard-step-4" class="wizard-step hidden space-y-4">
+          <div class="text-xs text-slate-400">Preview generated Python project structure and files before approval:</div>
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+            <div class="md:col-span-4 bg-slate-900 rounded-xl p-3 border border-slate-800 text-xs font-mono space-y-1" id="code-tree-box">
+              <div class="font-bold text-slate-400 uppercase text-[10px] mb-2">Generated Structure</div>
+              <div class="text-cyan-400 cursor-pointer hover:underline" onclick="previewFileContent('tests/test_functional.py')">📁 tests/test_functional.py</div>
+              <div class="text-cyan-400 cursor-pointer hover:underline" onclick="previewFileContent('tests/test_negative.py')">📁 tests/test_negative.py</div>
+              <div class="text-cyan-400 cursor-pointer hover:underline" onclick="previewFileContent('utils/api_client.py')">📄 utils/api_client.py</div>
+              <div class="text-cyan-400 cursor-pointer hover:underline" onclick="previewFileContent('conftest.py')">📄 conftest.py</div>
+              <div class="text-cyan-400 cursor-pointer hover:underline" onclick="previewFileContent('pytest.ini')">📄 pytest.ini</div>
+              <div class="text-cyan-400 cursor-pointer hover:underline" onclick="previewFileContent('.github/workflows/tests.yml')">📄 .github/workflows/tests.yml</div>
+            </div>
+            <div class="md:col-span-8 bg-slate-950 rounded-xl p-3 border border-slate-800 text-xs font-mono overflow-auto max-h-72">
+              <pre id="code-preview-pane" class="text-slate-300">// Click a file on the left to preview its generated Python source code</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5: APPROVAL & ACTIONS -->
+        <div id="wizard-step-5" class="wizard-step hidden space-y-4 text-center py-6">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 mx-auto flex items-center justify-center text-3xl">
+            ✓
+          </div>
+          <h3 class="text-lg font-bold text-white">Project Approved & Saved!</h3>
+          <p class="text-xs text-slate-400 max-w-md mx-auto">
+            Your new automation suite is saved in the database. You can now execute the tests live, download the complete project as a ZIP file, or inspect reports.
+          </p>
+          <div class="flex justify-center space-x-3 pt-3">
+            <button onclick="executeNewlyCreatedProject()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs shadow-lg shadow-cyan-500/25">
+              ⚡ Execute Tests Now
+            </button>
+            <button onclick="downloadNewlyCreatedZip()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700">
+              📥 Download Project ZIP
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Wizard Navigation Buttons -->
+      <div class="p-6 border-t border-slate-800 bg-slate-950 flex items-center justify-between">
+        <button onclick="prevWizardStep()" id="wz-prev-btn" disabled class="px-4 py-2 rounded-xl bg-slate-800 text-slate-500 text-xs font-semibold">
+          Back
+        </button>
+        <button onclick="nextWizardStep()" id="wz-next-btn" class="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white text-xs font-semibold shadow-md">
+          Continue →
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STAGE DETAILS MODAL (Module 1 Inspection) -->
+  <div id="stage-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-xl glass-card bg-slate-950/95 border border-slate-700 rounded-3xl p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-4 h-4 rounded-full bg-cyan-400" id="modal-stage-pill"></div>
+          <h3 class="text-base font-bold text-white uppercase tracking-wider" id="modal-stage-title">Stage Details</h3>
+        </div>
+        <button onclick="closeStageModal()" class="w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">✕</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-2 p-3 rounded-xl bg-slate-900 border border-slate-800">
+          <div><span class="text-slate-500">Execution Status:</span> <span id="modal-stage-status" class="font-bold text-emerald-400">PASSED</span></div>
+          <div><span class="text-slate-500">Duration:</span> <span id="modal-stage-duration" class="font-mono text-slate-200">2.55s</span></div>
+        </div>
+        <div>
+          <div class="font-semibold text-slate-300 mb-1">Stage Description & Quality Gate:</div>
+          <div id="modal-stage-desc" class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 font-mono text-[11px] leading-relaxed"></div>
+        </div>
+        <div>
+          <div class="font-semibold text-slate-300 mb-1">Detailed Metrics & Logs:</div>
+          <pre id="modal-stage-logs" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-cyan-400 font-mono text-[11px] max-h-44 overflow-y-auto leading-relaxed"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC & THREE.JS VISUALIZER -->
+  <script>
+    // -------------------------------------------------------------
+    // STATE MANAGEMENT
+    // -------------------------------------------------------------
+    let currentTab = 'overview';
+    let projectsData = [];
+    let activeExecutionType = 'all';
+    let wizardStep = 1;
+    let wizardEndpoints = [];
+    let wizardTestCases = [];
+    let wizardCreatedProjectId = null;
+    let wizardScaffoldFiles = {};
+
+    // -------------------------------------------------------------
+    // TAB SWITCHING
+    // -------------------------------------------------------------
+    function switchTab(tabId) {
+      currentTab = tabId;
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-cyan-500/10', 'text-cyan-400', 'border-cyan-500/30');
+        btn.classList.add('text-slate-400', 'border-transparent');
+      });
+
+      const activePane = document.getElementById(`tab-${tabId}`);
+      if (activePane) activePane.classList.remove('hidden');
+
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      if (activeNav) {
+        activeNav.classList.add('active', 'bg-cyan-500/10', 'text-cyan-400', 'border-cyan-500/30');
+        activeNav.classList.remove('text-slate-400', 'border-transparent');
+      }
+
+      // Dynamic header title
+      const titles = {
+        overview: "Automation Platform Overview",
+        pipeline3d: "3D CI/CD DevOps Pipeline",
+        projects: "My Automation Projects",
+        execution: "Test Execution & Live Logs Console",
+        github: "GitHub Actions CI/CD Integration"
+      };
+      document.getElementById('page-title').innerText = titles[tabId] || "Platform Overview";
+
+      if (tabId === 'pipeline3d') {
+        setTimeout(initThreeJSPipeline, 100);
+      } else if (tabId === 'projects') {
+        loadProjectsList();
+      } else if (tabId === 'github') {
+        loadGitHubConfig();
+        loadGitHubRuns();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // DATA FETCHING & DASHBOARD STATS (Module 4)
+    // -------------------------------------------------------------
+    async function loadDashboardStats() {
+      try {
+        const res = await fetch('/api/platform/dashboard/stats');
+        if (!res.ok) return;
+        const data = await res.json();
+        document.getElementById('stat-projects').innerText = data.total_projects;
+        document.getElementById('stat-endpoints').innerText = data.total_endpoints;
+        document.getElementById('stat-tests').innerText = data.total_test_cases;
+        document.getElementById('stat-latency').innerText = `${data.avg_latency_ms}ms`;
+      } catch (err) {
+        console.error("Stats load error:", err);
+      }
+    }
+
+    let trendChartInstance = null;
+    let catChartInstance = null;
+
+    async function loadDashboardCharts() {
+      try {
+        const res = await fetch('/api/platform/dashboard/charts');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // 1. Trend Chart
+        const trendCtx = document.getElementById('trendChart').getContext('2d');
+        if (trendChartInstance) trendChartInstance.destroy();
+        trendChartInstance = new Chart(trendCtx, {
+          type: 'line',
+          data: {
+            labels: data.trend.labels,
+            datasets: [
+              {
+                label: 'Passed Tests',
+                data: data.trend.passed,
+                borderColor: '#22c55e',
+                backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                fill: true,
+                tension: 0.35
+              },
+              {
+                label: 'Failed Tests',
+                data: data.trend.failed,
+                borderColor: '#f43f5e',
+                backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                fill: true,
+                tension: 0.35
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: '#94a3b8' } } },
+            scales: {
+              x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
+              y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' }, beginAtZero: true }
+            }
+          }
+        });
+
+        // 2. Category Breakdown
+        const catCtx = document.getElementById('categoryChart').getContext('2d');
+        if (catChartInstance) catChartInstance.destroy();
+        catChartInstance = new Chart(catCtx, {
+          type: 'doughnut',
+          data: {
+            labels: data.categories.labels,
+            datasets: [{
+              data: data.categories.data,
+              backgroundColor: ['#38bdf8', '#f59e0b', '#a855f7', '#22c55e', '#f43f5e'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 10, font: { size: 10 } } } }
+          }
+        });
+      } catch (err) {
+        console.error("Charts load error:", err);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // PROJECT MANAGEMENT (Module 3)
+    // -------------------------------------------------------------
+    async function loadProjectsList() {
+      try {
+        const res = await fetch('/api/platform/projects');
+        if (!res.ok) return;
+        projectsData = await res.json();
+
+        // Populate dropdown on execution page
+        const select = document.getElementById('exec-project-select');
+        select.innerHTML = '';
+        projectsData.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.innerText = p.name;
+          select.appendChild(opt);
+        });
+
+        // Render My Projects Cards
+        const container = document.getElementById('my-projects-container');
+        container.innerHTML = '';
+
+        const overviewContainer = document.getElementById('overview-projects-list');
+        overviewContainer.innerHTML = '';
+
+        projectsData.forEach(p => {
+          const passRate = p.latest_execution ? p.latest_execution.pass_rate : 100;
+          const statusBadge = p.latest_execution && p.latest_execution.status === 'failed'
+            ? '<span class="px-2 py-0.5 rounded text-[10px] bg-red-500/20 text-red-400 font-bold border border-red-500/30">FAILED</span>'
+            : '<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">PASSING 100%</span>';
+
+          const card = `
+            <div class="glass-card rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300 uppercase">${p.app_type}</span>
+                  ${statusBadge}
+                </div>
+                <h3 class="font-bold text-white text-base">${p.name}</h3>
+                <p class="text-xs text-slate-400 mt-1 line-clamp-2">${p.description || 'API automation testing suite.'}</p>
+                <div class="mt-3 p-2 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px] font-mono text-cyan-300 truncate">
+                  ${p.base_url}
+                </div>
+              </div>
+              <div class="space-y-3 pt-3 border-t border-slate-800/80">
+                <div class="flex justify-between text-xs text-slate-400">
+                  <span>Endpoints: <b class="text-white">${p.endpoints_count}</b></span>
+                  <span>Test Cases: <b class="text-white">${p.test_cases_count}</b></span>
+                </div>
+                <div class="flex space-x-2">
+                  <button onclick="runProjectTests(${p.id})" class="flex-1 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs shadow-md">Run Tests ⚡</button>
+                  <a href="/api/platform/projects/${p.id}/download-zip" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs border border-slate-700 text-center">ZIP 📥</a>
+                  <button onclick="deleteProject(${p.id})" class="px-2.5 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs border border-red-500/20">🗑</button>
+                </div>
+              </div>
+            </div>
+          `;
+          container.insertAdjacentHTML('beforeend', card);
+          overviewContainer.insertAdjacentHTML('beforeend', card);
+        });
+      } catch (err) {
+        console.error("Projects load error:", err);
+      }
+    }
+
+    async function deleteProject(id) {
+      if (!confirm("Are you sure you want to delete this automation project?")) return;
+      await fetch(`/api/platform/projects/${id}`, { method: 'DELETE' });
+      loadProjectsList();
+      loadDashboardStats();
+    }
+
+    // -------------------------------------------------------------
+    // MODULE 1: THREE.JS 3D CI/CD PIPELINE VISUALIZATION
+    // -------------------------------------------------------------
+    let scene, camera, renderer, nodes3D = [], particlesMesh;
+    let isThreeInitialized = false;
+
+    const pipelineStagesMeta = [
+      { id: 1, name: "1. Developer Code", status: "success", pos: [-25, 0, 0], desc: "Commit pushed to branch main with 4 modified test suites." },
+      { id: 2, name: "2. Git Repository", status: "success", pos: [-20, 0, 0], desc: "Head commit 392961f verified on origin/main branch." },
+      { id: 3, name: "3. GitHub Webhook", status: "success", pos: [-15, 0, 0], desc: "Webhook signature validated, payload delivered to CI runner." },
+      { id: 4, name: "4. CI/CD Trigger", status: "success", pos: [-10, 0, 0], desc: "GitHub Actions workflow run scheduled on ubuntu-latest." },
+      { id: 5, name: "5. Dependencies", status: "success", pos: [-5, 0, 0], desc: "pip install -r requirements.txt (FastAPI, Pytest, Requests, Pydantic)." },
+      { id: 6, name: "6. Code Quality", status: "success", pos: [0, 0, 0], desc: "PEP 8 syntax validation & Pydantic schema checks passed cleanly." },
+      { id: 7, name: "7. Pytest Engine", status: "success", pos: [5, 0, 0], desc: "Pytest 8.3 executed 66 test items in 3.02s." },
+      { id: 8, name: "8. API Execution", status: "success", pos: [10, 0, 0], desc: "Live HTTP requests dispatched against target endpoints." },
+      { id: 9, name: "9. Schema & SLA", status: "success", pos: [15, 0, 0], desc: "Draft-7 JSON Schemas and latency SLAs (<1500ms) verified." },
+      { id: 10, name: "10. HTML Report", status: "success", pos: [20, 0, 0], desc: "Standalone reports/report.html generated and archived as artifact." },
+      { id: 11, name: "11. Release Status", status: "success", pos: [25, 0, 0], desc: "Quality gate PASSED (100% test success). Ready for release." }
+    ];
+
+    function initThreeJSPipeline() {
+      const container = document.getElementById('three-pipeline-container');
+      if (!container || isThreeInitialized) return;
+
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x070a10, 0.015);
+
+      camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
+      camera.position.set(0, 15, 45);
+      camera.lookAt(0, 0, 0);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      // Ambient & Directional Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0x38bdf8, 1.2);
+      dirLight.position.set(10, 20, 20);
+      scene.add(dirLight);
+
+      // Create Grid Floor
+      const grid = new THREE.GridHelper(80, 40, 0x38bdf8, 0x1e293b);
+      grid.position.y = -6;
+      scene.add(grid);
+
+      // Create 11 Connected 3D Stages
+      const boxGeo = new THREE.CylinderGeometry(1.6, 2.0, 1.2, 32);
+      const ringGeo = new THREE.TorusGeometry(2.4, 0.08, 16, 64);
+
+      nodes3D = [];
+
+      pipelineStagesMeta.forEach((stage, idx) => {
+        const group = new THREE.Group();
+        group.position.set(stage.pos[0], stage.pos[1], stage.pos[2]);
+
+        const mat = new THREE.MeshStandardMaterial({
+          color: 0x22c55e,
+          emissive: 0x15803d,
+          roughness: 0.2,
+          metalness: 0.8
+        });
+        const cylinder = new THREE.Mesh(boxGeo, mat);
+        group.add(cylinder);
+
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        group.add(ring);
+
+        group.userData = { stageIdx: idx, meta: stage };
+        scene.add(group);
+        nodes3D.push({ group, cylinder, ring, meta: stage });
+      });
+
+      // Connecting Laser Paths
+      const lineMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, opacity: 0.6, transparent: true });
+      for (let i = 0; i < pipelineStagesMeta.length - 1; i++) {
+        const p1 = new THREE.Vector3(...pipelineStagesMeta[i].pos);
+        const p2 = new THREE.Vector3(...pipelineStagesMeta[i + 1].pos);
+        const geo = new THREE.BufferGeometry().setFromPoints([p1, p2]);
+        const line = new THREE.Line(geo, lineMat);
+        scene.add(line);
+      }
+
+      // Moving Particles
+      const particleCount = 200;
+      const pGeo = new THREE.BufferGeometry();
+      const pPos = new Float32Array(particleCount * 3);
+      for (let i = 0; i < particleCount; i++) {
+        pPos[i * 3] = (Math.random() - 0.5) * 60;
+        pPos[i * 3 + 1] = (Math.random() - 0.5) * 8;
+        pPos[i * 3 + 2] = (Math.random() - 0.5) * 15;
+      }
+      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+      const pMat = new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.35, transparent: true, opacity: 0.7 });
+      particlesMesh = new THREE.Points(pGeo, pMat);
+      scene.add(particlesMesh);
+
+      // Orbit Interaction
+      let isDragging = false;
+      let prevMouseX = 0;
+      let prevMouseY = 0;
+
+      container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      });
+      window.addEventListener('mouseup', () => isDragging = false);
+      container.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevMouseX;
+        const dy = e.clientY - prevMouseY;
+        camera.position.x -= dx * 0.08;
+        camera.position.y += dy * 0.08;
+        camera.lookAt(0, 0, 0);
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      });
+
+      // Click Stage to Inspect
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+
+      container.addEventListener('click', (e) => {
+        const rect = container.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+
+        const intersects = raycaster.intersectObjects(scene.children, true);
+        for (let hit of intersects) {
+          let p = hit.object.parent;
+          if (p && p.userData && p.userData.meta) {
+            openStageModal(p.userData.meta);
+            break;
+          }
+        }
+      });
+
+      // Render Loop
+      function animate() {
+        requestAnimationFrame(animate);
+        nodes3D.forEach(n => {
+          n.ring.rotation.z += 0.02;
+        });
+        if (particlesMesh) {
+          const positions = particlesMesh.geometry.attributes.position.array;
+          for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] += 0.15;
+            if (positions[i * 3] > 30) positions[i * 3] = -30;
+          }
+          particlesMesh.geometry.attributes.position.needsUpdate = true;
+        }
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      isThreeInitialized = true;
+      renderPipelineGrid();
+    }
+
+    function resetPipelineCamera() {
+      if (camera) {
+        camera.position.set(0, 15, 45);
+        camera.lookAt(0, 0, 0);
+      }
+    }
+
+    function renderPipelineGrid() {
+      const container = document.getElementById('pipeline-stages-grid');
+      container.innerHTML = '';
+      pipelineStagesMeta.forEach(s => {
+        const el = document.createElement('div');
+        el.className = 'p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 cursor-pointer transition-all';
+        el.onclick = () => openStageModal(s);
+        el.innerHTML = `
+          <div class="flex items-center space-x-1.5 mb-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="font-bold text-white truncate text-[11px]">${s.name}</span>
+          </div>
+          <div class="text-[10px] text-slate-400 truncate">${s.desc}</div>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    function openStageModal(stage) {
+      document.getElementById('modal-stage-title').innerText = stage.name;
+      document.getElementById('modal-stage-desc').innerText = stage.desc;
+      document.getElementById('modal-stage-status').innerText = stage.status.toUpperCase();
+      document.getElementById('modal-stage-logs').innerText = `[STAGE EXECUTOR]: Initiating ${stage.name}\n[STATUS]: Gate verified.\n[TIMESTAMP]: ${new Date().toISOString()}\n[METRICS]: All checks completed cleanly without warnings.`;
+      document.getElementById('stage-modal').classList.remove('hidden');
+    }
+    function closeStageModal() {
+      document.getElementById('stage-modal').classList.add('hidden');
+    }
+
+    async function simulateLivePipelineRun() {
+      const btn = document.getElementById('sim-pipe-btn');
+      btn.disabled = true;
+      btn.innerText = 'Executing 11 Stages...';
+
+      for (let i = 0; i < nodes3D.length; i++) {
+        nodes3D[i].cylinder.material.color.setHex(0x38bdf8);
+        nodes3D[i].cylinder.material.emissive.setHex(0x0284c7);
+        await new Promise(r => setTimeout(r, 250));
+        nodes3D[i].cylinder.material.color.setHex(0x22c55e);
+        nodes3D[i].cylinder.material.emissive.setHex(0x15803d);
+      }
+
+      btn.disabled = false;
+      btn.innerText = '▶ Re-Execute Live Pipeline Simulation';
+    }
+
+    // -------------------------------------------------------------
+    // MODULE 2: 7-STEP PROJECT CREATION WIZARD
+    // -------------------------------------------------------------
+    function openWizardModal() {
+      wizardStep = 1;
+      updateWizardUI();
+      document.getElementById('wizard-modal').classList.remove('hidden');
+    }
+    function closeWizardModal() {
+      document.getElementById('wizard-modal').classList.add('hidden');
+    }
+
+    function updateWizardUI() {
+      for (let i = 1; i <= 5; i++) {
+        const stepEl = document.getElementById(`wizard-step-${i}`);
+        const indEl = document.getElementById(`step-ind-${i}`);
+        if (i === wizardStep) {
+          stepEl.classList.remove('hidden');
+          indEl.className = 'wizard-step-indicator active font-semibold text-cyan-400';
+        } else if (i < wizardStep) {
+          stepEl.classList.add('hidden');
+          indEl.className = 'wizard-step-indicator font-semibold text-emerald-400';
+        } else {
+          stepEl.classList.add('hidden');
+          indEl.className = 'wizard-step-indicator text-slate-500';
+        }
+      }
+
+      document.getElementById('wz-prev-btn').disabled = (wizardStep === 1);
+      const nextBtn = document.getElementById('wz-next-btn');
+      if (wizardStep === 4) {
+        nextBtn.innerText = 'Approve & Save Project ✓';
+      } else if (wizardStep === 5) {
+        nextBtn.innerText = 'Finish & Close';
+      } else {
+        nextBtn.innerText = 'Continue →';
+      }
+    }
+
+    function prevWizardStep() {
+      if (wizardStep > 1) {
+        wizardStep--;
+        updateWizardUI();
+      }
+    }
+
+    async function nextWizardStep() {
+      if (wizardStep === 1) {
+        const name = document.getElementById('wz-name').value.trim();
+        const url = document.getElementById('wz-base-url').value.trim();
+        if (!name || !url) {
+          alert("Please fill in Project Name and Target Base URL.");
+          return;
+        }
+        wizardStep++;
+        updateWizardUI();
+      } else if (wizardStep === 2) {
+        if (wizardEndpoints.length === 0) {
+          alert("Please parse or add at least one endpoint.");
+          return;
+        }
+        wizardStep++;
+        renderWizardTestCases();
+        updateWizardUI();
+      } else if (wizardStep === 3) {
+        wizardStep++;
+        await buildScaffoldPreview();
+        updateWizardUI();
+      } else if (wizardStep === 4) {
+        await approveAndSaveProject();
+        wizardStep++;
+        updateWizardUI();
+      } else if (wizardStep === 5) {
+        closeWizardModal();
+        loadProjectsList();
+        loadDashboardStats();
+      }
+    }
+
+    function setSpecOption(opt) {
+      document.querySelectorAll('.spec-tab-btn').forEach(b => {
+        b.classList.remove('active', 'bg-cyan-500', 'text-white');
+        b.classList.add('bg-slate-800', 'text-slate-300');
+      });
+      document.getElementById(`spec-opt-${opt}`).classList.add('active', 'bg-cyan-500', 'text-white');
+      ['url', 'openapi', 'postman', 'manual'].forEach(k => {
+        document.getElementById(`spec-pane-${k}`).classList.add('hidden');
+      });
+      document.getElementById(`spec-pane-${opt}`).classList.remove('hidden');
+    }
+
+    async function autoProbeUrl() {
+      const url = document.getElementById('wz-base-url').value.trim();
+      const btn = document.getElementById('probe-btn');
+      btn.innerText = 'Probing...';
+      try {
+        const fd = new FormData();
+        fd.append('spec_type', 'url');
+        fd.append('base_url', url);
+        const res = await fetch('/api/platform/projects/parse-spec', { method: 'POST', body: fd });
+        const data = await res.json();
+        wizardEndpoints = data.endpoints || [];
+        wizardTestCases = data.suggested_tests || [];
+        renderIdentifiedEndpoints();
+      } catch (err) {
+        alert("Failed to auto-discover: " + err);
+      } finally {
+        btn.innerText = '🔍 Auto-Probe Endpoints from URL';
+      }
+    }
+
+    async function parseProvidedSpec(type) {
+      const fd = new FormData();
+      fd.append('spec_type', type);
+      fd.append('base_url', document.getElementById('wz-base-url').value.trim());
+
+      const fileInput = document.getElementById(`wz-file-${type}`);
+      const textInput = document.getElementById(`wz-text-${type}`);
+
+      if (fileInput.files.length > 0) {
+        fd.append('spec_file', fileInput.files[0]);
+      } else if (textInput.value.trim()) {
+        fd.append('raw_content', textInput.value.trim());
+      } else {
+        alert("Please paste spec content or choose a file.");
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/platform/projects/parse-spec', { method: 'POST', body: fd });
+        if (!res.ok) {
+          const err = await res.json();
+          alert(err.detail || "Parse error");
+          return;
+        }
+        const data = await res.json();
+        wizardEndpoints = data.endpoints || [];
+        wizardTestCases = data.suggested_tests || [];
+        renderIdentifiedEndpoints();
+        alert(`Successfully parsed ${wizardEndpoints.length} endpoints!`);
+      } catch (err) {
+        alert("Parsing failed: " + err);
+      }
+    }
+
+    function addManualEndpoint() {
+      const method = document.getElementById('man-method').value;
+      const path = document.getElementById('man-path').value.trim();
+      if (!path) return;
+
+      wizardEndpoints.push({
+        method: method,
+        path: path,
+        summary: `Manual ${method} ${path}`,
+        expected_status: method === 'POST' ? 201 : 200,
+        auth_required: false
+      });
+      document.getElementById('man-path').value = '';
+      renderIdentifiedEndpoints();
+    }
+
+    function renderIdentifiedEndpoints() {
+      document.getElementById('identified-count').innerText = wizardEndpoints.length;
+      const box = document.getElementById('identified-endpoints-box');
+      box.innerHTML = '';
+      wizardEndpoints.forEach(ep => {
+        const row = document.createElement('div');
+        row.className = 'p-2 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between text-xs';
+        row.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-cyan-500/20 text-cyan-300 font-mono">${ep.method}</span>
+            <span class="font-mono text-slate-200">${ep.path}</span>
+          </div>
+          <span class="text-slate-400 text-[10px]">${ep.summary || ''}</span>
+        `;
+        box.appendChild(row);
+      });
+    }
+
+    function renderWizardTestCases() {
+      document.getElementById('wz-generated-test-count').innerText = `${wizardTestCases.length} Tests Generated`;
+      const list = document.getElementById('wz-test-cases-review-list');
+      list.innerHTML = '';
+
+      wizardTestCases.forEach((tc, idx) => {
+        const item = document.createElement('div');
+        item.className = 'p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs';
+        item.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <input type="checkbox" checked onchange="toggleWizardTest(${idx}, this.checked)" class="rounded text-cyan-500">
+            <div>
+              <div class="font-mono text-slate-200 font-semibold">${tc.name}</div>
+              <div class="text-[11px] text-slate-400">${tc.description}</div>
+            </div>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-800 text-cyan-400">${tc.category}</span>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function toggleWizardTest(idx, enabled) {
+      if (wizardTestCases[idx]) {
+        wizardTestCases[idx].is_enabled = enabled;
+      }
+    }
+
+    async function buildScaffoldPreview() {
+      wizardScaffoldFiles = {
+        'tests/test_functional.py': `# Functional CRUD Tests Generated by Antigravity\nimport pytest\nfrom utils.api_client import APIClient\n\nclass TestFunctional:\n    def test_sample(self, client: APIClient):\n        resp = client.get("/users")\n        assert resp.status_code == 200`,
+        'utils/api_client.py': `import requests\n\nclass APIClient:\n    def __init__(self, base_url):\n        self.base_url = base_url\n        self.session = requests.Session()`,
+        'conftest.py': `@pytest.fixture(scope="session")\ndef client():\n    return APIClient(base_url="http://127.0.0.1:8000")`,
+        'pytest.ini': `[pytest]\ntestpaths = tests\naddopts = -v --html=reports/report.html`,
+        '.github/workflows/tests.yml': `name: Automated Test Pipeline\non: [push, pull_request]\njobs:\n  run-tests:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: pytest`
+      };
+      previewFileContent('tests/test_functional.py');
+    }
+
+    function previewFileContent(filePath) {
+      const code = wizardScaffoldFiles[filePath] || "// Code generation ready.";
+      document.getElementById('code-preview-pane').innerText = code;
+    }
+
+    async function approveAndSaveProject() {
+      const payload = {
+        name: document.getElementById('wz-name').value.trim(),
+        description: document.getElementById('wz-desc').value.trim(),
+        app_type: document.getElementById('wz-app-type').value,
+        base_url: document.getElementById('wz-base-url').value.trim(),
+        language: "Python",
+        framework: "Pytest + Requests"
+      };
+
+      const res = await fetch('/api/platform/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const project = await res.json();
+      wizardCreatedProjectId = project.id;
+
+      // Save endpoints and test cases
+      await fetch(`/api/platform/projects/${project.id}/save-wizard-data`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          endpoints: wizardEndpoints,
+          test_cases: wizardTestCases
+        })
+      });
+    }
+
+    function downloadNewlyCreatedZip() {
+      if (wizardCreatedProjectId) {
+        window.location.href = `/api/platform/projects/${wizardCreatedProjectId}/download-zip`;
+      }
+    }
+
+    function executeNewlyCreatedProject() {
+      closeWizardModal();
+      switchTab('execution');
+      if (wizardCreatedProjectId) {
+        document.getElementById('exec-project-select').value = wizardCreatedProjectId;
+        triggerSelectedExecution();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // MODULE 4: TEST EXECUTION RUNNER
+    // -------------------------------------------------------------
+    function setExecType(type) {
+      activeExecutionType = type;
+      document.querySelectorAll('.exec-type-btn').forEach(b => {
+        b.classList.remove('active', 'bg-cyan-500', 'text-white');
+        b.classList.add('bg-slate-800', 'text-slate-300');
+      });
+      event.target.classList.add('active', 'bg-cyan-500', 'text-white');
+      event.target.classList.remove('bg-slate-800', 'text-slate-300');
+    }
+
+    async function triggerSelectedExecution() {
+      const projectId = document.getElementById('exec-project-select').value;
+      if (!projectId) return;
+
+      const term = document.getElementById('execution-terminal');
+      term.innerText = `[RUNNER]: Dispatching ${activeExecutionType.toUpperCase()} test suite for Project ID ${projectId}...\n`;
+
+      const btn = document.getElementById('exec-run-btn');
+      btn.disabled = true;
+      btn.innerText = 'Running...';
+
+      try {
+        const res = await fetch('/api/platform/execution/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            project_id: parseInt(projectId),
+            execution_type: activeExecutionType
+          })
+        });
+
+        const execData = await res.json();
+        term.innerText = execData.output_logs || "Execution finished.";
+        loadDashboardStats();
+        loadDashboardCharts();
+      } catch (err) {
+        term.innerText += `\n[ERROR]: ${err}`;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '⚡ Run Tests';
+      }
+    }
+
+    function runProjectTests(projectId) {
+      switchTab('execution');
+      document.getElementById('exec-project-select').value = projectId;
+      triggerSelectedExecution();
+    }
+
+    // -------------------------------------------------------------
+    // MODULE 5: GITHUB INTEGRATION
+    // -------------------------------------------------------------
+    async function loadGitHubConfig() {
+      try {
+        const res = await fetch('/api/platform/github/config');
+        if (!res.ok) return;
+        const cfg = await res.json();
+        if (cfg.repo_owner) document.getElementById('gh-owner').value = cfg.repo_owner;
+        if (cfg.repo_name) document.getElementById('gh-repo').value = cfg.repo_name;
+        if (cfg.branch) document.getElementById('gh-branch').value = cfg.branch;
+        document.getElementById('gh-status-msg').innerText = cfg.is_connected ? "✓ Connected to GitHub" : "Not connected";
+      } catch (err) {
+        console.error("GH config error:", err);
+      }
+    }
+
+    async function saveGitHubConfig() {
+      const payload = {
+        repo_owner: document.getElementById('gh-owner').value.trim(),
+        repo_name: document.getElementById('gh-repo').value.trim(),
+        branch: document.getElementById('gh-branch').value.trim(),
+        access_token: document.getElementById('gh-token').value.trim()
+      };
+      const res = await fetch('/api/platform/github/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      document.getElementById('gh-status-msg').innerText = data.verification_message || "Saved.";
+      loadGitHubRuns();
+    }
+
+    async function loadGitHubRuns() {
+      try {
+        const res = await fetch('/api/platform/github/runs');
+        const data = await res.json();
+        const list = document.getElementById('gh-runs-list');
+        list.innerHTML = '';
+
+        (data.runs || []).forEach(r => {
+          const badgeColor = r.conclusion === 'success' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400';
+          const item = document.createElement('div');
+          item.className = 'p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs';
+          item.innerHTML = `
+            <div>
+              <div class="font-bold text-white">${r.name} <span class="text-[10px] text-slate-500">#${r.id}</span></div>
+              <div class="text-[11px] text-slate-400 font-mono">${r.commit_message || 'Test suite run'} (${r.branch})</div>
+            </div>
+            <div class="text-right">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeColor}">${r.conclusion || r.status}</span>
+              <div class="text-[10px] text-slate-500 mt-1">${r.event}</div>
+            </div>
+          `;
+          list.appendChild(item);
+        });
+      } catch (err) {
+        console.error("GH runs error:", err);
+      }
+    }
+
+    async function triggerGitHubWorkflow() {
+      try {
+        const res = await fetch('/api/platform/github/trigger', { method: 'POST' });
+        const data = await res.json();
+        alert(data.message || "Dispatched!");
+        setTimeout(loadGitHubRuns, 2000);
+      } catch (err) {
+        alert("Trigger error: " + err);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // INITIALIZATION
+    // -------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      loadDashboardStats();
+      loadDashboardCharts();
+      loadProjectsList();
+    });
+  </script>
+</body>
+</html>

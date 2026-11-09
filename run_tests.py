@@ -53,10 +53,18 @@ def open_dashboard():
         print(f"\n⚠️  Dashboard not found at: {dash_path}\n")
 
 
+def open_web_platform():
+    """Open the Intelligent API Automation & 3D CI/CD Web Platform in default browser."""
+    url = "http://127.0.0.1:8000/platform"
+    print(f"\n✨ Opening Intelligent API Automation Web Platform at {url}...\n")
+    webbrowser.open(url)
+
+
 def start_server():
     """Launch the FastAPI server using Uvicorn with graceful shutdown."""
-    print("\n🌐 Starting FastAPI Target Server on http://127.0.0.1:8000...")
-    print("Interactive Documentation: http://127.0.0.1:8000/docs")
+    print("\n🌐 Starting FastAPI Target Server & Platform on http://127.0.0.1:8000...")
+    print("🚀 Web Platform & 3D CI/CD Visualizer: http://127.0.0.1:8000/platform")
+    print("📖 Interactive Swagger Documentation: http://127.0.0.1:8000/docs")
     print("Press CTRL+C anytime to stop the server cleanly.\n")
     cmd = [
         sys.executable, "-m", "uvicorn", "application.main:app",
@@ -89,13 +97,14 @@ def interactive_menu():
         print("  [4] Run Negative Scenarios (400, 401, 404, 405, 409, 422)")
         print("  [5] Run JSON Schema & Performance SLA Tests")
         print("  [6] Open Latest HTML Test Report in Browser")
-        print("  [7] Open Interactive 3D Architecture Dashboard")
-        print("  [8] Run Concurrency & Load Benchmark (100 reqs / 10 workers)")
-        print("  [9] Start FastAPI Target Application Server")
+        print("  [7] Open Web Platform (3D CI/CD & Project Wizard) [Browser]")
+        print("  [8] Open Interactive 3D Architecture Canvas")
+        print("  [9] Run Concurrency & Load Benchmark (100 reqs / 10 workers)")
+        print("  [10] Start FastAPI Target Application & Platform Server")
         print("  [0] Exit")
         print("=" * 65)
 
-        choice = input("Enter your choice [0-9]: ").strip()
+        choice = input("Enter your choice [0-10]: ").strip()
 
         if choice == "1":
             code = run_pytest()
@@ -114,16 +123,18 @@ def interactive_menu():
         elif choice == "6":
             open_report()
         elif choice == "7":
-            open_dashboard()
+            open_web_platform()
         elif choice == "8":
-            run_benchmark()
+            open_dashboard()
         elif choice == "9":
+            run_benchmark()
+        elif choice == "10":
             start_server()
         elif choice == "0":
             print("\nExiting. Happy Testing! 🎉\n")
             break
         else:
-            print("\n❌ Invalid selection. Please choose an option from 0 to 9.")
+            print("\n❌ Invalid selection. Please choose an option from 0 to 10.")
 
 
 def main():
@@ -135,6 +146,7 @@ def main():
     parser.add_argument("--schema", action="store_true", help="Run schema tests")
     parser.add_argument("--performance", action="store_true", help="Run performance tests")
     parser.add_argument("--open-report", action="store_true", help="Open HTML report")
+    parser.add_argument("--platform", action="store_true", help="Open intelligent web platform")
     parser.add_argument("--dashboard", action="store_true", help="Open interactive 3D dashboard")
     parser.add_argument("--server", action="store_true", help="Start FastAPI server")
 
@@ -150,6 +162,18 @@ def main():
         sys.exit(run_pytest(["-m", "negative"]))
     elif args.schema:
         sys.exit(run_pytest(["-m", "schema"]))
+    elif args.performance:
+        sys.exit(run_pytest(["-m", "performance"]))
+    elif args.open_report:
+        open_report()
+    elif args.platform:
+        open_web_platform()
+    elif args.dashboard:
+        open_dashboard()
+    elif args.server:
+        start_server()
+    else:
+        interactive_menu()
     elif args.performance:
         sys.exit(run_pytest(["-m", "performance"]))
     elif args.open_report:

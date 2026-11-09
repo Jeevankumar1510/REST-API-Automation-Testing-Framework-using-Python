@@ -135,3 +135,22 @@ class TestGetUsers:
         body = response.json()
         assert "detail" in body
 
+    @pytest.mark.negative
+    @pytest.mark.parametrize("invalid_page", [0, -1, -10])
+    def test_get_users_invalid_page_boundary_returns_422(self, api_client: APIClient, invalid_page: int):
+        """
+        Verify GET /users with page < 1 violates boundary constraints and returns HTTP 422.
+        """
+        response = api_client.get("/users", params={"page": invalid_page})
+        assert_status_code(response, 422)
+
+    @pytest.mark.negative
+    @pytest.mark.parametrize("invalid_limit", [0, -5, 101, 500])
+    def test_get_users_invalid_limit_boundary_returns_422(self, api_client: APIClient, invalid_limit: int):
+        """
+        Verify GET /users with limit < 1 or limit > 100 returns HTTP 422.
+        """
+        response = api_client.get("/users", params={"limit": invalid_limit})
+        assert_status_code(response, 422)
+
+

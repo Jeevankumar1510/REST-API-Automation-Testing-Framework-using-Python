@@ -17,7 +17,14 @@ htmlcov/
 # Local reports and execution logs
 reports/*.html
 reports/*.log
+reports/executions/
 !reports/.gitkeep
+
+# Generated Projects and Databases
+platform_core/*.db
+*.db
+generated_projects/*.zip
+!generated_projects/.gitkeep
 
 # IDEs and Editors
 .idea/
