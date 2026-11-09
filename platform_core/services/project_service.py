@@ -184,3 +184,4 @@ class ProjectService:
                     zf.write(file_full, arcname=rel_path)
 
         return zip_path
+

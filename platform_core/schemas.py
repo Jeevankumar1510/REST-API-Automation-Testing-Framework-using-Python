@@ -106,3 +106,4 @@ class PipelineTriggerRequest(BaseModel):
     project_id: Optional[int] = None
     branch: str = "main"
     trigger_event: str = "manual"
+

@@ -136,3 +136,4 @@ async def trigger_github_workflow(db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=message)
 
     return {"message": message, "status": "triggered"}
+

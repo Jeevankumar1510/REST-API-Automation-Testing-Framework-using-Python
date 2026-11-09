@@ -224,3 +224,4 @@ def download_project_zip(project_id: int, db: Session = Depends(get_db)):
         )
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to generate project zip: {str(exc)}")
+

@@ -439,3 +439,4 @@ pytest -m performance
                 f.write(content)
 
         return generated_files
+

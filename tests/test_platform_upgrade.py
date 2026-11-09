@@ -220,3 +220,4 @@ class TestPlatformUpgrade:
         assert body["status"] in ["passed", "completed", "failed"]
         assert "output_logs" in body and len(body["output_logs"]) > 20
         assert "report_path" in body
+

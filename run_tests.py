@@ -174,16 +174,6 @@ def main():
         start_server()
     else:
         interactive_menu()
-    elif args.performance:
-        sys.exit(run_pytest(["-m", "performance"]))
-    elif args.open_report:
-        open_report()
-    elif args.dashboard:
-        open_dashboard()
-    elif args.server:
-        start_server()
-    else:
-        interactive_menu()
 
 
 if __name__ == "__main__":

@@ -94,3 +94,4 @@ def trigger_pipeline_simulation(payload: PipelineTriggerRequest, db: Session = D
     res = run.to_dict()
     res["stages"] = DEFAULT_11_STAGES
     return res
+

@@ -111,3 +111,4 @@ def get_dashboard_charts(db: Session = Depends(get_db)):
             ]
         }
     }
+

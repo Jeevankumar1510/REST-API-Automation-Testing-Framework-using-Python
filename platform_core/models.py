@@ -258,3 +258,4 @@ class GitHubConfig(Base):
             "is_connected": self.is_connected,
             "last_synced_at": self.last_synced_at.isoformat() if self.last_synced_at else None
         }
+

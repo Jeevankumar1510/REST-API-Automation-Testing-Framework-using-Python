@@ -73,3 +73,4 @@ def view_execution_report(execution_id: int, db: Session = Depends(get_db)):
         html = f.read()
 
     return HTMLResponse(content=html)
+
