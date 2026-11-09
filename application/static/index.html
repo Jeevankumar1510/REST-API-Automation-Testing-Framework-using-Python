@@ -204,42 +204,110 @@
 
       <!-- TAB 2: INTERACTIVE 3D CI/CD PIPELINE VISUALIZATION (Module 1) -->
       <div id="tab-pipeline3d" class="tab-pane hidden space-y-4">
-        <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+        
+        <!-- Top Telemetry & Control Bar -->
+        <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 border border-cyan-500/30 shadow-xl shadow-cyan-950/20">
           <div class="flex items-center space-x-3">
-            <div class="w-3 h-3 rounded-full bg-cyan-400 animate-ping"></div>
+            <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-blue-600/30 border border-cyan-500/40 text-cyan-400">
+              <svg class="w-5 h-5 animate-spin" style="animation-duration: 9s;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <div class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></div>
+            </div>
             <div>
-              <h2 class="text-sm font-bold text-white uppercase tracking-wider">3D CI/CD Pipeline Visualizer (11 Connected Stages)</h2>
-              <p class="text-xs text-slate-400">Drag to rotate 3D camera • Scroll to zoom • Click any stage to inspect real logs and metrics</p>
+              <div class="flex items-center space-x-2">
+                <h2 class="text-sm font-bold text-white uppercase tracking-wider">Futuristic 3D CI/CD DevOps Pipeline</h2>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">3D LIVE</span>
+              </div>
+              <p class="text-xs text-slate-400">Interconnected 9 Stages: Developer ➔ GitHub ➔ CI Trigger ➔ Build ➔ Code Quality ➔ Pytest ➔ API Testing ➔ Reports ➔ Deployment</p>
             </div>
           </div>
 
-          <div class="flex items-center space-x-2">
-            <button onclick="resetPipelineCamera()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 border border-slate-700">
-              Reset Camera
-            </button>
-            <button onclick="simulateLivePipelineRun()" id="sim-pipe-btn" class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white font-semibold text-xs shadow-lg shadow-cyan-500/20 transition-all flex items-center space-x-1.5">
+          <!-- Live GitHub / Pipeline Telemetry Badges -->
+          <div class="flex flex-wrap items-center gap-2 text-[11px]">
+            <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300">
+              <span class="text-slate-500">Branch:</span>
+              <span id="pipe-live-branch" class="font-mono text-cyan-400 font-semibold">main</span>
+            </div>
+            <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300">
+              <span class="text-slate-500">Commit:</span>
+              <span id="pipe-live-commit" class="font-mono text-emerald-400 font-semibold">392961f</span>
+            </div>
+            <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300">
+              <span class="text-slate-500">Quality Gate:</span>
+              <span id="pipe-live-gate" class="font-semibold text-emerald-400 flex items-center space-x-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>PASSED (100%)</span></span>
+            </div>
+          </div>
+
+          <!-- Pipeline Controls: Run, Pause, Replay, Reset -->
+          <div class="flex items-center flex-wrap gap-2">
+            <button onclick="runPipelineSequential()" id="pipe-run-btn" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white font-semibold text-xs shadow-lg shadow-cyan-500/25 transition-all flex items-center space-x-1.5 active:scale-95">
               <span>▶</span>
-              <span>Execute Live Pipeline Simulation</span>
+              <span id="pipe-run-btn-label">Run Pipeline</span>
+            </button>
+            <button onclick="pausePipelineSequential()" id="pipe-pause-btn" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs border border-slate-700 transition-all flex items-center space-x-1.5 active:scale-95" disabled>
+              <span>⏸</span>
+              <span>Pause</span>
+            </button>
+            <button onclick="replayPipelineSequential()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs border border-slate-700 transition-all flex items-center space-x-1.5 active:scale-95">
+              <span>🔄</span>
+              <span>Replay</span>
+            </button>
+            <button onclick="resetPipelineStages()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs border border-slate-700 transition-all flex items-center space-x-1.5 active:scale-95">
+              <span>⏹</span>
+              <span>Reset</span>
             </button>
           </div>
         </div>
 
-        <!-- 3D Canvas Container -->
-        <div class="relative w-full h-[520px] rounded-2xl overflow-hidden glass-card border border-cyan-500/30">
+        <!-- 3D Canvas Viewport Container -->
+        <div class="relative w-full h-[560px] rounded-2xl overflow-hidden glass-card border border-cyan-500/30 shadow-2xl bg-[#030712]">
+          <!-- Three.js Canvas Div -->
           <div id="three-pipeline-container" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
 
-          <!-- Floating Stage Legend -->
-          <div class="absolute bottom-4 left-4 p-3 rounded-xl bg-slate-950/80 backdrop-blur-md border border-slate-800 text-[11px] space-y-1.5">
-            <div class="font-bold text-slate-300 uppercase tracking-wider mb-1">Stage Status Indicators</div>
-            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span><span class="text-slate-300">Passed / Success</span></div>
-            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span><span class="text-slate-300">Running / In-Progress</span></div>
-            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span><span class="text-slate-300">Pending / Queued</span></div>
-            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span class="text-slate-300">Failed Quality Gate</span></div>
+          <!-- Camera & View Floating Toolbar (Top Right) -->
+          <div class="absolute top-4 right-4 flex items-center space-x-1.5 p-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-xs z-10">
+            <button onclick="setCameraPreset('default')" title="Default 3D Perspective" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium border border-slate-700 transition-all">Perspective</button>
+            <button onclick="setCameraPreset('isometric')" title="Isometric 3D View" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium border border-slate-700 transition-all">Isometric</button>
+            <button onclick="setCameraPreset('top')" title="Top-Down Overview" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium border border-slate-700 transition-all">Top-Down</button>
+            <div class="w-px h-4 bg-slate-700 mx-1"></div>
+            <label class="flex items-center space-x-1 text-[11px] text-slate-300 cursor-pointer pr-1">
+              <input type="checkbox" id="chk-auto-follow" class="rounded bg-slate-900 border-slate-700 text-cyan-500 focus:ring-0">
+              <span>Auto-Follow</span>
+            </label>
+          </div>
+
+          <!-- Active Stage Mini HUD Banner (Top Left) -->
+          <div class="absolute top-4 left-4 p-3 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-xs z-10 pointer-events-none max-w-sm">
+            <div class="flex items-center space-x-2 mb-1">
+              <span id="hud-stage-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
+              <span id="hud-stage-name" class="font-bold text-white uppercase tracking-wider text-[11px]">ALL 9 STAGES VERIFIED</span>
+            </div>
+            <div id="hud-stage-desc" class="text-[10px] text-slate-400 leading-tight">Pipeline executed successfully. Click any rotating 3D station to inspect detailed logs.</div>
+          </div>
+
+          <!-- Floating Stage Status Legend (Bottom Left) -->
+          <div class="absolute bottom-4 left-4 p-3 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-[11px] space-y-1.5 z-10">
+            <div class="font-bold text-slate-300 uppercase tracking-wider text-[10px] mb-1">Status Color Legend</div>
+            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span><span class="text-slate-300 font-medium">Green: Success / Passed</span></div>
+            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-sm shadow-cyan-400"></span><span class="text-slate-300 font-medium">Blue/Cyan: Running (Spinning)</span></div>
+            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-sm shadow-rose-500"></span><span class="text-slate-300 font-medium">Red: Failure / Blocked</span></div>
+            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span><span class="text-slate-400 font-medium">Grey: Pending / Queued</span></div>
+          </div>
+
+          <!-- Instructions Pill (Bottom Right) -->
+          <div class="absolute bottom-4 right-4 px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-[11px] text-slate-400 z-10 flex items-center space-x-2">
+            <span>🖱 Drag to rotate 360° • Scroll to zoom • Click stage to inspect logs</span>
+          </div>
+
+          <!-- Dynamic Hover Tooltip -->
+          <div id="three-hover-tooltip" class="absolute hidden pointer-events-none z-20 px-3 py-2 rounded-xl bg-slate-950/95 border border-cyan-500/50 text-white text-xs shadow-2xl backdrop-blur-md transition-opacity duration-150">
+            <div class="font-bold text-cyan-300 text-[11px]" id="tt-title">Stage Title</div>
+            <div class="text-[10px] text-slate-300 mt-0.5" id="tt-desc">Description</div>
+            <div class="text-[9px] text-emerald-400 font-mono mt-1" id="tt-status">Status: SUCCESS</div>
           </div>
         </div>
 
-        <!-- 11 Stages Status Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 text-xs" id="pipeline-stages-grid">
+        <!-- 9 Stages Interactive Grid Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-9 gap-2 text-xs" id="pipeline-stages-grid">
           <!-- Rendered dynamically -->
         </div>
       </div>
@@ -565,6 +633,20 @@
           <div class="font-semibold text-slate-300 mb-1">Detailed Metrics & Logs:</div>
           <pre id="modal-stage-logs" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-cyan-400 font-mono text-[11px] max-h-44 overflow-y-auto leading-relaxed"></pre>
         </div>
+        <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+          <button onclick="focusStageFromModal()" class="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-semibold flex items-center space-x-1.5 transition-all">
+            <span>🎯</span>
+            <span>Focus 3D Camera</span>
+          </button>
+          <div class="flex items-center space-x-2">
+            <button onclick="copyModalLogs()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700">
+              📋 Copy Logs
+            </button>
+            <button onclick="closeStageModal()" class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold">
+              Close
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -784,225 +866,835 @@
     }
 
     // -------------------------------------------------------------
-    // MODULE 1: THREE.JS 3D CI/CD PIPELINE VISUALIZATION
+    // MODULE 1: MODERN INTERACTIVE 3D CI/CD PIPELINE VISUALIZATION
     // -------------------------------------------------------------
-    let scene, camera, renderer, nodes3D = [], particlesMesh;
+    let scene, camera, renderer, nodes3D = [], splineCurve, tubeMesh, pulseOrbs = [];
+    let particlesMesh, followSpotlight;
     let isThreeInitialized = false;
+    let pipelineRunning = false;
+    let pipelinePaused = false;
+    let activeStageIdx = 0;
+    let pipelineTimer = null;
+    let selectedStageForModal = null;
 
-    const pipelineStagesMeta = [
-      { id: 1, name: "1. Developer Code", status: "success", pos: [-25, 0, 0], desc: "Commit pushed to branch main with 4 modified test suites." },
-      { id: 2, name: "2. Git Repository", status: "success", pos: [-20, 0, 0], desc: "Head commit 392961f verified on origin/main branch." },
-      { id: 3, name: "3. GitHub Webhook", status: "success", pos: [-15, 0, 0], desc: "Webhook signature validated, payload delivered to CI runner." },
-      { id: 4, name: "4. CI/CD Trigger", status: "success", pos: [-10, 0, 0], desc: "GitHub Actions workflow run scheduled on ubuntu-latest." },
-      { id: 5, name: "5. Dependencies", status: "success", pos: [-5, 0, 0], desc: "pip install -r requirements.txt (FastAPI, Pytest, Requests, Pydantic)." },
-      { id: 6, name: "6. Code Quality", status: "success", pos: [0, 0, 0], desc: "PEP 8 syntax validation & Pydantic schema checks passed cleanly." },
-      { id: 7, name: "7. Pytest Engine", status: "success", pos: [5, 0, 0], desc: "Pytest 8.3 executed 66 test items in 3.02s." },
-      { id: 8, name: "8. API Execution", status: "success", pos: [10, 0, 0], desc: "Live HTTP requests dispatched against target endpoints." },
-      { id: 9, name: "9. Schema & SLA", status: "success", pos: [15, 0, 0], desc: "Draft-7 JSON Schemas and latency SLAs (<1500ms) verified." },
-      { id: 10, name: "10. HTML Report", status: "success", pos: [20, 0, 0], desc: "Standalone reports/report.html generated and archived as artifact." },
-      { id: 11, name: "11. Release Status", status: "success", pos: [25, 0, 0], desc: "Quality gate PASSED (100% test success). Ready for release." }
+    // Camera Spherical Coordinates (Orbit Controls)
+    let camRadius = 46;
+    let camTheta = 0;             // Horizontal azimuth angle
+    let camPhi = Math.PI / 3.4;   // Polar elevation angle
+    let camTarget = new THREE.Vector3(0, 0, 0);
+    let isDragging = false;
+    let isPanning = false;
+    let prevMouseX = 0, prevMouseY = 0;
+
+    // Palette: Green (Success), Cyan/Blue (Running), Red (Failed), Grey (Pending)
+    const STAGE_THEME = {
+      success: { hex: 0x10b981, emissive: 0x059669, ring: 0x34d399, beamOpacity: 0.18, label: "PASSED" },
+      running: { hex: 0x00f0ff, emissive: 0x0284c7, ring: 0x38bdf8, beamOpacity: 0.40, label: "RUNNING" },
+      failed:  { hex: 0xef4444, emissive: 0xdc2626, ring: 0xf87171, beamOpacity: 0.45, label: "FAILED" },
+      pending: { hex: 0x64748b, emissive: 0x334155, ring: 0x94a3b8, beamOpacity: 0.06, label: "PENDING" }
+    };
+
+    // The 9 Interconnected 3D Stages
+    const STAGES_9_DATA = [
+      {
+        id: 1,
+        key: "developer",
+        name: "1. Developer",
+        subtitle: "Code & Commit",
+        pos: [-24, 0, -3.5],
+        status: "success",
+        duration: "0.15s",
+        desc: "Local feature branch test changes staged and committed with clean Git history.",
+        logs: `[GIT]: Staging 4 modified automation test modules\n[GIT]: Commit 392961f: "feat: complete REST API automation testing framework"\n[AUTHOR]: QA Automation Engineer <sdet@example.com>\n[STATUS]: Commit signed and verified.`
+      },
+      {
+        id: 2,
+        key: "github",
+        name: "2. GitHub",
+        subtitle: "Remote Sync",
+        pos: [-18, 0, 3.5],
+        status: "success",
+        duration: "0.22s",
+        desc: "Pushed to origin/main with webhook payload dispatched to GitHub Actions runner.",
+        logs: `[GITHUB]: Push event detected on refs/heads/main\n[WEBHOOK]: Delivery ID: 8931a-412f delivered to Actions runner\n[PAYLOAD]: 200 OK webhook signature verified.`
+      },
+      {
+        id: 3,
+        key: "ci_trigger",
+        name: "3. CI Trigger",
+        subtitle: "Workflow Dispatch",
+        pos: [-12, 0, -3.5],
+        status: "success",
+        duration: "0.18s",
+        desc: "Workflow 'REST API CI/CD' triggered on runner ubuntu-latest with Python matrix.",
+        logs: `[CI/CD]: Workflow run #41029 scheduled on ubuntu-latest\n[MATRIX]: Initializing runner environments for Python 3.11 and 3.12\n[ENVIRONMENT]: Sandbox verified.`
+      },
+      {
+        id: 4,
+        key: "build",
+        name: "4. Build",
+        subtitle: "Dependencies",
+        pos: [-6, 0, 3.5],
+        status: "success",
+        duration: "1.25s",
+        desc: "Pip package installation from requirements.txt with wheel cache acceleration.",
+        logs: `[PIP]: python -m pip install -r requirements.txt\n[CACHE]: Wheel cache HIT for fastapi, pytest, requests, jsonschema, pytest-html\n[SUCCESS]: 9 packages installed in 1.25s.`
+      },
+      {
+        id: 5,
+        key: "code_quality",
+        name: "5. Code Quality",
+        subtitle: "Lint & Validation",
+        pos: [0, 0, -3.5],
+        status: "success",
+        duration: "0.65s",
+        desc: "Flake8 PEP 8 linting and Pydantic v2 data model type validation clean.",
+        logs: `[LINT]: flake8 application tests utils platform_core\n[LINT]: 0 syntax errors, 0 PEP 8 violations detected\n[PYDANTIC]: Strict type assertion checks PASSED cleanly.`
+      },
+      {
+        id: 6,
+        key: "pytest",
+        name: "6. Pytest",
+        subtitle: "Test Engine (78)",
+        pos: [6, 0, 3.5],
+        status: "success",
+        duration: "3.72s",
+        desc: "Pytest 8.3 executed 78 automated test cases across 8 test suites with 100% success.",
+        logs: `============================= test session starts =============================\nplatform win32 -- Python 3.12.0, pytest-8.3.4\ncollected 78 items\n\ntests/test_authentication.py::TestAuthentication::test_login_success PASSED [  1%]\ntests/test_create_users.py::TestCreateUsers::test_create_user_success_201 PASSED [ 12%]\ntests/test_get_users.py::TestGetUsers::test_get_all_users_status_and_structure PASSED [ 29%]\ntests/test_update_users.py::TestUpdateUsers::test_put_update_user_full_success PASSED [ 89%]\ntests/test_delete_users.py::TestDeleteUsers::test_delete_existing_user_success_200 PASSED [ 23%]\ntests/test_negative_scenarios.py::TestNegativeScenarios::test_invalid_endpoint PASSED [ 55%]\ntests/test_response_validation.py::TestResponseValidation::test_json_schema PASSED [ 82%]\ntests/test_platform_upgrade.py::TestPlatformUpgrade::test_pipeline_stages PASSED [ 78%]\n\n======================= 78 passed in 3.72s (100% SUCCESS) =======================`
+      },
+      {
+        id: 7,
+        key: "api_testing",
+        name: "7. API Testing",
+        subtitle: "Requests HTTP",
+        pos: [12, 0, -3.5],
+        status: "success",
+        duration: "1.45s",
+        desc: "Live HTTP requests dispatched against FastAPI target service; all SLA thresholds met.",
+        logs: `[APIClient] ===> REQUEST: POST http://127.0.0.1:8000/login\n[APIClient] <=== RESPONSE: 200 OK in 15.22ms [http://127.0.0.1:8000/login]\n[APIClient] ===> REQUEST: GET http://127.0.0.1:8000/users?page=1&limit=10\n[APIClient] <=== RESPONSE: 200 OK in 12.04ms (Headers: X-Total-Count: 5)\n[APIClient] ===> REQUEST: POST http://127.0.0.1:8000/users\n[APIClient] <=== RESPONSE: 201 Created in 14.11ms\n[SLA CHECK]: All 7 endpoints met response time limit (< 1500ms).`
+      },
+      {
+        id: 8,
+        key: "report_generation",
+        name: "8. Report Generation",
+        subtitle: "HTML Artifact",
+        pos: [18, 0, 3.5],
+        status: "success",
+        duration: "0.35s",
+        desc: "Pytest-HTML execution report compiled and archived as downloadable CI/CD artifact.",
+        logs: `[REPORT]: Compiling reports/report.html\n[REPORT]: Packaging execution telemetry, test duration, and environment metadata\n[ARTIFACT]: Stored artifact 'reports/report.html' (102.4 KB) with 14-day retention.`
+      },
+      {
+        id: 9,
+        key: "deployment",
+        name: "9. Deployment",
+        subtitle: "Release Gate",
+        pos: [24, 0, -3.5],
+        status: "success",
+        duration: "0.20s",
+        desc: "Automated quality gate APPROVED (0 failures, 100% pass rate). Production release ready.",
+        logs: `[QUALITY GATE]: Checking release criteria...\n[ASSERTION]: Pass percentage == 100.0% -> PASSED\n[ASSERTION]: Failed tests == 0 -> PASSED\n[ASSERTION]: SLA violations == 0 -> PASSED\n[STATUS]: Gating APPROVED for production release.`
+      }
     ];
+
+    function createStageBillboardTexture(stageNumber, name, subtitle) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 110;
+      const ctx = canvas.getContext('2d');
+
+      // Rounded Capsule Card
+      ctx.fillStyle = 'rgba(7, 12, 22, 0.90)';
+      ctx.strokeStyle = '#00f0ff';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(8, 8, 240, 94, 16);
+      ctx.fill();
+      ctx.stroke();
+
+      // Stage Number Pill
+      ctx.fillStyle = '#0284c7';
+      ctx.beginPath();
+      ctx.roundRect(18, 18, 48, 24, 8);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 15px monospace';
+      ctx.fillText(`#0${stageNumber}`, 24, 35);
+
+      // Stage Name
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 20px system-ui, sans-serif';
+      ctx.fillText(name.replace(/^\d+\.\s*/, ''), 74, 36);
+
+      // Subtitle
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = '14px system-ui, sans-serif';
+      ctx.fillText(subtitle, 20, 78);
+
+      return new THREE.CanvasTexture(canvas);
+    }
 
     function initThreeJSPipeline() {
       const container = document.getElementById('three-pipeline-container');
       if (!container || isThreeInitialized) return;
 
-      const width = container.clientWidth;
-      const height = container.clientHeight;
+      const width = container.clientWidth || 900;
+      const height = container.clientHeight || 560;
 
+      // 1. Scene & Cosmic Cyber Fog
       scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x070a10, 0.015);
+      scene.fog = new THREE.FogExp2(0x030712, 0.012);
 
+      // 2. Camera Setup with Spherical Coordinates
       camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
-      camera.position.set(0, 15, 45);
-      camera.lookAt(0, 0, 0);
+      updateCameraPosition();
 
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      // 3. Renderer with Antialiasing & Alpha
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
       renderer.setSize(width, height);
-      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       container.appendChild(renderer.domElement);
 
-      // Ambient & Directional Lights
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      // 4. Futuristic Lighting Setup
+      const ambientLight = new THREE.AmbientLight(0x0f172a, 1.4);
       scene.add(ambientLight);
 
-      const dirLight = new THREE.DirectionalLight(0x38bdf8, 1.2);
-      dirLight.position.set(10, 20, 20);
-      scene.add(dirLight);
+      const mainDirLight = new THREE.DirectionalLight(0x38bdf8, 1.5);
+      mainDirLight.position.set(10, 30, 25);
+      scene.add(mainDirLight);
 
-      // Create Grid Floor
-      const grid = new THREE.GridHelper(80, 40, 0x38bdf8, 0x1e293b);
-      grid.position.y = -6;
-      scene.add(grid);
+      const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      rimLight.position.set(-20, 20, -20);
+      scene.add(rimLight);
 
-      // Create 11 Connected 3D Stages
-      const boxGeo = new THREE.CylinderGeometry(1.6, 2.0, 1.2, 32);
-      const ringGeo = new THREE.TorusGeometry(2.4, 0.08, 16, 64);
+      // Dynamic Active Stage Follow Spotlight
+      followSpotlight = new THREE.SpotLight(0x00f0ff, 3.5, 60, Math.PI / 4, 0.4);
+      followSpotlight.position.set(0, 22, 10);
+      scene.add(followSpotlight);
 
+      // 5. Dual Cyber Grid Ground Plane
+      const mainGrid = new THREE.GridHelper(100, 50, 0x00f0ff, 0x1e293b);
+      mainGrid.position.y = -4.5;
+      scene.add(mainGrid);
+
+      // 6. 500 Twinkling Cyber Nebula Particles
+      const starCount = 500;
+      const starGeo = new THREE.BufferGeometry();
+      const starPos = new Float32Array(starCount * 3);
+      for (let i = 0; i < starCount; i++) {
+        starPos[i * 3] = (Math.random() - 0.5) * 120;
+        starPos[i * 3 + 1] = (Math.random() - 0.5) * 50 + 10;
+        starPos[i * 3 + 2] = (Math.random() - 0.5) * 70;
+      }
+      starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+      const starMat = new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.35, transparent: true, opacity: 0.7 });
+      particlesMesh = new THREE.Points(starGeo, starMat);
+      scene.add(particlesMesh);
+
+      // 7. Construct the 9 Connected Rotating 3D Stages
       nodes3D = [];
+      const baseGeo = new THREE.CylinderGeometry(2.3, 2.7, 0.55, 6); // Hexagonal cyber pedestal
+      const ringGeo = new THREE.TorusGeometry(3.0, 0.08, 16, 48);   // Glowing status perimeter ring
 
-      pipelineStagesMeta.forEach((stage, idx) => {
+      STAGES_9_DATA.forEach((stage, idx) => {
         const group = new THREE.Group();
         group.position.set(stage.pos[0], stage.pos[1], stage.pos[2]);
 
-        const mat = new THREE.MeshStandardMaterial({
-          color: 0x22c55e,
-          emissive: 0x15803d,
-          roughness: 0.2,
-          metalness: 0.8
-        });
-        const cylinder = new THREE.Mesh(boxGeo, mat);
-        group.add(cylinder);
+        const theme = STAGE_THEME[stage.status] || STAGE_THEME.success;
 
-        const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
-        const ring = new THREE.Mesh(ringGeo, ringMat);
-        ring.rotation.x = Math.PI / 2;
-        group.add(ring);
+        // Base Pedestal
+        const baseMat = new THREE.MeshStandardMaterial({
+          color: 0x070e1e,
+          roughness: 0.25,
+          metalness: 0.85
+        });
+        const baseMesh = new THREE.Mesh(baseGeo, baseMat);
+        baseMesh.position.y = -0.25;
+        group.add(baseMesh);
+
+        // Perimeter Glowing Status Ring
+        const ringMat = new THREE.MeshBasicMaterial({ color: theme.ring });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.rotation.x = Math.PI / 2;
+        group.add(ringMesh);
+
+        // Gyroscopic Rotating Inner Core Assembly
+        const gyroGroup = new THREE.Group();
+        gyroGroup.position.y = 1.4;
+
+        // Spinning Ring 1 (X Axis)
+        const r1Geo = new THREE.TorusGeometry(1.65, 0.04, 16, 32);
+        const r1Mat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, roughness: 0.2, metalness: 0.8 });
+        const ringX = new THREE.Mesh(r1Geo, r1Mat);
+        gyroGroup.add(ringX);
+
+        // Spinning Ring 2 (Y Axis)
+        const r2Geo = new THREE.TorusGeometry(1.30, 0.04, 16, 32);
+        const r2Mat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x0369a1, roughness: 0.2, metalness: 0.8 });
+        const ringY = new THREE.Mesh(r2Geo, r2Mat);
+        ringY.rotation.x = Math.PI / 3;
+        gyroGroup.add(ringY);
+
+        // Spinning Ring 3 (Z Axis)
+        const r3Geo = new THREE.TorusGeometry(0.95, 0.035, 16, 32);
+        const r3Mat = new THREE.MeshStandardMaterial({ color: 0xa78bfa, emissive: 0x7c3aed, roughness: 0.2, metalness: 0.8 });
+        const ringZ = new THREE.Mesh(r3Geo, r3Mat);
+        gyroGroup.add(ringZ);
+
+        // Central Floating Energy Crystal
+        const coreGeo = new THREE.OctahedronGeometry(0.70, 0);
+        const coreMat = new THREE.MeshStandardMaterial({
+          color: theme.hex,
+          emissive: theme.emissive,
+          emissiveIntensity: 0.9,
+          roughness: 0.1,
+          metalness: 0.9
+        });
+        const core = new THREE.Mesh(coreGeo, coreMat);
+        gyroGroup.add(core);
+
+        group.add(gyroGroup);
+
+        // Vertical Holographic Energy Beam
+        const beamGeo = new THREE.CylinderGeometry(1.7, 1.7, 4.6, 24, 1, true);
+        const beamMat = new THREE.MeshBasicMaterial({
+          color: theme.hex,
+          transparent: true,
+          opacity: theme.beamOpacity,
+          blending: THREE.AdditiveBlending,
+          side: THREE.DoubleSide
+        });
+        const beam = new THREE.Mesh(beamGeo, beamMat);
+        beam.position.y = 2.3;
+        group.add(beam);
+
+        // 3D Billboard Sprite Label
+        const texture = createStageBillboardTexture(stage.id, stage.name, stage.subtitle);
+        const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+        const sprite = new THREE.Sprite(spriteMat);
+        sprite.scale.set(4.8, 2.1, 1);
+        sprite.position.y = 4.0;
+        group.add(sprite);
 
         group.userData = { stageIdx: idx, meta: stage };
         scene.add(group);
-        nodes3D.push({ group, cylinder, ring, meta: stage });
+
+        nodes3D.push({
+          group,
+          baseMesh,
+          ring: ringMesh,
+          gyroGroup,
+          ringX,
+          ringY,
+          ringZ,
+          core,
+          beam,
+          sprite,
+          meta: stage,
+          currentStatus: stage.status
+        });
       });
 
-      // Connecting Laser Paths
-      const lineMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, opacity: 0.6, transparent: true });
-      for (let i = 0; i < pipelineStagesMeta.length - 1; i++) {
-        const p1 = new THREE.Vector3(...pipelineStagesMeta[i].pos);
-        const p2 = new THREE.Vector3(...pipelineStagesMeta[i + 1].pos);
-        const geo = new THREE.BufferGeometry().setFromPoints([p1, p2]);
-        const line = new THREE.Line(geo, lineMat);
-        scene.add(line);
+      // 8. Interconnected 3D Glowing Neon Conduit (Catmull-Rom Spline Tube)
+      const curvePoints = STAGES_9_DATA.map(s => new THREE.Vector3(s.pos[0], s.pos[1] + 0.1, s.pos[2]));
+      splineCurve = new THREE.CatmullRomCurve3(curvePoints);
+      const tubeGeo = new THREE.TubeGeometry(splineCurve, 160, 0.20, 12, false);
+      const tubeMat = new THREE.MeshStandardMaterial({
+        color: 0x0284c7,
+        emissive: 0x00f0ff,
+        emissiveIntensity: 0.7,
+        roughness: 0.2,
+        metalness: 0.8,
+        transparent: true,
+        opacity: 0.75
+      });
+      tubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
+      scene.add(tubeMesh);
+
+      // Flowing Energy Pulse Orbs (3 pulses traveling continuously down the conduit)
+      pulseOrbs = [];
+      for (let p = 0; p < 3; p++) {
+        const pGeo = new THREE.SphereGeometry(0.38, 16, 16);
+        const pMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+        const pMesh = new THREE.Mesh(pGeo, pMat);
+        scene.add(pMesh);
+        pulseOrbs.push({ mesh: pMesh, progress: p / 3.0 });
       }
 
-      // Moving Particles
-      const particleCount = 200;
-      const pGeo = new THREE.BufferGeometry();
-      const pPos = new Float32Array(particleCount * 3);
-      for (let i = 0; i < particleCount; i++) {
-        pPos[i * 3] = (Math.random() - 0.5) * 60;
-        pPos[i * 3 + 1] = (Math.random() - 0.5) * 8;
-        pPos[i * 3 + 2] = (Math.random() - 0.5) * 15;
+      // 9. Interactive Mouse / Touch Orbit Controls
+      setupThreeEventListeners(container);
+
+      // 10. Render & Animation Loop
+      const clock = new THREE.Clock();
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const elapsed = clock.getElapsedTime();
+
+        // Rotate individual stage gyroscopic rings & crystals
+        nodes3D.forEach((node, idx) => {
+          const isRunning = node.currentStatus === 'running';
+          const speed = isRunning ? 0.08 : 0.022;
+
+          node.ringX.rotation.x += speed * 1.3;
+          node.ringY.rotation.y += speed * 0.9;
+          node.ringZ.rotation.z += speed * 0.7;
+          node.core.rotation.y += speed * 1.1;
+          node.core.rotation.x += speed * 0.6;
+
+          // Sinusoidal floating bobbing
+          node.gyroGroup.position.y = 1.4 + Math.sin(elapsed * 2.2 + idx * 0.8) * 0.14;
+
+          // Pulse emission when running
+          if (isRunning) {
+            const pulse = (Math.sin(elapsed * 6) + 1) * 0.5;
+            node.core.material.emissiveIntensity = 0.8 + pulse * 1.2;
+            node.beam.material.opacity = 0.35 + pulse * 0.25;
+          }
+        });
+
+        // Advance energy pulses along the pipeline conduit
+        pulseOrbs.forEach(orb => {
+          orb.progress = (orb.progress + 0.003) % 1.0;
+          const pos = splineCurve.getPoint(orb.progress);
+          orb.mesh.position.copy(pos);
+        });
+
+        // Rotate background nebula particles
+        if (particlesMesh) {
+          particlesMesh.rotation.y = elapsed * 0.015;
+        }
+
+        renderer.render(scene, camera);
       }
-      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-      const pMat = new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.35, transparent: true, opacity: 0.7 });
-      particlesMesh = new THREE.Points(pGeo, pMat);
-      scene.add(particlesMesh);
+      animate();
 
-      // Orbit Interaction
-      let isDragging = false;
-      let prevMouseX = 0;
-      let prevMouseY = 0;
+      isThreeInitialized = true;
+      renderPipelineStagesGrid();
+      fetchPipelineBackendStatus();
 
-      container.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        prevMouseX = e.clientX;
-        prevMouseY = e.clientY;
+      // Window resize listener
+      window.addEventListener('resize', () => {
+        if (!container || !renderer || !camera) return;
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
       });
-      window.addEventListener('mouseup', () => isDragging = false);
-      container.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        const dx = e.clientX - prevMouseX;
-        const dy = e.clientY - prevMouseY;
-        camera.position.x -= dx * 0.08;
-        camera.position.y += dy * 0.08;
-        camera.lookAt(0, 0, 0);
-        prevMouseX = e.clientX;
-        prevMouseY = e.clientY;
-      });
+    }
 
-      // Click Stage to Inspect
+    function updateCameraPosition() {
+      camera.position.x = camTarget.x + camRadius * Math.sin(camPhi) * Math.sin(camTheta);
+      camera.position.y = camTarget.y + camRadius * Math.cos(camPhi);
+      camera.position.z = camTarget.z + camRadius * Math.sin(camPhi) * Math.cos(camTheta);
+      camera.lookAt(camTarget);
+    }
+
+    function setupThreeEventListeners(container) {
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
+      const tooltip = document.getElementById('three-hover-tooltip');
+      let hoveredNode = null;
 
+      container.addEventListener('mousedown', (e) => {
+        if (e.button === 0) isDragging = true;
+        if (e.button === 2) isPanning = true;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      });
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+        isPanning = false;
+      });
+
+      container.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        const clientX = e.clientX - rect.left;
+        const clientY = e.clientY - rect.top;
+
+        // Camera Orbiting / Panning
+        if (isDragging) {
+          const dx = e.clientX - prevMouseX;
+          const dy = e.clientY - prevMouseY;
+          camTheta -= dx * 0.008;
+          camPhi -= dy * 0.008;
+          // Clamp polar angle to keep camera above the floor
+          camPhi = Math.max(0.12, Math.min(Math.PI / 2.05, camPhi));
+          updateCameraPosition();
+          prevMouseX = e.clientX;
+          prevMouseY = e.clientY;
+          return;
+        } else if (isPanning) {
+          const dx = e.clientX - prevMouseX;
+          const dy = e.clientY - prevMouseY;
+          camTarget.x -= dx * 0.04;
+          camTarget.y += dy * 0.04;
+          updateCameraPosition();
+          prevMouseX = e.clientX;
+          prevMouseY = e.clientY;
+          return;
+        }
+
+        // Raycasting for Hover Detection
+        mouse.x = (clientX / rect.width) * 2 - 1;
+        mouse.y = -(clientY / rect.height) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+
+        const stageMeshes = [];
+        nodes3D.forEach(n => stageMeshes.push(n.baseMesh, n.ring, n.core));
+        const intersects = raycaster.intersectObjects(stageMeshes, false);
+
+        if (intersects.length > 0) {
+          let hit = intersects[0].object;
+          let node = nodes3D.find(n => n.baseMesh === hit || n.ring === hit || n.core === hit);
+          if (node) {
+            container.style.cursor = 'pointer';
+            if (hoveredNode !== node) {
+              if (hoveredNode) hoveredNode.ring.scale.set(1, 1, 1);
+              hoveredNode = node;
+              node.ring.scale.set(1.18, 1.18, 1.18);
+            }
+            if (tooltip) {
+              tooltip.classList.remove('hidden');
+              tooltip.style.left = `${clientX + 16}px`;
+              tooltip.style.top = `${clientY + 16}px`;
+              document.getElementById('tt-title').innerText = node.meta.name;
+              document.getElementById('tt-desc').innerText = node.meta.desc;
+              document.getElementById('tt-status').innerText = `Status: ${node.currentStatus.toUpperCase()} (${node.meta.duration})`;
+            }
+            return;
+          }
+        }
+
+        container.style.cursor = 'grab';
+        if (hoveredNode) {
+          hoveredNode.ring.scale.set(1, 1, 1);
+          hoveredNode = null;
+        }
+        if (tooltip) tooltip.classList.add('hidden');
+      });
+
+      // Mouse Wheel Zoom
+      container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        camRadius += e.deltaY * 0.035;
+        camRadius = Math.max(16, Math.min(85, camRadius));
+        updateCameraPosition();
+      }, { passive: false });
+
+      // Click to Inspect Stage Modal
       container.addEventListener('click', (e) => {
         const rect = container.getBoundingClientRect();
         mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
         raycaster.setFromCamera(mouse, camera);
 
-        const intersects = raycaster.intersectObjects(scene.children, true);
-        for (let hit of intersects) {
-          let p = hit.object.parent;
-          if (p && p.userData && p.userData.meta) {
-            openStageModal(p.userData.meta);
-            break;
+        const stageMeshes = [];
+        nodes3D.forEach(n => stageMeshes.push(n.baseMesh, n.ring, n.core));
+        const intersects = raycaster.intersectObjects(stageMeshes, false);
+
+        if (intersects.length > 0) {
+          let hit = intersects[0].object;
+          let node = nodes3D.find(n => n.baseMesh === hit || n.ring === hit || n.core === hit);
+          if (node) {
+            openStageModal(node.meta);
           }
         }
       });
+    }
 
-      // Render Loop
-      function animate() {
-        requestAnimationFrame(animate);
-        nodes3D.forEach(n => {
-          n.ring.rotation.z += 0.02;
-        });
-        if (particlesMesh) {
-          const positions = particlesMesh.geometry.attributes.position.array;
-          for (let i = 0; i < particleCount; i++) {
-            positions[i * 3] += 0.15;
-            if (positions[i * 3] > 30) positions[i * 3] = -30;
-          }
-          particlesMesh.geometry.attributes.position.needsUpdate = true;
+    function setStageVisualState(stageIndex, status) {
+      const node = nodes3D[stageIndex];
+      if (!node) return;
+      node.currentStatus = status;
+      const theme = STAGE_THEME[status] || STAGE_THEME.pending;
+
+      node.core.material.color.setHex(theme.hex);
+      node.core.material.emissive.setHex(theme.emissive);
+      node.ring.material.color.setHex(theme.ring);
+      node.beam.material.color.setHex(theme.hex);
+      node.beam.material.opacity = theme.beamOpacity;
+
+      if (status === 'running') {
+        followSpotlight.target = node.group;
+        followSpotlight.position.set(node.group.position.x, 20, node.group.position.z + 10);
+        followSpotlight.color.setHex(0x00f0ff);
+
+        const autoFollow = document.getElementById('chk-auto-follow');
+        if (autoFollow && autoFollow.checked) {
+          camTarget.set(node.group.position.x, 1.5, node.group.position.z);
+          updateCameraPosition();
         }
-        renderer.render(scene, camera);
       }
-      animate();
 
-      isThreeInitialized = true;
-      renderPipelineGrid();
+      updateStageCardsUI();
+      updateHUDTelemetry(stageIndex, status);
     }
 
-    function resetPipelineCamera() {
-      if (camera) {
-        camera.position.set(0, 15, 45);
-        camera.lookAt(0, 0, 0);
+    function updateHUDTelemetry(stageIdx, status) {
+      const dot = document.getElementById('hud-stage-dot');
+      const name = document.getElementById('hud-stage-name');
+      const desc = document.getElementById('hud-stage-desc');
+      const stage = STAGES_9_DATA[stageIdx];
+
+      if (!dot || !name || !desc || !stage) return;
+
+      if (status === 'running') {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping';
+        name.innerText = `STAGE #${stage.id}: ${stage.name.toUpperCase()} (IN PROGRESS)`;
+        desc.innerText = stage.desc;
+      } else if (status === 'success') {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
+        name.innerText = `STAGE #${stage.id}: ${stage.name.toUpperCase()} (PASSED)`;
+        desc.innerText = `Completed in ${stage.duration}. Quality gate verified.`;
+      } else if (status === 'failed') {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+        name.innerText = `STAGE #${stage.id}: ${stage.name.toUpperCase()} (FAILED)`;
+        desc.innerText = `Quality violation encountered during execution.`;
       }
     }
 
-    function renderPipelineGrid() {
+    // -------------------------------------------------------------
+    // CONTROLS: RUN, PAUSE, REPLAY, RESET
+    // -------------------------------------------------------------
+    async function runPipelineSequential() {
+      const runBtn = document.getElementById('pipe-run-btn');
+      const pauseBtn = document.getElementById('pipe-pause-btn');
+      const label = document.getElementById('pipe-run-btn-label');
+
+      if (pipelineRunning && !pipelinePaused) return;
+
+      pipelineRunning = true;
+      pipelinePaused = false;
+      pauseBtn.disabled = false;
+      label.innerText = 'Running...';
+      runBtn.classList.add('opacity-80');
+
+      for (let i = activeStageIdx; i < STAGES_9_DATA.length; i++) {
+        if (!pipelineRunning || pipelinePaused) {
+          activeStageIdx = i;
+          return;
+        }
+
+        setStageVisualState(i, 'running');
+        await new Promise(r => {
+          pipelineTimer = setTimeout(r, 700);
+        });
+
+        if (!pipelineRunning || pipelinePaused) {
+          activeStageIdx = i;
+          return;
+        }
+
+        setStageVisualState(i, 'success');
+        activeStageIdx = i + 1;
+      }
+
+      pipelineRunning = false;
+      pipelinePaused = false;
+      activeStageIdx = 0;
+      pauseBtn.disabled = true;
+      label.innerText = '✓ Pipeline Passed';
+      runBtn.classList.remove('opacity-80');
+
+      // Update Live Gate Pill
+      document.getElementById('pipe-live-gate').innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>PASSED (100%)</span>';
+    }
+
+    function pausePipelineSequential() {
+      if (!pipelineRunning) return;
+      pipelinePaused = true;
+      clearTimeout(pipelineTimer);
+      document.getElementById('pipe-pause-btn').disabled = true;
+      document.getElementById('pipe-run-btn-label').innerText = 'Resume';
+      document.getElementById('pipe-run-btn').classList.remove('opacity-80');
+    }
+
+    function replayPipelineSequential() {
+      clearTimeout(pipelineTimer);
+      pipelineRunning = false;
+      pipelinePaused = false;
+      activeStageIdx = 0;
+      STAGES_9_DATA.forEach((s, idx) => setStageVisualState(idx, 'pending'));
+      setTimeout(runPipelineSequential, 200);
+    }
+
+    function resetPipelineStages() {
+      clearTimeout(pipelineTimer);
+      pipelineRunning = false;
+      pipelinePaused = false;
+      activeStageIdx = 0;
+      document.getElementById('pipe-pause-btn').disabled = true;
+      document.getElementById('pipe-run-btn-label').innerText = 'Run Pipeline';
+      document.getElementById('pipe-run-btn').classList.remove('opacity-80');
+
+      STAGES_9_DATA.forEach((s, idx) => setStageVisualState(idx, 'pending'));
+      setCameraPreset('default');
+      updateStageCardsUI();
+
+      const name = document.getElementById('hud-stage-name');
+      const desc = document.getElementById('hud-stage-desc');
+      if (name) name.innerText = "ALL 9 STAGES IN STANDBY";
+      if (desc) desc.innerText = "Click 'Run Pipeline' or 'Replay' to trigger sequential 3D execution.";
+    }
+
+    function setCameraPreset(preset) {
+      if (preset === 'default') {
+        camRadius = 46;
+        camTheta = 0;
+        camPhi = Math.PI / 3.4;
+        camTarget.set(0, 0, 0);
+      } else if (preset === 'isometric') {
+        camRadius = 50;
+        camTheta = Math.PI / 4.2;
+        camPhi = Math.PI / 3.2;
+        camTarget.set(0, 0, 0);
+      } else if (preset === 'top') {
+        camRadius = 52;
+        camTheta = 0;
+        camPhi = 0.14;
+        camTarget.set(0, 0, 0);
+      }
+      updateCameraPosition();
+    }
+
+    function renderPipelineStagesGrid() {
       const container = document.getElementById('pipeline-stages-grid');
+      if (!container) return;
       container.innerHTML = '';
-      pipelineStagesMeta.forEach(s => {
+
+      STAGES_9_DATA.forEach((s, idx) => {
         const el = document.createElement('div');
-        el.className = 'p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 cursor-pointer transition-all';
-        el.onclick = () => openStageModal(s);
+        el.id = `stage-card-${idx}`;
+        el.className = 'p-2.5 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-cyan-500/50 cursor-pointer transition-all';
+        el.onclick = () => {
+          openStageModal(s);
+          focusCameraOnStage(idx);
+        };
         el.innerHTML = `
           <div class="flex items-center space-x-1.5 mb-1">
-            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span class="font-bold text-white truncate text-[11px]">${s.name}</span>
+            <span class="stage-dot w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="font-bold text-white truncate text-[11px]">${s.name.replace(/^\d+\.\s*/, '')}</span>
           </div>
-          <div class="text-[10px] text-slate-400 truncate">${s.desc}</div>
+          <div class="text-[10px] text-slate-400 truncate">${s.subtitle}</div>
+          <div class="mt-1 flex items-center justify-between text-[9px] text-slate-500">
+            <span class="stage-status-text font-mono text-emerald-400">SUCCESS</span>
+            <span>${s.duration}</span>
+          </div>
         `;
         container.appendChild(el);
       });
     }
 
+    function updateStageCardsUI() {
+      STAGES_9_DATA.forEach((s, idx) => {
+        const card = document.getElementById(`stage-card-${idx}`);
+        if (!card) return;
+        const dot = card.querySelector('.stage-dot');
+        const stText = card.querySelector('.stage-status-text');
+        const node = nodes3D[idx];
+        const status = node ? node.currentStatus : s.status;
+
+        if (status === 'running') {
+          dot.className = 'stage-dot w-2 h-2 rounded-full bg-cyan-400 animate-ping';
+          stText.className = 'stage-status-text font-mono text-cyan-400 font-bold';
+          stText.innerText = 'RUNNING';
+          card.classList.add('border-cyan-500/80', 'bg-cyan-950/20');
+        } else if (status === 'success') {
+          dot.className = 'stage-dot w-2 h-2 rounded-full bg-emerald-400';
+          stText.className = 'stage-status-text font-mono text-emerald-400';
+          stText.innerText = 'PASSED';
+          card.classList.remove('border-cyan-500/80', 'bg-cyan-950/20');
+        } else if (status === 'failed') {
+          dot.className = 'stage-dot w-2 h-2 rounded-full bg-rose-500';
+          stText.className = 'stage-status-text font-mono text-rose-500 font-bold';
+          stText.innerText = 'FAILED';
+        } else {
+          dot.className = 'stage-dot w-2 h-2 rounded-full bg-slate-500';
+          stText.className = 'stage-status-text font-mono text-slate-400';
+          stText.innerText = 'PENDING';
+          card.classList.remove('border-cyan-500/80', 'bg-cyan-950/20');
+        }
+      });
+    }
+
+    function focusCameraOnStage(idx) {
+      const stage = STAGES_9_DATA[idx];
+      if (!stage) return;
+      camTarget.set(stage.pos[0], 1.5, stage.pos[2]);
+      camRadius = 18;
+      camTheta = 0;
+      camPhi = Math.PI / 3.8;
+      updateCameraPosition();
+    }
+
+    function focusStageFromModal() {
+      if (selectedStageForModal) {
+        const idx = STAGES_9_DATA.findIndex(s => s.id === selectedStageForModal.id);
+        if (idx !== -1) {
+          focusCameraOnStage(idx);
+          closeStageModal();
+        }
+      }
+    }
+
+    function copyModalLogs() {
+      const logs = document.getElementById('modal-stage-logs').innerText;
+      navigator.clipboard.writeText(logs).then(() => {
+        alert("Logs copied to clipboard!");
+      });
+    }
+
     function openStageModal(stage) {
-      document.getElementById('modal-stage-title').innerText = stage.name;
+      selectedStageForModal = stage;
+      const idx = STAGES_9_DATA.findIndex(s => s.id === stage.id);
+      const currentSt = (nodes3D[idx] ? nodes3D[idx].currentStatus : stage.status).toUpperCase();
+
+      document.getElementById('modal-stage-title').innerText = `${stage.name} (${stage.subtitle})`;
       document.getElementById('modal-stage-desc').innerText = stage.desc;
-      document.getElementById('modal-stage-status').innerText = stage.status.toUpperCase();
-      document.getElementById('modal-stage-logs').innerText = `[STAGE EXECUTOR]: Initiating ${stage.name}\n[STATUS]: Gate verified.\n[TIMESTAMP]: ${new Date().toISOString()}\n[METRICS]: All checks completed cleanly without warnings.`;
+      document.getElementById('modal-stage-duration').innerText = stage.duration;
+
+      const stEl = document.getElementById('modal-stage-status');
+      stEl.innerText = currentSt;
+      if (currentSt === 'SUCCESS' || currentSt === 'PASSED') {
+        stEl.className = 'font-bold text-emerald-400';
+      } else if (currentSt === 'RUNNING') {
+        stEl.className = 'font-bold text-cyan-400 animate-pulse';
+      } else if (currentSt === 'FAILED') {
+        stEl.className = 'font-bold text-rose-500';
+      } else {
+        stEl.className = 'font-bold text-slate-400';
+      }
+
+      document.getElementById('modal-stage-logs').innerText = stage.logs;
       document.getElementById('stage-modal').classList.remove('hidden');
     }
+
     function closeStageModal() {
       document.getElementById('stage-modal').classList.add('hidden');
     }
 
-    async function simulateLivePipelineRun() {
-      const btn = document.getElementById('sim-pipe-btn');
-      btn.disabled = true;
-      btn.innerText = 'Executing 11 Stages...';
-
-      for (let i = 0; i < nodes3D.length; i++) {
-        nodes3D[i].cylinder.material.color.setHex(0x38bdf8);
-        nodes3D[i].cylinder.material.emissive.setHex(0x0284c7);
-        await new Promise(r => setTimeout(r, 250));
-        nodes3D[i].cylinder.material.color.setHex(0x22c55e);
-        nodes3D[i].cylinder.material.emissive.setHex(0x15803d);
+    async function fetchPipelineBackendStatus() {
+      try {
+        const res = await fetch('/api/platform/pipeline/latest');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.commit_hash) {
+          document.getElementById('pipe-live-commit').innerText = data.commit_hash.substring(0, 7);
+        }
+        if (data.branch) {
+          document.getElementById('pipe-live-branch').innerText = data.branch;
+        }
+      } catch (e) {
+        console.warn("Could not query backend pipeline latest:", e);
       }
-
-      btn.disabled = false;
-      btn.innerText = '▶ Re-Execute Live Pipeline Simulation';
     }
 
     // -------------------------------------------------------------
