@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from platform_core.database import get_db
 from platform_core.models import Endpoint, PipelineRun, Project, TestCase, TestExecution
+from platform_core.services.project_service import ProjectService
 
 router = APIRouter(prefix="/api/platform/dashboard", tags=["Dashboard Analytics"])
 
@@ -26,6 +27,9 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
     8. Average API Response Time
     9. Latest Pipeline Status
     """
+    if db.query(Project).count() == 0:
+        ProjectService.seed_default_projects_if_empty(db)
+
     total_projects = db.query(Project).count()
     total_endpoints = db.query(Endpoint).count()
     total_test_cases = db.query(TestCase).count()

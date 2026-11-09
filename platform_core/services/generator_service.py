@@ -39,7 +39,7 @@ class GeneratorService:
             method = ep.get("method", "GET").upper()
             slug = cls.slugify(path)
             expected_status = ep.get("expected_status", 200)
-            auth_required = ep.get("auth_required", False) or auth_type != "none"
+            auth_required = bool(ep.get("auth_required", False))
             request_body = ep.get("request_body")
 
             # Replace {param} in path with sample values for positive testing

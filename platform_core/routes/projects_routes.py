@@ -21,8 +21,10 @@ router = APIRouter(prefix="/api/platform/projects", tags=["Automation Projects"]
 
 @router.get("", summary="List All Automation Projects")
 def list_projects(db: Session = Depends(get_db)):
-    """Retrieve all automation projects."""
-    projects = db.query(Project).order_by(Project.created_at.desc()).all()
+    """Retrieve all automation projects, ensuring defaults are seeded on serverless/cold starts."""
+    if db.query(Project).count() == 0:
+        ProjectService.seed_default_projects_if_empty(db)
+    projects = db.query(Project).order_by(Project.id.asc()).all()
     return [p.to_dict() for p in projects]
 
 
